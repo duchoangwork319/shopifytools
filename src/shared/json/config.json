@@ -1,0 +1,82 @@
+{
+  "sitemap": {
+    "mode": "html",
+    "output": "ignore/shopify/master"
+  },
+  "csv": {
+    "entry": "ignore/shopify/master",
+    "output": "ignore/shopify/Product List Crawl Fusion.csv",
+    "tag": {
+      "gender": [
+        {
+          "tag": "Unisex",
+          "keywords": "unisex"
+        },
+        {
+          "tag": "Women",
+          "keywords": "women"
+        },
+        {
+          "tag": "Men",
+          "keywords": "men"
+        }
+      ],
+      "activity": [
+        {
+          "tag": "Recharge",
+          "keywords": "recharge"
+        },
+        {
+          "tag": "Cycling",
+          "keywords": "cycling"
+        },
+        {
+          "tag": "Gym",
+          "keywords": "gym"
+        },
+        {
+          "tag": "Triathlon",
+          "keywords": "triathlon"
+        },
+        {
+          "tag": "Running",
+          "keywords": "running"
+        }
+      ],
+      "other": [
+        {
+          "tag": "T-Shirt",
+          "keywords": "t-shirt"
+        },
+        {
+          "tag": "Bib Shorts",
+          "keywords": "bib short"
+        },
+        {
+          "tag": "Tights",
+          "keywords": "tight"
+        },
+        {
+          "tag": "Sock",
+          "keywords": "sock"
+        },
+        {
+          "tag": "Tri Suit",
+          "keywords": "tri suit"
+        },
+        {
+          "tag": "Calf Sleeves",
+          "keywords": "calf sleeves"
+        },
+        {
+          "tag": "Singlet",
+          "keywords": "singlet"
+        },
+        {
+          "tag": "Jersey",
+          "keywords": "jersey"
+        }
+      ]
+    }
+  }
+}
