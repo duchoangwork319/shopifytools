@@ -263,8 +263,15 @@ export function buildMainMap(headers) {
  * @param {Object} rowData - Row context
  * @param {boolean} [isMaster=false] - Whether row is the master product row
  * @param {boolean} [isMediaOnly=false] - Whether row is a media-only row
+ * @param {boolean} [valueOnly=true] - Append values only
  * @returns {Array}
  */
-export function mapRow(mainMap, rowData, isMaster = false, isMediaOnly = false) {
-  return mainMap.map((entry) => entry.map(rowData, isMaster, isMediaOnly));
+export function mapRow(mainMap, rowData, isMaster = false, isMediaOnly = false, valuesOnly = true) {
+  if (valuesOnly) {
+    return mainMap.map((entry) => entry.map(rowData, isMaster, isMediaOnly));
+  } else {
+    return mainMap.map((entry) => ({
+      value: entry.map(rowData, isMaster, isMediaOnly)
+    }));
+  }
 }

@@ -24,9 +24,10 @@ export function createProductCsvRows({ product, html = null, headers = [], csvCo
  * @param {import("cheerio").CheerioAPI|null|undefined} [params.html] - Cheerio API instance
  * @param {{ header: string, map: Function }[]} params.mainMap - Header mapper definitions
  * @param {Object} [params.csvConfig] - CSV config with tag groups
+ * @param {boolean} [params.valueOnly=true] - Append values only
  * @returns {{ rows: Array[], counters: { products: number, variants: number } }}
  */
-export function createProductCsvRowsWithMap({ product, html = null, mainMap = [], csvConfig = {} }) {
+export function createProductCsvRowsWithMap({ product, html = null, mainMap = [], csvConfig = {}, valuesOnly = true }) {
   const rows = [];
   const counters = { products: 0, variants: 0 };
   const mediaItems = Array.isArray(product?.media) ? product.media : [];
