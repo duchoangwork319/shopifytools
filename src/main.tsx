@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
 
 import "./index.css"
+import "./App.css";
 import ShadcnApp from "./ShadcnApp.tsx"
 import { TooltipProvider } from "./components/ui/tooltip.tsx"
 
