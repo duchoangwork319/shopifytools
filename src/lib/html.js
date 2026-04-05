@@ -23,16 +23,22 @@ export function buildBodyDescription(doc, product = {}) {
   if (!doc) return product.description || "";
 
   const selectors = [
-    "#description .lg\\:col-span-5 .font-heading",
-    "#description .lg\\:col-span-5 .text-base",
-    "#description [data-hashchange-target=\"details-and-materials\"] h2",
-    "#description [data-hashchange-target=\"details-and-materials\"] ul",
-    "#description [data-hashchange-target=\"details-and-materials\"] ul + p"
+    "#description .hidden .font-heading",
+    "#description .hidden .font-heading ~ .rte",
+    "div[data-tab-content=\"details_and_materials\"] > div"
   ];
 
   const finalHtml = selectors.map((sel) => {
     const self = Array.from(doc.querySelectorAll(sel));
-    return self.map(el => el.outerHTML).join("") || "";
+    return self.map(el => {
+      if (el.classList.contains("font-heading")) {
+        const h2 = doc.createElement("h2");
+        h2.textContent = el.textContent;
+        el.replaceWith(h2);
+      }
+      el.classList.remove(el.classList.value);
+      return el.outerHTML;
+    }).join("") || "";
   })
     .filter(Boolean)
     .join("");

@@ -1,4 +1,7 @@
-import { useRef, useState } from "react"
+import {
+  useRef,
+  useState
+} from "react"
 import { IconFolderCode } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,43 +12,26 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  // TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { Skeleton } from "@/components/ui/skeleton"
 import Papa from "papaparse";
 import {
   createTimestampedFilename,
   downloadCsv,
 } from "@/lib/csv"
-import {
-  crawlHandle
-} from "@/lib/shopify"
+import { crawlHandle } from "@/lib/shopify"
 import { Spinner } from "@/components/ui/spinner"
 import { SummaryCards } from "@/components/summary-cards"
-import type { PapaData, ShopifyCSVContainer } from "@/types/crawl"
+import { toast } from "sonner"
+import {
+  columns,
+  type StaticShopifyCSVRow,
+  type ShopifyCSVContainer
+} from "@/types/crawl"
+import { TanstackProductDataTable } from "@/components/shopify-data-table"
+import { sleep } from "@/lib/utils"
 
-export function SkeletonTable() {
-  return (
-    <div className="flex w-full flex-col gap-2">
-      {Array.from({ length: 10 }).map((_, index) => (
-        <div className="flex gap-4 w-full" key={index}>
-          <Skeleton className="h-8 flex-1" />
-          <Skeleton className="h-8 w-100" />
-          <Skeleton className="h-8 w-100" />
-        </div>
-      ))}
-    </div>
-  )
-}
+const SLEEP_MS_DURING_FETCH = 500;
+const FETCH_MS_PER_PRODUCT = 1000;
 
 export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -83,61 +69,6 @@ export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
   )
 }
 
-export function ProductTable({
-  headers,
-  data,
-  fetching,
-  ...props
-}: Omit<ShopifyCSVContainer, "handles">
-  & { fetching: boolean }
-  & React.HTMLAttributes<HTMLDivElement>) {
-  const allowedHeaders = headers.filter(header => ["Handle", "Title", "Variant SKU"].includes(header));
-  return (
-    <div {...props}>
-      {
-        (data.length === 0 || fetching) ? (
-          <SkeletonTable />
-        ) : (
-          <Table>
-            <TableCaption>A list of your products</TableCaption>
-            <TableHeader>
-              <TableRow>
-                {
-                  allowedHeaders.map((header) => (
-                    <TableHead key={header}>{header}</TableHead>
-                  ))
-                }
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {
-                data.map((row, tridx) => (
-                  <TableRow key={`tr-${tridx}`}>
-                    {
-                      allowedHeaders.map((header, tdidx) => (
-                        <TableCell key={`${header}-${tridx}-${tdidx}`}
-                          title={String(row[header] ?? "")}>
-                          <span className="block break-all">
-                            {String(row[header] ?? "")}
-                          </span>
-                        </TableCell>
-                      ))
-                    }
-                  </TableRow>
-                ))
-              }
-            </TableBody>
-          </Table>
-        )
-      }
-    </div>
-  )
-}
-
-async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
 async function fetchProductData(handles: string[], headers: string[]) {
   const outputData: string[][] = [];
   for (const handle of handles) {
@@ -145,7 +76,7 @@ async function fetchProductData(handles: string[], headers: string[]) {
     try {
       const { rows: newRows } = await crawlHandle(handle, "https://fusionworld.com", headers);
       outputData.push(...newRows);
-      await sleep(250);
+      await sleep(SLEEP_MS_DURING_FETCH);
     } catch (error) {
       console.error("Error crawling handle:", handle, error);
       return [];
@@ -175,7 +106,7 @@ export function CrawlPage() {
 
     Papa.parse(file, {
       header: true,
-      complete: (results: { data: PapaData[] }) => {
+      complete: (results: { data: StaticShopifyCSVRow[] }) => {
         const first = results.data[0];
 
         console.log("Uploaded file:", file);
@@ -188,7 +119,7 @@ export function CrawlPage() {
           setShopifyCsvContainer((prev) => ({
             ...prev,
             headers: keys,
-            data: results.data,
+            data: results.data as StaticShopifyCSVRow[],
             handles,
           }));
           setOutputContainer((prev) => ({
@@ -211,6 +142,11 @@ export function CrawlPage() {
         data: newData,
       }));
       setFetching(false);
+    });
+    const est = (shopifyCsvContainer.handles.length * (FETCH_MS_PER_PRODUCT + SLEEP_MS_DURING_FETCH)) / 1000;
+    toast.info(`This may take about ${est.toFixed(1)} seconds depending on the number of products.`, {
+      position: "top-center",
+      duration: 3000,
     });
   };
 
@@ -254,9 +190,15 @@ export function CrawlPage() {
                 </Button>
               </div>
             </div>
-            <div className="flex-[0_0_100%] max-w-[100%]">
-              <ProductTable
+            <div className="flex-[0_0_calc(100%-var(--sidebar-width))] max-w-[calc(100%-var(--sidebar-width))]">
+              {/* <DefaultProductTable
                 headers={shopifyCsvContainer.headers}
+                data={shopifyCsvContainer.data as AnyDataRow[]}
+                fetching={fetching}
+                className="w-[calc(100%-var(--sidebar-width))]"
+              /> */}
+              <TanstackProductDataTable
+                columns={columns}
                 data={shopifyCsvContainer.data}
                 fetching={fetching}
               />

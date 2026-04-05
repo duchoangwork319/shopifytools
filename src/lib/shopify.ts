@@ -1,13 +1,9 @@
 import { buildMainMap } from "@/shared/csv/mapping"
 import { createProductCsvRowsWithMap } from "@/shared/csv/rows"
+import type { CrawlResult } from "@/types/crawl"
+import type { ShopifyProduct } from "@/types/shopify"
 import csvConfig from "@/shared/json/config.json"
 import headerConfig from "@/shared/json/header.json"
-import type { CrawlResult } from "@/types/crawl"
-import type {
-  ShopifyProduct,
-  // ShopifyProductMedia,
-  // ShopifyProductVariant,
-} from "@/types/shopify"
 
 type CsvHeader = (typeof headerConfig.headers)[number]
 
@@ -17,56 +13,31 @@ export function getCsvHeaders() {
   return HEADERS
 }
 
-export function normalizeHandle(value: string) {
-  if (!value) return ""
-
-  try {
-    const url = new URL(value)
-    const parts = url.pathname.split("/").filter(Boolean)
-    const productsIndex = parts.findIndex((part) => part === "products")
-    if (productsIndex >= 0 && parts[productsIndex + 1]) {
-      return parts[productsIndex + 1].replace(/\.js$/u, "")
-    }
-  } catch {
-    return value
-      .replace(/^\/+|\/+$/gu, "")
-      .replace(/^products\//u, "")
-      .replace(/\.js$/u, "")
-      .replace(/[?#].*$/u, "")
-  }
-
-  return value
-}
-
-export function extractHandles(input: string) {
-  return Array.from(
-    new Set(
-      input
-        .split(/[\s,]+/u)
-        .map((value) => value.trim())
-        .filter(Boolean)
-        .map(normalizeHandle),
-    ),
-  ).filter(Boolean)
-}
-
-export function inferStoreOrigin(input: string) {
-  const tokens = input.split(/[\s,]+/u).map((value) => value.trim())
-  for (const token of tokens) {
-    try {
-      const url = new URL(token)
-      return url.origin
-    } catch {
-      continue
-    }
-  }
-
-  return ""
-}
-
 export function buildProductUrl(storeOrigin: string, handle: string) {
   const base = storeOrigin.replace(/\/+$/u, "")
   return `${base}/products/${handle}`
+}
+
+export function sanityHtml(html: string) {
+  const imgRegex = /<img\b[^>]*>/gi;
+  const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+  const styleRegex = /<style\b[^>]*>([\s\S]*?)<\/style>/gi;
+  const linkRegex = /<link\b[^>]*>/gi;
+  const videoRegex = /<video\b[^>]*>([\s\S]*?)<\/video>/gi;
+  const audioRegex = /<audio\b[^>]*>([\s\S]*?)<\/audio>/gi;
+  const iframeRegex = /<iframe\b[^>]*>([\s\S]*?)<\/iframe>/gi;
+  const embedRegex = /<embed\b[^>]*>([\s\S]*?)<\/embed>/gi;
+  const objectRegex = /<object\b[^>]*>([\s\S]*?)<\/object>/gi;
+  const noscriptRegex = /<noscript\b[^>]*>([\s\S]*?)<\/noscript>/gi;
+  const pictureRegex = /<picture\b[^>]*>([\s\S]*?)<\/picture>/gi;
+  const sourceRegex = /<source\b[^>]*>/gi;
+  const regexGroup = [imgRegex, scriptRegex, styleRegex, linkRegex, videoRegex, audioRegex, iframeRegex, embedRegex, objectRegex, noscriptRegex, pictureRegex, sourceRegex];
+  let cleanedHtml = html;
+  regexGroup.forEach((regex) => {
+    cleanedHtml = cleanedHtml.replace(regex, "");
+  });
+  const doc = new DOMParser().parseFromString(cleanedHtml, "text/html")
+  return doc
 }
 
 export async function crawlHandle(
@@ -91,7 +62,7 @@ export async function crawlHandle(
   const json = await jsonResponse.text()
   const html = await htmlResponse.text()
   const product = JSON.parse(json) as ShopifyProduct
-  const htmlDocument = new DOMParser().parseFromString(html, "text/html")
+  const htmlDocument = sanityHtml(html)
   const mainMap = buildMainMap(headers || getCsvHeaders());
   const options = {
     product: product,
