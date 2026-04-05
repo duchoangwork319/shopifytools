@@ -72,6 +72,7 @@ export function buildProductUrl(storeOrigin: string, handle: string) {
 export async function crawlHandle(
   handle: string,
   storeOrigin: string,
+  headers: string[]
 ): Promise<CrawlResult> {
   const productUrl = buildProductUrl(storeOrigin, handle)
   const [jsonResponse, htmlResponse] = await Promise.all([
@@ -91,17 +92,19 @@ export async function crawlHandle(
   const html = await htmlResponse.text()
   const product = JSON.parse(json) as ShopifyProduct
   const htmlDocument = new DOMParser().parseFromString(html, "text/html")
-  const mainMap = buildMainMap(getCsvHeaders());
-
-  const { rows } = createProductCsvRowsWithMap({
+  const mainMap = buildMainMap(headers || getCsvHeaders());
+  const options = {
     product: product,
     html: htmlDocument,
     mainMap,
-    csvConfig: csvConfig
-  });
+    csvConfig: csvConfig,
+    valuesOnly: true,
+  };
+  console.log("Create CSV rows with options:", options);
+  const { rows } = createProductCsvRowsWithMap(options);
 
-  localStorage.setItem(`spf_${handle}_json`, json)
-  localStorage.setItem(`spf_${handle}_html`, html)
+  // localStorage.setItem(`spf_${handle}_json`, json)
+  // localStorage.setItem(`spf_${handle}_html`, html)
 
   return { handle, json, html, rows }
 }

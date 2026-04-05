@@ -261,17 +261,17 @@ export function buildMainMap(headers) {
  * Convert a row context into a CSV row array.
  * @param {{ header: string, map: Function }[]} mainMap - Header mapper definitions
  * @param {Object} rowData - Row context
- * @param {boolean} [isMaster=false] - Whether row is the master product row
- * @param {boolean} [isMediaOnly=false] - Whether row is a media-only row
- * @param {boolean} [valueOnly=true] - Append values only
+ * @param {boolean} [isMaster=false] - Whether this is a master product row
+ * @param {boolean} [isMediaOnly=false] - Whether this is a media-only row
+ * @param {boolean} [valuesOnly] - Whether to return values only or an array of { header, value }
  * @returns {Array}
  */
-export function mapRow(mainMap, rowData, isMaster = false, isMediaOnly = false, valuesOnly = true) {
+export function mapRow(mainMap, rowData, { isMaster = false, isMediaOnly = false, valuesOnly }) {
   if (valuesOnly) {
     return mainMap.map((entry) => entry.map(rowData, isMaster, isMediaOnly));
   } else {
     return mainMap.map((entry) => ({
-      value: entry.map(rowData, isMaster, isMediaOnly)
-    }));
+      [entry.header]: entry.map(rowData, isMaster, isMediaOnly)
+    })).reduce((acc, cur) => Object.assign(acc, cur), {});
   }
 }

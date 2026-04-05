@@ -9,10 +9,10 @@ import { TooltipProvider } from "./components/ui/tooltip.tsx"
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <TooltipProvider>
+    <TooltipProvider>
+      <BrowserRouter>
         <ShadcnApp />
-      </TooltipProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </TooltipProvider>
   </StrictMode>,
 )

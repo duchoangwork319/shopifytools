@@ -1,17 +1,15 @@
 export type CsvCellValue = string | number | boolean | null
 
-export type ProductCsvRow = CsvCellValue[]
-
 export interface CrawlResult {
   handle: string
   json: string
   html: string
-  rows: ProductCsvRow[]
+  rows: string[][]
 }
 
-export interface ProductTableObject {
-  handle: string,
-  rows: ProductCsvRow[]
+export type PapaData = Record<string, string>
+export interface ShopifyCSVContainer {
+  headers: string[]
+  data: PapaData[]
+  handles: string[]
 }
-
-export type ProductRecordMap = Map<string, ProductTableObject>

@@ -1,179 +1,271 @@
-import { Download, Play, Store, Terminal } from "lucide-react"
-import { useEffect, useState } from "react"
-
-import { HandleBoard } from "@/components/handle-board"
-import { ProductTable } from "@/components/product-table"
+import { useRef, useState } from "react"
+import { IconFolderCode } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import {
-  createCsvString,
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  // TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
+import Papa from "papaparse";
+import {
   createTimestampedFilename,
   downloadCsv,
 } from "@/lib/csv"
 import {
-  crawlHandle,
-  extractHandles,
-  getCsvHeaders,
-  inferStoreOrigin,
+  crawlHandle
 } from "@/lib/shopify"
-import type { ProductCsvRow, ProductRecordMap } from "@/types/crawl"
+import { Spinner } from "@/components/ui/spinner"
+import { SummaryCards } from "@/components/summary-cards"
+import type { PapaData, ShopifyCSVContainer } from "@/types/crawl"
 
-const STORE_ORIGIN_KEY = "spf_store_origin"
+export function SkeletonTable() {
+  return (
+    <div className="flex w-full flex-col gap-2">
+      {Array.from({ length: 10 }).map((_, index) => (
+        <div className="flex gap-4 w-full" key={index}>
+          <Skeleton className="h-8 flex-1" />
+          <Skeleton className="h-8 w-100" />
+          <Skeleton className="h-8 w-100" />
+        </div>
+      ))}
+    </div>
+  )
+}
 
-export function CrawlPage() {
-  const headers = getCsvHeaders()
-  const [storeOrigin, setStoreOrigin] = useState("")
-  const [pastedValue, setPastedValue] = useState("")
-  const [handles, setHandles] = useState<string[]>([])
-  const [productRecord, setProductRecord] = useState<ProductRecordMap>(new Map())
-  const [status, setStatus] = useState("Idle")
-  const [error, setError] = useState("")
-  const [isRunning, setIsRunning] = useState(false)
+export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const savedOrigin = localStorage.getItem(STORE_ORIGIN_KEY)
-    setStoreOrigin(savedOrigin || window.location.origin)
-  }, [])
-
-  function commitPastedValue() {
-    if (!pastedValue.trim()) return
-
-    const inferredOrigin = inferStoreOrigin(pastedValue)
-    if (inferredOrigin && !storeOrigin.trim()) {
-      setStoreOrigin(inferredOrigin)
-      localStorage.setItem(STORE_ORIGIN_KEY, inferredOrigin)
-    }
-
-    setHandles((current) =>
-      Array.from(new Set([...current, ...extractHandles(pastedValue)])),
-    )
-    setPastedValue("")
-  }
-
-  function removeHandle(handle: string) {
-    setHandles((current) => current.filter((item) => item !== handle))
-  }
-
-  async function handleStart() {
-    if (handles.length === 0) {
-      setError("Add at least one handle before starting.")
-      return
-    }
-
-    if (!storeOrigin.trim()) {
-      setError("Enter a Shopify store origin before starting.")
-      return
-    }
-
-    setIsRunning(true)
-    setError("")
-
-    try {
-      const newRecord: ProductRecord = new Map();
-
-      for (const handle of handles) {
-        setStatus(`Fetching ${handle}...`)
-        const result = await crawlHandle(handle, storeOrigin)
-        newRecord.set(handle, { handle: handle, rows: result.rows })
-      }
-
-      setProductRecord((current) => (new Map([...current.entries(), ...newRecord.entries()])))
-      setStatus(`Completed ${handles.length} handle${handles.length === 1 ? "" : "s"}.`)
-    } catch (caughtError) {
-      const message =
-        caughtError instanceof Error ? caughtError.message : "Crawl failed."
-      setError(message)
-      setStatus("Failed")
-    } finally {
-      setIsRunning(false)
+  const triggerUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   }
 
-  function handleExport() {
-    // const csv = createCsvString(headers, productRecord)
-    // downloadCsv(createTimestampedFilename(), csv)
-    // setStatus(`Exported ${productRecord.length} row${productRecord.length === 1 ? "" : "s"}.`)
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) onImport(file);
   }
 
   return (
-    <section className="space-y-6">
-      <div className="space-y-2">
-        <p className="text-sm font-medium uppercase tracking-[0.22em] text-muted-foreground">
-          Crawl
-        </p>
-        <h2 className="text-3xl font-semibold tracking-tight">
-          Product crawl workspace
-        </h2>
-        <p className="max-w-3xl text-sm text-muted-foreground">
-          Paste handles, fetch each Shopify product, flatten the responses into CSV-ready rows, and export the combined table.
-        </p>
-      </div>
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <IconFolderCode />
+        </EmptyMedia>
+        <EmptyTitle>No CSV Found</EmptyTitle>
+        <EmptyDescription>
+          Please import a CSV file to get started.
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent className="flex-row justify-center gap-2">
+        <Button onClick={triggerUpload} className="cursor-pointer">
+          Import CSV
+        </Button>
+        <Input ref={fileInputRef} onChange={handleFileChange}
+          className="hidden" id="csv" type="file" />
+      </EmptyContent>
+    </Empty>
+  )
+}
 
-      <Card>
-        <CardContent className="space-y-5 p-5">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-            <div className="grid gap-2 xl:min-w-[360px] xl:flex-1">
-              <label
-                htmlFor="store-origin"
-                className="flex items-center gap-2 text-sm font-medium"
-              >
-                <Store className="size-4 text-primary" />
-                Shopify store origin
-              </label>
-              <input
-                id="store-origin"
-                value={storeOrigin}
-                onChange={(event) => {
-                  const value = event.target.value
-                  setStoreOrigin(value)
-                  localStorage.setItem(STORE_ORIGIN_KEY, value)
-                }}
-                placeholder="https://your-store.myshopify.com"
-                className="h-11 rounded-2xl border border-input bg-background/80 px-4 text-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-primary"
+export function ProductTable({
+  headers,
+  data,
+  fetching,
+  ...props
+}: Omit<ShopifyCSVContainer, "handles">
+  & { fetching: boolean }
+  & React.HTMLAttributes<HTMLDivElement>) {
+  const allowedHeaders = headers.filter(header => ["Handle", "Title", "Variant SKU"].includes(header));
+  return (
+    <div {...props}>
+      {
+        (data.length === 0 || fetching) ? (
+          <SkeletonTable />
+        ) : (
+          <Table>
+            <TableCaption>A list of your products</TableCaption>
+            <TableHeader>
+              <TableRow>
+                {
+                  allowedHeaders.map((header) => (
+                    <TableHead key={header}>{header}</TableHead>
+                  ))
+                }
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {
+                data.map((row, tridx) => (
+                  <TableRow key={`tr-${tridx}`}>
+                    {
+                      allowedHeaders.map((header, tdidx) => (
+                        <TableCell key={`${header}-${tridx}-${tdidx}`}
+                          title={String(row[header] ?? "")}>
+                          <span className="block break-all">
+                            {String(row[header] ?? "")}
+                          </span>
+                        </TableCell>
+                      ))
+                    }
+                  </TableRow>
+                ))
+              }
+            </TableBody>
+          </Table>
+        )
+      }
+    </div>
+  )
+}
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function fetchProductData(handles: string[], headers: string[]) {
+  const outputData: string[][] = [];
+  for (const handle of handles) {
+    console.log("Crawling handle:", handle);
+    try {
+      const { rows: newRows } = await crawlHandle(handle, "https://fusionworld.com", headers);
+      outputData.push(...newRows);
+      await sleep(250);
+    } catch (error) {
+      console.error("Error crawling handle:", handle, error);
+      return [];
+    }
+  }
+  return outputData;
+}
+
+export function CrawlPage() {
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [shopifyCsvContainer, setShopifyCsvContainer] = useState<ShopifyCSVContainer>({
+    headers: [],
+    data: [],
+    handles: [],
+  });
+  const [outputContainer, setOutputContainer] = useState<{
+    headers: string[]
+    data: string[][]
+  }>({
+    headers: [],
+    data: [],
+  });
+  const [fetching, setFetching] = useState(false);
+
+  const handleFileImport = (file: File) => {
+    setCsvFile(file);
+
+    Papa.parse(file, {
+      header: true,
+      complete: (results: { data: PapaData[] }) => {
+        const first = results.data[0];
+
+        console.log("Uploaded file:", file);
+        console.log("Import completed with", results.data.length, "rows");
+        console.log("First row:", first);
+
+        if (first) {
+          const handles = Array.from(new Set<string>(results.data.map(row => row.Handle).filter(Boolean)));
+          const keys = Object.keys(first);
+          setShopifyCsvContainer((prev) => ({
+            ...prev,
+            headers: keys,
+            data: results.data,
+            handles,
+          }));
+          setOutputContainer((prev) => ({
+            ...prev,
+            headers: keys,
+          }));
+        }
+      },
+      error: (error: Error) => {
+        console.error("Error parsing CSV:", error);
+      }
+    });
+  }
+
+  const handleFetching = async () => {
+    setFetching(true);
+    fetchProductData(shopifyCsvContainer.handles, shopifyCsvContainer.headers).then((newData) => {
+      setOutputContainer((prev) => ({
+        ...prev,
+        data: newData,
+      }));
+      setFetching(false);
+    });
+  };
+
+  const handleDownload = () => {
+    downloadCsv(
+      createTimestampedFilename(),
+      Papa.unparse({
+        fields: outputContainer.headers,
+        data: outputContainer.data,
+      })
+    );
+  };
+
+  return (
+    <>
+      {csvFile ? (
+        <div className="p-6">
+          <div className="@container/main flex flex-1 flex-col gap-2">
+            <div className="flex flex-col gap-4 pb-4 md:gap-6">
+              <SummaryCards container={shopifyCsvContainer} />
+            </div>
+          </div>
+          <div className="flex flex-row flex-wrap">
+            <div className="flex-[0_0_100%] max-w-[100%] mb-4">
+              <div className="flex items-start gap-1">
+                {
+                  fetching ? (
+                    <Button className="cursor-pointer" disabled>
+                      <Spinner data-icon="inline-start" />
+                      Fetching
+                    </Button>
+                  ) : (
+                    <Button className="cursor-pointer" onClick={handleFetching}>
+                      Fetch
+                    </Button>
+                  )
+                }
+                <Button className="cursor-pointer" variant="secondary" onClick={handleDownload}
+                  disabled={outputContainer.data.length === 0}>
+                  Download
+                </Button>
+              </div>
+            </div>
+            <div className="flex-[0_0_100%] max-w-[100%]">
+              <ProductTable
+                headers={shopifyCsvContainer.headers}
+                data={shopifyCsvContainer.data}
+                fetching={fetching}
               />
             </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Button onClick={handleStart} disabled={isRunning || handles.length === 0}>
-                <Play className="size-4" />
-                Start
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleExport}
-                disabled={productRecord.size === 0}
-              >
-                <Download className="size-4" />
-                Export
-              </Button>
-            </div>
           </div>
-
-          <Separator />
-
-          <div className="flex flex-wrap items-center gap-4 text-sm">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-primary">
-              <Terminal className="size-4" />
-              <span>{status}</span>
-            </div>
-            <div className="text-muted-foreground">{handles.length} handles queued</div>
-            <div className="text-muted-foreground">{productRecord.size} rows ready</div>
-            {error ? <div className="text-destructive">{error}</div> : null}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
-        <HandleBoard
-          handles={handles}
-          pastedValue={pastedValue}
-          onPastedValueChange={setPastedValue}
-          onPasteCommit={commitPastedValue}
-          onDeleteHandle={removeHandle}
-        />
-        <ProductTable headers={headers} record={productRecord} />
-      </div>
-    </section>
+        </div>
+      ) : (
+        <EmptyCover onImport={handleFileImport} />
+      )}
+    </>
   )
 }
