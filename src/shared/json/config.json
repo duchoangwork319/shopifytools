@@ -1,11 +1,5 @@
 {
-  "sitemap": {
-    "mode": "html",
-    "output": "ignore/shopify/master"
-  },
   "csv": {
-    "entry": "ignore/shopify/master",
-    "output": "ignore/shopify/Product List Crawl Fusion.csv",
     "tag": {
       "gender": [
         {

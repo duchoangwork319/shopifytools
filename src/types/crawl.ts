@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table"
 
 export type CsvCellValue = string | number | boolean | null
 
-export interface CrawlResult {
+export interface FetchByHandleResult {
   handle: string
   json: string
   html: string
@@ -12,7 +12,7 @@ export interface CrawlResult {
 export type AnyDataRow = Record<string, string>
 export interface ShopifyCSVContainer {
   headers: string[]
-  data: StaticShopifyCSVRow[]
+  data: AnyDataRow[]
   handles: string[]
 }
 
@@ -82,323 +82,264 @@ export interface StaticShopifyCSVRow {
   Status: string
 }
 
-// export interface CamelCaseShopifyCSVRow {
-//   handle: string
-//   title: string
-//   bodyHtml: string
-//   vendor: string
-//   productCategory: string
-//   type: string
-//   tags: string
-//   published: string
-//   option1Name: string
-//   option1Value: string
-//   option1LinkedTo: string
-//   option2Name: string
-//   option2Value: string
-//   option2LinkedTo: string
-//   option3Name: string
-//   option3Value: string
-//   option3LinkedTo: string
-//   variantSku: string
-//   variantGrams: string
-//   variantInventoryTracker: string
-//   variantInventoryQty: string
-//   variantInventoryPolicy: string
-//   variantFulfillmentService: string
-//   variantPrice: string
-//   variantCompareAtPrice: string
-//   variantRequiresShipping: string
-//   variantTaxable: string
-//   unitPriceTotalMeasure: string
-//   unitPriceTotalMeasureUnit: string
-//   unitPriceBaseMeasure: string
-//   unitPriceBaseMeasureUnit: string
-//   variantBarcode: string
-//   imageSrc: string
-//   imagePosition: string
-//   imageAltText: string
-//   giftCard: string
-//   seoTitle: string
-//   seoDescription: string
-//   googleShoppingGoogleProductCategory: string
-//   googleShoppingGender: string
-//   googleShoppingAgeGroup: string
-//   googleShoppingMpn: string
-//   googleShoppingCondition: string
-//   googleShoppingCustomProduct: string
-//   googleShoppingCustomLabel0: string
-//   googleShoppingCustomLabel1: string
-//   googleShoppingCustomLabel2: string
-//   googleShoppingCustomLabel3: string
-//   googleShoppingCustomLabel4: string
-//   sizeChartProductMetafieldsBwpFieldsSizeChart: string
-//   googleCustomProductProductMetafieldsMmGoogleShoppingCustomProduct: string
-//   productRatingCountProductMetafieldsReviewsRatingCount: string
-//   colorProductMetafieldsShopifyColorPattern: string
-//   targetGenderProductMetafieldsShopifyTargetGender: string
-//   complementaryProductsProductMetafieldsShopifyDiscoveryProductRecommendationComplementaryProducts: string
-//   relatedProductsProductMetafieldsShopifyDiscoveryProductRecommendationRelatedProducts: string
-//   relatedProductsSettingsProductMetafieldsShopifyDiscoveryProductRecommendationRelatedProductsDisplay: string
-//   searchProductBoostsProductMetafieldsShopifyDiscoveryProductSearchBoostQueries: string
-//   variantImage: string
-//   variantWeightUnit: string
-//   variantTaxCode: string
-//   costPerItem: string
-//   status: string
-// }
-
 export const columns: ColumnDef<StaticShopifyCSVRow>[] = [
   {
-    accessorKey: "Handle",
     header: "Handle",
+    accessorFn: row => `${row["Handle"] || ""}`,
   },
   {
-    accessorKey: "Title",
     header: "Title",
+    accessorFn: row => `${row["Title"] || ""}`,
   },
   {
-    accessorKey: "Body (HTML)",
     header: "Body (HTML)",
+    accessorFn: row => `${row["Body (HTML)"] || ""}`,
   },
   {
-    accessorKey: "Vendor",
     header: "Vendor",
+    accessorFn: row => `${row["Vendor"] || ""}`,
   },
   {
-    accessorKey: "Product Category",
     header: "Product Category",
+    accessorFn: row => `${row["Product Category"] || ""}`,
   },
   {
-    accessorKey: "Type",
     header: "Type",
+    accessorFn: row => `${row["Type"] || ""}`,
   },
   {
-    accessorKey: "Tags",
     header: "Tags",
+    accessorFn: row => `${row["Tags"] || ""}`,
   },
   {
-    accessorKey: "Published",
     header: "Published",
+    accessorFn: row => `${row["Published"] || ""}`,
   },
   {
-    accessorKey: "Option1 Name",
     header: "Option1 Name",
+    accessorFn: row => `${row["Option1 Name"] || ""}`,
   },
   {
-    accessorKey: "Option1 Value",
     header: "Option1 Value",
+    accessorFn: row => `${row["Option1 Value"] || ""}`,
   },
   {
-    accessorKey: "Option1 Linked To",
     header: "Option1 Linked To",
+    accessorFn: row => `${row["Option1 Linked To"] || ""}`,
   },
   {
-    accessorKey: "Option2 Name",
     header: "Option2 Name",
+    accessorFn: row => `${row["Option2 Name"] || ""}`,
   },
   {
-    accessorKey: "Option2 Value",
     header: "Option2 Value",
+    accessorFn: row => `${row["Option2 Value"] || ""}`,
   },
   {
-    accessorKey: "Option2 Linked To",
     header: "Option2 Linked To",
+    accessorFn: row => `${row["Option2 Linked To"] || ""}`,
   },
   {
-    accessorKey: "Option3 Name",
     header: "Option3 Name",
+    accessorFn: row => `${row["Option3 Name"] || ""}`,
   },
   {
-    accessorKey: "Option3 Value",
     header: "Option3 Value",
+    accessorFn: row => `${row["Option3 Value"] || ""}`,
   },
   {
-    accessorKey: "Option3 Linked To",
     header: "Option3 Linked To",
+    accessorFn: row => `${row["Option3 Linked To"] || ""}`,
   },
   {
-    accessorKey: "Variant SKU",
     header: "Variant SKU",
+    accessorFn: row => `${row["Variant SKU"] || ""}`,
   },
   {
-    accessorKey: "Variant Grams",
     header: "Variant Grams",
+    accessorFn: row => `${row["Variant Grams"] || ""}`,
   },
   {
-    accessorKey: "Variant Inventory Tracker",
     header: "Variant Inventory Tracker",
+    accessorFn: row => `${row["Variant Inventory Tracker"] || ""}`,
   },
   {
-    accessorKey: "Variant Inventory Qty",
     header: "Variant Inventory Qty",
+    accessorFn: row => `${row["Variant Inventory Qty"] || ""}`,
   },
   {
-    accessorKey: "Variant Inventory Policy",
     header: "Variant Inventory Policy",
+    accessorFn: row => `${row["Variant Inventory Policy"] || ""}`,
   },
   {
-    accessorKey: "Variant Fulfillment Service",
     header: "Variant Fulfillment Service",
+    accessorFn: row => `${row["Variant Fulfillment Service"] || ""}`,
   },
   {
-    accessorKey: "Variant Price",
     header: "Variant Price",
+    accessorFn: row => `${row["Variant Price"] || ""}`,
   },
   {
-    accessorKey: "Variant Compare At Price",
     header: "Variant Compare At Price",
+    accessorFn: row => `${row["Variant Compare At Price"] || ""}`,
   },
   {
-    accessorKey: "Variant Requires Shipping",
     header: "Variant Requires Shipping",
+    accessorFn: row => `${row["Variant Requires Shipping"] || ""}`,
   },
   {
-    accessorKey: "Variant Taxable",
     header: "Variant Taxable",
+    accessorFn: row => `${row["Variant Taxable"] || ""}`,
   },
   {
-    accessorKey: "Unit Price Total Measure",
     header: "Unit Price Total Measure",
+    accessorFn: row => `${row["Unit Price Total Measure"] || ""}`,
   },
   {
-    accessorKey: "Unit Price Total Measure Unit",
     header: "Unit Price Total Measure Unit",
+    accessorFn: row => `${row["Unit Price Total Measure Unit"] || ""}`,
   },
   {
-    accessorKey: "Unit Price Base Measure",
     header: "Unit Price Base Measure",
+    accessorFn: row => `${row["Unit Price Base Measure"] || ""}`,
   },
   {
-    accessorKey: "Unit Price Base Measure Unit",
     header: "Unit Price Base Measure Unit",
+    accessorFn: row => `${row["Unit Price Base Measure Unit"] || ""}`,
   },
   {
-    accessorKey: "Variant Barcode",
     header: "Variant Barcode",
+    accessorFn: row => `${row["Variant Barcode"] || ""}`,
   },
   {
-    accessorKey: "Image Src",
     header: "Image Src",
+    accessorFn: row => `${row["Image Src"] || ""}`,
   },
   {
-    accessorKey: "Image Position",
     header: "Image Position",
+    accessorFn: row => `${row["Image Position"] || ""}`,
   },
   {
-    accessorKey: "Image Alt Text",
     header: "Image Alt Text",
+    accessorFn: row => `${row["Image Alt Text"] || ""}`,
   },
   {
-    accessorKey: "Gift Card",
     header: "Gift Card",
+    accessorFn: row => `${row["Gift Card"] || ""}`,
   },
   {
-    accessorKey: "SEO Title",
     header: "SEO Title",
+    accessorFn: row => `${row["SEO Title"] || ""}`,
   },
   {
-    accessorKey: "SEO Description",
     header: "SEO Description",
+    accessorFn: row => `${row["SEO Description"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Google Product Category",
     header: "Google Shopping / Google Product Category",
+    accessorFn: row => `${row["Google Shopping / Google Product Category"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Gender",
     header: "Google Shopping / Gender",
+    accessorFn: row => `${row["Google Shopping / Gender"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Age Group",
     header: "Google Shopping / Age Group",
+    accessorFn: row => `${row["Google Shopping / Age Group"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / MPN",
     header: "Google Shopping / MPN",
+    accessorFn: row => `${row["Google Shopping / MPN"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Condition",
     header: "Google Shopping / Condition",
+    accessorFn: row => `${row["Google Shopping / Condition"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Custom Product",
     header: "Google Shopping / Custom Product",
+    accessorFn: row => `${row["Google Shopping / Custom Product"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Custom Label 0",
     header: "Google Shopping / Custom Label 0",
+    accessorFn: row => `${row["Google Shopping / Custom Label 0"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Custom Label 1",
     header: "Google Shopping / Custom Label 1",
+    accessorFn: row => `${row["Google Shopping / Custom Label 1"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Custom Label 2",
     header: "Google Shopping / Custom Label 2",
+    accessorFn: row => `${row["Google Shopping / Custom Label 2"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Custom Label 3",
     header: "Google Shopping / Custom Label 3",
+    accessorFn: row => `${row["Google Shopping / Custom Label 3"] || ""}`,
   },
   {
-    accessorKey: "Google Shopping / Custom Label 4",
     header: "Google Shopping / Custom Label 4",
+    accessorFn: row => `${row["Google Shopping / Custom Label 4"] || ""}`,
   },
   {
-    accessorKey: "Size Chart (product.metafields.bwp_fields.size_chart)",
     header: "Size Chart (product.metafields.bwp_fields.size_chart)",
+    accessorFn: row => `${row["Size Chart (product.metafields.bwp_fields.size_chart)"] || ""}`,
   },
   {
-    accessorKey: "Google: Custom Product (product.metafields.mm-google-shopping.custom_product)",
     header: "Google: Custom Product (product.metafields.mm-google-shopping.custom_product)",
+    accessorFn: row => `${row["Google: Custom Product (product.metafields.mm-google-shopping.custom_product)"] || ""}`,
   },
   {
-    accessorKey: "Product rating count (product.metafields.reviews.rating_count)",
     header: "Product rating count (product.metafields.reviews.rating_count)",
+    accessorFn: row => `${row["Product rating count (product.metafields.reviews.rating_count)"] || ""}`,
   },
   {
-    accessorKey: "Color (product.metafields.shopify.color-pattern)",
     header: "Color (product.metafields.shopify.color-pattern)",
+    accessorFn: row => `${row["Color (product.metafields.shopify.color-pattern)"] || ""}`,
   },
   {
-    accessorKey: "Target gender (product.metafields.shopify.target-gender)",
     header: "Target gender (product.metafields.shopify.target-gender)",
+    accessorFn: row => `${row["Target gender (product.metafields.shopify.target-gender)"] || ""}`,
   },
   {
-    accessorKey: "Complementary products (product.metafields.shopify--discovery--product_recommendation.complementary_products)",
     header: "Complementary products (product.metafields.shopify--discovery--product_recommendation.complementary_products)",
+    accessorFn: row => `${row["Complementary products (product.metafields.shopify--discovery--product_recommendation.complementary_products)"] || ""}`,
   },
   {
-    accessorKey: "Related products (product.metafields.shopify--discovery--product_recommendation.related_products)",
     header: "Related products (product.metafields.shopify--discovery--product_recommendation.related_products)",
+    accessorFn: row => `${row["Related products (product.metafields.shopify--discovery--product_recommendation.related_products)"] || ""}`,
   },
   {
-    accessorKey: "Related products settings (product.metafields.shopify--discovery--product_recommendation.related_products_display)",
     header: "Related products settings (product.metafields.shopify--discovery--product_recommendation.related_products_display)",
+    accessorFn: row => `${row["Related products settings (product.metafields.shopify--discovery--product_recommendation.related_products_display)"] || ""}`,
   },
   {
-    accessorKey: "Search product boosts (product.metafields.shopify--discovery--product_search_boost.queries)",
     header: "Search product boosts (product.metafields.shopify--discovery--product_search_boost.queries)",
+    accessorFn: row => `${row["Search product boosts (product.metafields.shopify--discovery--product_search_boost.queries)"] || ""}`,
   },
   {
-    accessorKey: "Variant Image",
     header: "Variant Image",
+    accessorFn: row => `${row["Variant Image"] || ""}`,
   },
   {
-    accessorKey: "Variant Weight Unit",
     header: "Variant Weight Unit",
+    accessorFn: row => `${row["Variant Weight Unit"] || ""}`,
   },
   {
-    accessorKey: "Variant Tax Code",
     header: "Variant Tax Code",
+    accessorFn: row => `${row["Variant Tax Code"] || ""}`,
   },
   {
-    accessorKey: "Cost per item",
     header: "Cost per item",
+    accessorFn: row => `${row["Cost per item"] || ""}`,
   },
   {
-    accessorKey: "Status",
     header: "Status",
+    accessorFn: row => `${row["Status"] || ""}`,
   },
 ]
+
+export function createColumnsFromHeaders(headers: string[]): ColumnDef<AnyDataRow>[] {
+  return headers.map((header) => ({
+    header,
+    accessorFn: row => `${row[header] ?? ""}`,
+  }))
+}

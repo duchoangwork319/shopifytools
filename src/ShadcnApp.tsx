@@ -18,9 +18,11 @@ export default function ShadcnApp() {
             "--header-height": "calc(var(--spacing) * 12)",
           } as React.CSSProperties
         }
+        className="max-w-full"
       >
         <AppSidebar variant="inset" />
-        <SidebarInset>
+        <SidebarInset
+          className="max-w-[calc(100%-var(--sidebar-width))] peer-data-[state=collapsed]:max-w-[calc(100%-var(--spacing)*4)]">
           <SiteHeader />
           {/* <Routes>
             <Route index element={<CrawlPage />} />

@@ -29,7 +29,7 @@ export function SummaryCards({ container }: { container: ShopifyCSVContainer }) 
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Total Variants</CardDescription>
+          <CardDescription>Total Rows</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {container.data.length}
           </CardTitle>

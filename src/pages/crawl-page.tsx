@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useRef,
   useState
 } from "react"
@@ -18,19 +19,20 @@ import {
   createTimestampedFilename,
   downloadCsv,
 } from "@/lib/csv"
-import { crawlHandle } from "@/lib/shopify"
+import { fetchByHandle } from "@/lib/shopify"
 import { Spinner } from "@/components/ui/spinner"
 import { SummaryCards } from "@/components/summary-cards"
 import { toast } from "sonner"
 import {
-  columns,
-  type StaticShopifyCSVRow,
-  type ShopifyCSVContainer
+  type ShopifyCSVContainer,
+  type AnyDataRow,
+  createColumnsFromHeaders
 } from "@/types/crawl"
 import { TanstackProductDataTable } from "@/components/shopify-data-table"
 import { sleep } from "@/lib/utils"
+import type { ColumnDef } from "@tanstack/react-table"
 
-const SLEEP_MS_DURING_FETCH = 500;
+const SLEEP_MS_DURING_FETCH = 1000;
 const FETCH_MS_PER_PRODUCT = 1000;
 
 export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
@@ -74,7 +76,7 @@ async function fetchProductData(handles: string[], headers: string[]) {
   for (const handle of handles) {
     console.log("Crawling handle:", handle);
     try {
-      const { rows: newRows } = await crawlHandle(handle, "https://fusionworld.com", headers);
+      const { rows: newRows } = await fetchByHandle(handle, "https://fusionworld.com", headers);
       outputData.push(...newRows);
       await sleep(SLEEP_MS_DURING_FETCH);
     } catch (error) {
@@ -100,16 +102,14 @@ export function CrawlPage() {
     data: [],
   });
   const [fetching, setFetching] = useState(false);
+  const [tableColumns, setTableColumns] = useState<ColumnDef<AnyDataRow>[]>([]);
 
-  const handleFileImport = (file: File) => {
-    setCsvFile(file);
-
-    Papa.parse(file, {
+  const papaParse = (data: File | string) => {
+    Papa.parse(data, {
       header: true,
-      complete: (results: { data: StaticShopifyCSVRow[] }) => {
+      complete: (results: { data: AnyDataRow[] }) => {
         const first = results.data[0];
 
-        console.log("Uploaded file:", file);
         console.log("Import completed with", results.data.length, "rows");
         console.log("First row:", first);
 
@@ -119,13 +119,10 @@ export function CrawlPage() {
           setShopifyCsvContainer((prev) => ({
             ...prev,
             headers: keys,
-            data: results.data as StaticShopifyCSVRow[],
+            data: results.data as AnyDataRow[],
             handles,
           }));
-          setOutputContainer((prev) => ({
-            ...prev,
-            headers: keys,
-          }));
+          setTableColumns(createColumnsFromHeaders(keys));
         }
       },
       error: (error: Error) => {
@@ -134,11 +131,18 @@ export function CrawlPage() {
     });
   }
 
+  const handleFileImport = (file: File) => {
+    console.log("Uploaded file:", file);
+    setCsvFile(file);
+    papaParse(file);
+  }
+
   const handleFetching = async () => {
     setFetching(true);
     fetchProductData(shopifyCsvContainer.handles, shopifyCsvContainer.headers).then((newData) => {
       setOutputContainer((prev) => ({
         ...prev,
+        headers: shopifyCsvContainer.headers,
         data: newData,
       }));
       setFetching(false);
@@ -159,6 +163,30 @@ export function CrawlPage() {
       })
     );
   };
+
+  const handleDetach = () => {
+    setCsvFile(null);
+    setShopifyCsvContainer({
+      headers: [],
+      data: [],
+      handles: [],
+    });
+    setOutputContainer({
+      headers: [],
+      data: [],
+    });
+    setTableColumns([]);
+  };
+
+  useEffect(() => {
+    if (outputContainer.data.length === 0) return;
+
+    const newCsv = Papa.unparse({
+      fields: outputContainer.headers,
+      data: outputContainer.data,
+    });
+    papaParse(newCsv);
+  }, [outputContainer]);
 
   return (
     <>
@@ -188,17 +216,16 @@ export function CrawlPage() {
                   disabled={outputContainer.data.length === 0}>
                   Download
                 </Button>
+                <Button className="cursor-pointer ml-auto" variant="destructive"
+                  onClick={handleDetach}
+                  disabled={!csvFile || fetching}>
+                  Detach
+                </Button>
               </div>
             </div>
-            <div className="flex-[0_0_calc(100%-var(--sidebar-width))] max-w-[calc(100%-var(--sidebar-width))]">
-              {/* <DefaultProductTable
-                headers={shopifyCsvContainer.headers}
-                data={shopifyCsvContainer.data as AnyDataRow[]}
-                fetching={fetching}
-                className="w-[calc(100%-var(--sidebar-width))]"
-              /> */}
+            <div className="flex-[0_0_100%] max-w-[100%]">
               <TanstackProductDataTable
-                columns={columns}
+                columns={tableColumns}
                 data={shopifyCsvContainer.data}
                 fetching={fetching}
               />

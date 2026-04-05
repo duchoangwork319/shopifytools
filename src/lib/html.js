@@ -14,6 +14,14 @@ export function changeTagName(doc, node, to) {
 }
 
 /**
+ * Remove all attributes of an element
+ * @param {HTMLElement} element - Target HTML element
+ */
+function removeAllAttrs(element) {
+  [...element.attributes].forEach(attr => element.removeAttribute(attr.name));
+}
+
+/**
  * Build the HTML body description for the Shopify CSV.
  * @param {Document|null|undefined} doc - Parsed HTML document
  * @param {Object} product - Product data
@@ -25,18 +33,22 @@ export function buildBodyDescription(doc, product = {}) {
   const selectors = [
     "#description .hidden .font-heading",
     "#description .hidden .font-heading ~ .rte",
-    "div[data-tab-content=\"details_and_materials\"] > div"
+    "div[data-tab-content=\"details_and_materials\"]"
   ];
 
   const finalHtml = selectors.map((sel) => {
     const self = Array.from(doc.querySelectorAll(sel));
     return self.map(el => {
-      if (el.classList.contains("font-heading")) {
-        const h2 = doc.createElement("h2");
+      if (el.classList.value.includes("font-heading")) {
+        const h2 = document.createElement("h2");
         h2.textContent = el.textContent;
-        el.replaceWith(h2);
+        return h2.outerHTML;
       }
-      el.classList.remove(el.classList.value);
+      if (el.getAttribute("data-tab-content") === "details_and_materials") {
+        Array.from(el.querySelectorAll("*")).forEach(innerEl => removeAllAttrs(innerEl));
+        return "<h2>Details and materials</h2>" + el.innerHTML;
+      }
+      removeAllAttrs(el);
       return el.outerHTML;
     }).join("") || "";
   })

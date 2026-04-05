@@ -3,21 +3,21 @@ import * as React from "react"
 // import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+// import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
+  // SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import {
-  LayoutDashboardIcon,
   // ChartBarIcon, FolderIcon, UsersIcon, SearchIcon, ListIcon,
   CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon,
-  DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon
+  DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon,
+  CloudSyncIcon
 } from "lucide-react"
 
 const data = {
@@ -28,11 +28,10 @@ const data = {
   },
   navMain: [
     {
-      title: "Crawler",
-      url: "/crawler",
+      title: "Sync",
+      url: "/sync",
       icon: (
-        <LayoutDashboardIcon
-        />
+        <CloudSyncIcon />
       ),
     },
     // {
@@ -136,7 +135,7 @@ const data = {
     },
     {
       title: "Get Help",
-      url: "#",
+      url: "https://duchoangwork319.github.io/theme-azeno-v1-guideline/shopify_tools.html",
       icon: (
         <CircleHelpIcon
         />
@@ -202,9 +201,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <NavUser user={data.user} />
-      </SidebarFooter>
+      </SidebarFooter> */}
     </Sidebar>
   )
 }

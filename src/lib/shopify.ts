@@ -1,6 +1,6 @@
 import { buildMainMap } from "@/shared/csv/mapping"
 import { createProductCsvRowsWithMap } from "@/shared/csv/rows"
-import type { CrawlResult } from "@/types/crawl"
+import type { FetchByHandleResult } from "@/types/crawl"
 import type { ShopifyProduct } from "@/types/shopify"
 import csvConfig from "@/shared/json/config.json"
 import headerConfig from "@/shared/json/header.json"
@@ -18,21 +18,33 @@ export function buildProductUrl(storeOrigin: string, handle: string) {
   return `${base}/products/${handle}`
 }
 
+export function cleanConfusables(str: string) {
+  const map: Record<string, string> = {
+    '\u2013': '-', // En dash
+    '\u2014': '-', // Em dash
+    '\u2018': "'", // Left single quote
+    '\u2019': "'", // Right single quote
+    '\u201c': '"', // Left double quote
+    '\u201d': '"', // Right double quote
+  };
+  return str.replace(/[\u2013\u2014\u2018\u2019\u201c\u201d]/g, m => map[m]);
+}
+
 export function sanityHtml(html: string) {
-  const imgRegex = /<img\b[^>]*>/gi;
-  const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
-  const styleRegex = /<style\b[^>]*>([\s\S]*?)<\/style>/gi;
-  const linkRegex = /<link\b[^>]*>/gi;
-  const videoRegex = /<video\b[^>]*>([\s\S]*?)<\/video>/gi;
-  const audioRegex = /<audio\b[^>]*>([\s\S]*?)<\/audio>/gi;
-  const iframeRegex = /<iframe\b[^>]*>([\s\S]*?)<\/iframe>/gi;
-  const embedRegex = /<embed\b[^>]*>([\s\S]*?)<\/embed>/gi;
-  const objectRegex = /<object\b[^>]*>([\s\S]*?)<\/object>/gi;
-  const noscriptRegex = /<noscript\b[^>]*>([\s\S]*?)<\/noscript>/gi;
-  const pictureRegex = /<picture\b[^>]*>([\s\S]*?)<\/picture>/gi;
-  const sourceRegex = /<source\b[^>]*>/gi;
+  const imgRegex = /<img[^>]*>/gi;
+  const scriptRegex = /<script[^>]*>([\s\S]*?)<\/script>/gi;
+  const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+  const linkRegex = /<link[^>]*>/gi;
+  const videoRegex = /<video[^>]*>([\s\S]*?)<\/video>/gi;
+  const audioRegex = /<audio[^>]*>([\s\S]*?)<\/audio>/gi;
+  const iframeRegex = /<iframe[^>]*>([\s\S]*?)<\/iframe>/gi;
+  const embedRegex = /<embed[^>]*>([\s\S]*?)<\/embed>/gi;
+  const objectRegex = /<object[^>]*>([\s\S]*?)<\/object>/gi;
+  const noscriptRegex = /<noscript[^>]*>([\s\S]*?)<\/noscript>/gi;
+  const pictureRegex = /<picture[^>]*>([\s\S]*?)<\/picture>/gi;
+  const sourceRegex = /<source[^>]*>/gi;
   const regexGroup = [imgRegex, scriptRegex, styleRegex, linkRegex, videoRegex, audioRegex, iframeRegex, embedRegex, objectRegex, noscriptRegex, pictureRegex, sourceRegex];
-  let cleanedHtml = html;
+  let cleanedHtml = cleanConfusables(html);
   regexGroup.forEach((regex) => {
     cleanedHtml = cleanedHtml.replace(regex, "");
   });
@@ -40,11 +52,11 @@ export function sanityHtml(html: string) {
   return doc
 }
 
-export async function crawlHandle(
+export async function fetchByHandle(
   handle: string,
   storeOrigin: string,
   headers: string[]
-): Promise<CrawlResult> {
+): Promise<FetchByHandleResult> {
   const productUrl = buildProductUrl(storeOrigin, handle)
   const [jsonResponse, htmlResponse] = await Promise.all([
     fetch(`${productUrl}.js`),
