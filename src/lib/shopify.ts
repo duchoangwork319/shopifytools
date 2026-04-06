@@ -81,7 +81,7 @@ export async function fetchByHandle(
     product: product,
     html: htmlDocument,
     mainMap,
-    csvConfig: csvConfig,
+    csvConfig: csvConfig.csv || {},
     valuesOnly: true,
     transformOption: options
   };

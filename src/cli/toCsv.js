@@ -4,10 +4,11 @@ import { createArrayCsvWriter } from "csv-writer";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
 import * as cheerio from "cheerio";
-import header from "./shared/json/header.json" with { type: "json" };
-import config from "./shared/json/config.json" with { type: "json" };
-import { buildMainMap } from "./shared/csv/mapping.js";
-import { createProductCsvRowsWithMap } from "./shared/csv/rows.js";
+import header from "../shared/json/header.json" with { type: "json" };
+import config from "../shared/json/config.json" with { type: "json" };
+import { buildMainMap } from "../shared/csv/mapping.js";
+import { createProductCsvRowsWithMap } from "../shared/csv/rows.js";
+import { sanityHtml } from "../shared/util.js";
 
 /**
  * Lists all files in the client/js folder.
@@ -37,7 +38,7 @@ function readHtml(filePath) {
     const htmlPath = filePath.replace(/\.json$/i, ".html");
     if (!existsSync(htmlPath)) return "";
     const html = readFileSync(htmlPath, "utf8");
-    return html || "";
+    return sanityHtml(html) || "";
   } catch (err) {
     return "";
   }
@@ -57,7 +58,12 @@ function safeImportJson(jsonPath) {
 function processProducts(options) {
   const productFiles = listFiles(options.sourceDir, ".json");//.slice(0, 1);
   const counters = { products: 0, variants: 0 };
-  const mainMap = buildMainMap(header.headers);
+  const headers = header.headers.filter(h => ![
+    "Variant Inventory Qty",
+    "Variant Price",
+    "Size Chart (product.metafields.bwp_fields.size_chart)",
+  ].includes(h))
+  const mainMap = buildMainMap(headers);
   const csvWriter = createArrayCsvWriter({
     header: mainMap.map(entry => entry.header),
     path: options.output
@@ -68,10 +74,16 @@ function processProducts(options) {
       const filePath = productFiles[i];
       const product = safeImportJson(filePath);
       const html = cheerio.load(readHtml(filePath));
+      const finalOptions = {
+        product,
+        html,
+        mainMap,
+        csvConfig: config.csv || {},
+        valuesOnly: true,
+        transformOption: {}
+      };
 
-      const { rows } = createProductCsvRowsWithMap({
-        product, html, mainMap, csvConfig: config
-      });
+      const { rows } = createProductCsvRowsWithMap(finalOptions);
 
       await csvWriter.writeRecords(rows);
 

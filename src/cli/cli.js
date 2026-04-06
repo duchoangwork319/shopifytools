@@ -3,9 +3,8 @@
 
 import { Command } from "commander";
 import * as sitemap from "./sitemap.js";
-// import * as toCsv from "./toCsv.js";
-import * as toCsv from "./newToCsv.js";
-import * as preprocess from "./preprocess.js";
+import * as toCsv from "./toCsv.js";
+// import * as preprocess from "./preprocess.js";
 import * as filter from "./filter.js";
 
 const program = new Command();
@@ -20,7 +19,8 @@ program
   .description("Fetch and save products from a Shopify sitemap (JSON or HTML format)")
   .requiredOption("-o, --output <path>", "Output directory for saved products")
   .option("-m, --mode <mode>", "Output format: json or html", "json")
-  .option("-b, --batch-limit <number>", "Number of concurrent requests", "5")
+  .requiredOption("-r, --rate-limit <number>", "Number of concurrent requests", "5")
+  .requiredOption("-b, --rate-breaker <number>", "Number of concurrent requests", "500")
   .action((sitemapUrl, options) => {
     sitemap.doAction(sitemapUrl, options);
   });
@@ -33,13 +33,13 @@ program
     toCsv.doAction(sourceDir, options);
   });
 
-program
-  .command("preprocess <sourceDir>")
-  .description("Process Shopify product JSON files and transform them to a structured format")
-  .requiredOption("-o, --output <path>", "Output path for the processed JSON file")
-  .action((sourceDir, options) => {
-    preprocess.doAction(sourceDir, options);
-  });
+// program
+//   .command("preprocess <sourceDir>")
+//   .description("Process Shopify product JSON files and transform them to a structured format")
+//   .requiredOption("-o, --output <path>", "Output path for the processed JSON file")
+//   .action((sourceDir, options) => {
+//     preprocess.doAction(sourceDir, options);
+//   });
 
 program
   .command("filter <source>")

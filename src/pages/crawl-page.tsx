@@ -36,7 +36,6 @@ import { toast } from "sonner"
 import {
   type ShopifyCSVContainer,
   type AnyDataRow,
-  createColumnsFromHeaders,
   type FetchOptions
 } from "@/types/crawl"
 import { TanstackProductDataTable } from "@/components/shopify-data-table"
@@ -57,9 +56,9 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
+import { PreviewDialog } from "@/components/preview-dialog"
 
-
-const SLEEP_MS_DURING_FETCH = 750;
+const SLEEP_MS_DURING_FETCH = 1000;
 const FETCH_MS_PER_PRODUCT = 1000;
 
 export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
@@ -215,6 +214,29 @@ async function fetchProductData(
   return outputData;
 }
 
+function createColumnsFromHeaders(headers: string[]): ColumnDef<AnyDataRow>[] {
+  return headers.map((header) => {
+    if (header === "Body (HTML)") {
+      return {
+        header,
+        accessorFn: row => `${String(row[header] ?? "")}`,
+        cell: ({ row }) => {
+          const cellValue = String(row.original[header]).trim();
+          return cellValue ? <PreviewDialog
+            triggerContent="Preview"
+            title="Preview Content"
+            description="Preview HTML Content of Body (HTML)"
+            realContent={String(cellValue)} /> : "";
+        }
+      };
+    }
+    return {
+      header,
+      accessorFn: row => `${String(row[header] ?? "")}`,
+    };
+  });
+}
+
 export function CrawlPage() {
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [shopifyCsvContainer, setShopifyCsvContainer] = useState<ShopifyCSVContainer>({
@@ -366,7 +388,7 @@ export function CrawlPage() {
                   )
                 }
                 <Button className="cursor-pointer" variant="secondary" onClick={handleRollback}
-                  disabled={fetching}>
+                  disabled={fetching || outputContainer.data.length === 0}>
                   Rollback
                 </Button>
                 <Button className="cursor-pointer" variant="secondary" onClick={handleDownload}

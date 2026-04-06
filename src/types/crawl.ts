@@ -343,10 +343,3 @@ export const columns: ColumnDef<StaticShopifyCSVRow>[] = [
     accessorFn: row => `${row["Status"] || ""}`,
   },
 ]
-
-export function createColumnsFromHeaders(headers: string[]): ColumnDef<AnyDataRow>[] {
-  return headers.map((header) => ({
-    header,
-    accessorFn: row => `${row[header] ?? ""}`,
-  }))
-}

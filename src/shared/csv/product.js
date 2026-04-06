@@ -5,6 +5,12 @@ function joinLowerTags(product) {
   return Array.isArray(product.tags) ? product.tags.join(";").toLowerCase() : "";
 }
 
+/**
+ * Find the first matching tag from the tag map based on the haystacks.
+ * @param {string[]} haystacks - Array of strings to search within (e.g., tags, title, description)
+ * @param {Object[]} tagMap - Array of tag configurations with keywords and corresponding tags
+ * @returns {string} - The first matching tag or an empty string if no match is found
+ */
 function findFirstMappedTag(haystacks, tagMap = []) {
   for (const tagConfig of tagMap) {
     const keyword = String(tagConfig?.keywords || "").toLowerCase();
@@ -43,9 +49,10 @@ export function collectTags(product, csvConfig = {}) {
   if (!product) return "";
 
   const lowerTags = joinLowerTags(product);
+  const handle = String(product.handle || "").toLowerCase();
   const title = String(product.title || "").toLowerCase();
   const description = String(product.description || "").toLowerCase();
-  const haystacks = [lowerTags, title, description];
+  const haystacks = [lowerTags, handle, title, description];
   const tagGroups = csvConfig.tag || {};
 
   const genderTag = findFirstMappedTag(haystacks, tagGroups.gender);

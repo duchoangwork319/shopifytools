@@ -7,7 +7,7 @@ import { createDerivedProductData } from "./product.js";
  * Build product CSV rows using the same master -> variants -> media flow as toCsv.js.
  * @param {Object} params - Row generation options
  * @param {Object} params.product - Product JSON data
- * @param {import("cheerio").CheerioAPI|null|undefined} [params.html] - Cheerio API instance
+ * @param {import("cheerio").CheerioAPI|Document|null|undefined} [params.html] - Cheerio API instance
  * @param {string[]} params.headers - CSV headers
  * @param {Object} [params.csvConfig] - CSV config with tag groups
  * @returns {{ rows: Array[], counters: { products: number, variants: number }, mainMap: Array }}

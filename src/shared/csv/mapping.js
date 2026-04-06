@@ -88,6 +88,7 @@ export function buildMainMap(headers) {
                 split.map(str => str.trim()).filter(Boolean)
               )).join(", ");
             }
+            return tags;
           }
           return "";
         };
@@ -286,7 +287,7 @@ export function buildMainMap(headers) {
  * @param {Object} transformOption - Whether to return values only or an array of { header, value }
  * @returns {Array}
  */
-export function mapRow(mainMap, rowData, { isMaster = false, isMediaOnly = false, valuesOnly }, transformOption) {
+export function mapRow(mainMap, rowData, { isMaster, isMediaOnly, valuesOnly }, transformOption) {
   if (valuesOnly) {
     return mainMap.map((entry) => entry.map(rowData, isMaster, isMediaOnly, transformOption));
   } else {

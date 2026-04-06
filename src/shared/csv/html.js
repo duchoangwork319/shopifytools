@@ -12,6 +12,15 @@ export function changeTagName($, node, to) {
 }
 
 /**
+ * Remove all attributes of an element
+ * @param {import("cheerio").Cheerio<any>} element - Cheerio element
+ */
+function removeAllAttrs(element) {
+  const attribs = element.attr() || {};
+  Object.keys(attribs).forEach(attr => element.removeAttr(attr));
+}
+
+/**
  * Build the HTML body description for the Shopify CSV.
  * @param {import("cheerio").CheerioAPI|null|undefined} $ - Cheerio API instance
  * @param {Object} product - Product data
@@ -21,18 +30,27 @@ export function buildBodyDescription($, product) {
   if (!$) return "";
 
   const selectors = [
-    "#description .lg\\:col-span-5 .font-heading",
-    "#description .lg\\:col-span-5 .text-base",
-    "#description [data-hashchange-target=\"details-and-materials\"] h2",
-    "#description [data-hashchange-target=\"details-and-materials\"] ul",
-    "#description [data-hashchange-target=\"details-and-materials\"] ul + p"
+    "#description .hidden .font-heading",
+    "#description .hidden .font-heading ~ .rte",
+    "div[data-tab-content=\"details_and_materials\"]"
   ];
   const finalHtml = selectors
     .map((sel) => {
       const self = $(sel);
-      const els = self.removeAttr("class").toArray();
+      const els = self.toArray();
+
       if (!els || !els.length) return "";
-      if (sel.includes("font-heading")) return els.map((el) => $.html(changeTagName($, $(el), "h2"))).join("");
+      if (self.hasClass("font-heading")) {
+        return els.map((el) => $.html(changeTagName($, $(el), "h2"))).join("");
+      }
+      if (self.attr("data-tab-content") === "details_and_materials") {
+        removeAllAttrs(self);
+        self.find("*").each((i, innerEl) => {
+          removeAllAttrs($(innerEl));
+        });
+        return "<h2>Details and materials</h2>" + els.map((el) => $.html(el)).join("");
+      }
+      removeAllAttrs(self);
       return els.map((el) => $.html(el)).join("");
     })
     .filter(Boolean)

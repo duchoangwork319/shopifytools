@@ -2,7 +2,7 @@
 
 import path from "path";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { fetchProduct, fetchXMLContent } from "./shared/api.js";
+import { fetchProduct, fetchXMLContent } from "../shared/api.js";
 
 // Find product sitemap URL from sitemap index
 const findProductSitemapUrl = (sitemapIndex) => {
@@ -69,8 +69,8 @@ const processSitemap = async (sitemapUrl, options) => {
     console.log(`Found ${productUrls.length} product URL(s).`);
 
     // Process products in parallel with concurrency limit
-    for (let i = 0; i < productUrls.length; i += options.batchLimit) {
-      const batch = productUrls.slice(i, i + options.batchLimit);
+    for (let i = 0; i < productUrls.length; i += options.rateLimit) {
+      const batch = productUrls.slice(i, i + options.rateLimit);
       const fn = async (product) => {
         const text = await fetchProduct(product.apiUrl, options);
         const filePath = makeFilePath(product.filename, options);
@@ -78,7 +78,7 @@ const processSitemap = async (sitemapUrl, options) => {
       };
       const records = await Promise.all(batch.map(fn));
       records.forEach(rec => saveText(rec.filePath, rec.text));
-      await sleep(150);
+      await sleep(options.rateBreaker);
     }
 
     console.log("All products processed successfully");
@@ -92,7 +92,8 @@ export function doAction(sitemapUrl, options) {
   const resolvedOptions = {
     output: path.resolve(options.output),
     mode: options.mode,
-    batchLimit: parseInt(options.batchLimit, 10)
+    rateLimit: parseInt(options.rateLimit, 10),
+    rateBreaker: parseInt(options.rateBreaker, 10),
   };
 
   if (!["json", "html"].includes(resolvedOptions.mode)) {
