@@ -2,6 +2,13 @@ import type { ColumnDef } from "@tanstack/react-table"
 
 export type CsvCellValue = string | number | boolean | null
 
+export interface FetchOptions {
+  publishProducts: boolean;
+  inventoryPolicyContinue: boolean;
+  handleSuffix: string;
+  appendTags: string;
+}
+
 export interface FetchByHandleResult {
   handle: string
   json: string

@@ -42,8 +42,13 @@ export function buildMainMap(headers) {
   const byHeader = (header) => {
     switch (header) {
       case "Handle":
-        return (p, isMaster, isMediaOnly) => {
-          return p.handle || (p.url && p.url.split("/").pop()) || "";
+        return (p, isMaster, isMediaOnly, { handleSuffix }) => {
+          let handle = (p.handle || (p.url && p.url.split("/").pop()) || "");
+          if (typeof handleSuffix === "string" && handleSuffix) {
+            const re = RegExp(`${handleSuffix}$`, "g");
+            handle = re.test(handle) ? handle : handle + handleSuffix;
+          }
+          return handle;
         };
       case "Title":
         return (p, isMaster, isMediaOnly) => {
@@ -72,14 +77,24 @@ export function buildMainMap(headers) {
           return isMaster ? (p.type || "") : "";
         };
       case "Tags":
-        return (p, isMaster, isMediaOnly) => {
+        return (p, isMaster, isMediaOnly, { appendTags }) => {
           if (isMediaOnly) return "";
-          return isMaster && has(p, "_tags") ? p._tags : "";
+          if (isMaster) {
+            const tags = String(has(p, "_tags") ? p._tags : "");
+            if (typeof appendTags === "string" && appendTags) {
+              const split = tags.split(",");
+              split.push(...appendTags.split(","));
+              return Array.from(new Set(
+                split.map(str => str.trim()).filter(Boolean)
+              )).join(", ");
+            }
+          }
+          return "";
         };
       case "Published":
-        return (p, isMaster, isMediaOnly) => {
+        return (p, isMaster, isMediaOnly, { publishProducts }) => {
           if (isMediaOnly) return "";
-          return (p.published_at && isMaster ? "TRUE" : "");
+          return ((p.published_at && isMaster) || (publishProducts && isMaster) ? "TRUE" : "");
         };
       case "Option1 Name":
         return (p, isMaster, isMediaOnly) => {
@@ -138,7 +153,11 @@ export function buildMainMap(headers) {
       case "Variant Inventory Qty":
         return (p, isMaster, isMediaOnly) => isMediaOnly ? "" : 0;
       case "Variant Inventory Policy":
-        return (p, isMaster, isMediaOnly) => isMediaOnly ? "" : "deny";
+        return (p, isMaster, isMediaOnly, { inventoryPolicyContinue }) => {
+          if (isMediaOnly) return "";
+          if (inventoryPolicyContinue) return "continue";
+          return "deny";
+        };
       case "Variant Fulfillment Service":
         return (p, isMaster, isMediaOnly) => isMediaOnly ? "" : "manual";
       case "Variant Price":
@@ -264,14 +283,15 @@ export function buildMainMap(headers) {
  * @param {boolean} [isMaster=false] - Whether this is a master product row
  * @param {boolean} [isMediaOnly=false] - Whether this is a media-only row
  * @param {boolean} [valuesOnly] - Whether to return values only or an array of { header, value }
+ * @param {Object} transformOption - Whether to return values only or an array of { header, value }
  * @returns {Array}
  */
-export function mapRow(mainMap, rowData, { isMaster = false, isMediaOnly = false, valuesOnly }) {
+export function mapRow(mainMap, rowData, { isMaster = false, isMediaOnly = false, valuesOnly }, transformOption) {
   if (valuesOnly) {
-    return mainMap.map((entry) => entry.map(rowData, isMaster, isMediaOnly));
+    return mainMap.map((entry) => entry.map(rowData, isMaster, isMediaOnly, transformOption));
   } else {
     return mainMap.map((entry) => ({
-      [entry.header]: entry.map(rowData, isMaster, isMediaOnly)
+      [entry.header]: entry.map(rowData, isMaster, isMediaOnly, transformOption)
     })).reduce((acc, cur) => Object.assign(acc, cur), {});
   }
 }

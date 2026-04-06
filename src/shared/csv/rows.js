@@ -21,10 +21,11 @@ export function createProductCsvRows({ product, html = null, headers = [], csvCo
  * Build product CSV rows from a precomputed mapping table.
  * @param {Object} params - Row generation options
  * @param {Object} params.product - Product JSON data
- * @param {import("cheerio").CheerioAPI|null|undefined} [params.html] - Cheerio API instance
+ * @param {import("cheerio").CheerioAPI|Document|null|undefined} params.html - Cheerio API instance
  * @param {{ header: string, map: Function }[]} params.mainMap - Header mapper definitions
- * @param {Object} [params.csvConfig] - CSV config with tag groups
- * @param {boolean} [params.valuesOnly] - Append values only
+ * @param {Object} params.csvConfig - CSV config with tag groups
+ * @param {boolean} params.valuesOnly - Append values only
+ * @param {Object} transformOption - Append values only
  * @returns {{ rows: Array[], counters: { products: number, variants: number } }}
  */
 export function createProductCsvRowsWithMap({
@@ -32,7 +33,8 @@ export function createProductCsvRowsWithMap({
   html = null,
   mainMap = [],
   csvConfig = {},
-  valuesOnly
+  valuesOnly,
+  transformOption
 }) {
   const rows = [];
   const counters = { products: 0, variants: 0 };
@@ -41,14 +43,14 @@ export function createProductCsvRowsWithMap({
   const masterData = createDerivedProductData(product, html, csvConfig);
 
   masterData._media = mediaIterator.next().value;
-  rows.push(mapRow(mainMap, masterData, { isMaster: true, isMediaOnly: false, valuesOnly }));
+  rows.push(mapRow(mainMap, masterData, { isMaster: true, isMediaOnly: false, valuesOnly }, transformOption));
   counters.products += 1;
 
   const variants = Array.isArray(product?.variants) ? product.variants.slice(1) : [];
   for (const variant of variants) {
     masterData._variant = variant;
     masterData._media = mediaIterator.next().value;
-    rows.push(mapRow(mainMap, masterData, { isMaster: false, isMediaOnly: false, valuesOnly }));
+    rows.push(mapRow(mainMap, masterData, { isMaster: false, isMediaOnly: false, valuesOnly }, transformOption));
     counters.variants += 1;
   }
 
@@ -56,7 +58,7 @@ export function createProductCsvRowsWithMap({
     rows.push(mapRow(mainMap, {
       handle: masterData.handle,
       _media: media
-    }, { isMaster: false, isMediaOnly: true, valuesOnly }));
+    }, { isMaster: false, isMediaOnly: true, valuesOnly }, transformOption));
   }
 
   return { rows, counters };

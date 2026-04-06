@@ -1,6 +1,6 @@
 import { buildMainMap } from "@/shared/csv/mapping"
 import { createProductCsvRowsWithMap } from "@/shared/csv/rows"
-import type { FetchByHandleResult } from "@/types/crawl"
+import type { FetchByHandleResult, FetchOptions } from "@/types/crawl"
 import type { ShopifyProduct } from "@/types/shopify"
 import csvConfig from "@/shared/json/config.json"
 import headerConfig from "@/shared/json/header.json"
@@ -55,7 +55,8 @@ export function sanityHtml(html: string) {
 export async function fetchByHandle(
   handle: string,
   storeOrigin: string,
-  headers: string[]
+  headers: string[],
+  options: FetchOptions
 ): Promise<FetchByHandleResult> {
   const productUrl = buildProductUrl(storeOrigin, handle)
   const [jsonResponse, htmlResponse] = await Promise.all([
@@ -76,15 +77,16 @@ export async function fetchByHandle(
   const product = JSON.parse(json) as ShopifyProduct
   const htmlDocument = sanityHtml(html)
   const mainMap = buildMainMap(headers || getCsvHeaders());
-  const options = {
+  const finalOptions = {
     product: product,
     html: htmlDocument,
     mainMap,
     csvConfig: csvConfig,
     valuesOnly: true,
+    transformOption: options
   };
-  console.log("Create CSV rows with options:", options);
-  const { rows } = createProductCsvRowsWithMap(options);
+  console.log("Create CSV rows with options:", finalOptions);
+  const { rows } = createProductCsvRowsWithMap(finalOptions);
 
   // localStorage.setItem(`spf_${handle}_json`, json)
   // localStorage.setItem(`spf_${handle}_html`, html)

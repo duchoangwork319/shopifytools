@@ -22,17 +22,42 @@ import {
 import { fetchByHandle } from "@/lib/shopify"
 import { Spinner } from "@/components/ui/spinner"
 import {
-  SingleSummaryCard,
-  // SummaryCards
+  SingleSummaryCard
 } from "@/components/summary-cards"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "@/components/ui/field"
 import { toast } from "sonner"
 import {
   type ShopifyCSVContainer,
   type AnyDataRow,
-  createColumnsFromHeaders
+  createColumnsFromHeaders,
+  type FetchOptions
 } from "@/types/crawl"
 import { TanstackProductDataTable } from "@/components/shopify-data-table"
 import type { ColumnDef } from "@tanstack/react-table"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { AlertCircleIcon, ChevronDownIcon } from "lucide-react"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  getAll,
+  type AppSettings
+} from "@/lib/setting"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
+
 
 const SLEEP_MS_DURING_FETCH = 750;
 const FETCH_MS_PER_PRODUCT = 1000;
@@ -73,16 +98,113 @@ export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
   )
 }
 
+export function FetchButtonGroup(
+  {
+    fetchOptions, fetchHandler
+  }: {
+    fetchOptions: FetchOptions,
+    fetchHandler: (options: FetchOptions) => void
+  }
+) {
+  const [innerFetchOptions, setInnerFetchOptions] = useState<FetchOptions>(fetchOptions);
+  const [tempHandleSuffix, setTempHandleSuffix] = useState(fetchOptions.handleSuffix);
+  const [tempAppendTags, setTempAppendTags] = useState(fetchOptions.appendTags);
+
+  const handleSuffixRef = useRef<HTMLInputElement>(null);
+  const appendTagsRef = useRef<HTMLInputElement>(null);
+
+  const applyOptions = () => {
+    const textOptions: Omit<FetchOptions, 'publishProducts' | 'inventoryPolicyContinue'> = {
+      handleSuffix: handleSuffixRef.current?.value || "",
+      appendTags: appendTagsRef.current?.value || "",
+    };
+    textOptions.appendTags = textOptions.appendTags.split(",").map(tag => tag.trim()).filter(Boolean).join(", ");
+    setInnerFetchOptions(prev => ({ ...prev, ...textOptions }));
+  };
+
+  // useEffect(() => {
+  //   console.log("Fetch options updated:", options);
+  // }, [options]);
+
+  return (
+    <ButtonGroup>
+      <Button variant="outline" onClick={() => fetchHandler(innerFetchOptions)}>
+        Fetch
+      </Button>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className="pl-2!">
+            <ChevronDownIcon />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80" onInteractOutside={applyOptions}>
+          <FieldGroup className="w-full max-w-xs">
+            <FieldSet>
+              <FieldLabel>Visibility</FieldLabel>
+              <FieldGroup data-slot="checkbox-group">
+                <Field orientation="horizontal">
+                  <Checkbox id="publish-products" checked={innerFetchOptions.publishProducts}
+                    onCheckedChange={(checked: boolean) => setInnerFetchOptions(prev => ({ ...prev, publishProducts: checked }))} />
+                  <FieldLabel htmlFor="publish-products" className="font-normal">
+                    Publish products
+                  </FieldLabel>
+                </Field>
+                <Field orientation="horizontal">
+                  <Checkbox id="inventory-policy" checked={innerFetchOptions.inventoryPolicyContinue}
+                    onCheckedChange={(checked: boolean) => setInnerFetchOptions(prev => ({ ...prev, inventoryPolicyContinue: checked }))} />
+                  <FieldLabel htmlFor="inventory-policy" className="font-normal">
+                    Inventory Policy Continue
+                  </FieldLabel>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="handle-suffix">Handle Suffix</FieldLabel>
+                  <FieldDescription>
+                    Choose a unique suffix to be added to products after fetching.
+                  </FieldDescription>
+                  <Input id="handle-suffix" type="text" value={tempHandleSuffix} onChange={(e) => setTempHandleSuffix(e.target.value)}
+                    placeholder="sales" ref={handleSuffixRef} />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="append-tags">Append Tags</FieldLabel>
+                  <FieldDescription>
+                    Add additional tags to all products being fetched. Separate multiple tags with commas.
+                  </FieldDescription>
+                  <Input id="append-tags" type="text" value={tempAppendTags} onChange={(e) => setTempAppendTags(e.target.value)}
+                    placeholder="preorder, sales" ref={appendTagsRef} />
+                </Field>
+              </FieldGroup>
+            </FieldSet>
+          </FieldGroup>
+        </PopoverContent>
+      </Popover>
+    </ButtonGroup>
+  )
+}
+
+export function NoStoreOriginAlert() {
+  return (
+    <Alert variant="destructive">
+      <AlertCircleIcon />
+      <AlertTitle>Missing Store Origin</AlertTitle>
+      <AlertDescription>
+        Please go to Settings and set the store origin.
+      </AlertDescription>
+    </Alert>
+  )
+}
+
 async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function fetchProductData(handles: string[], headers: string[]) {
+async function fetchProductData(
+  handles: string[], storeOrigin: string, headers: string[], options: FetchOptions
+): Promise<string[][]> {
   const outputData: string[][] = [];
   for (const handle of handles) {
     console.log("Crawling handle:", handle);
     try {
-      const { rows: newRows } = await fetchByHandle(handle, "https://fusionworld.com", headers);
+      const { rows: newRows } = await fetchByHandle(handle, storeOrigin, headers, options);
       outputData.push(...newRows);
       await sleep(SLEEP_MS_DURING_FETCH);
     } catch (error) {
@@ -109,6 +231,12 @@ export function CrawlPage() {
   });
   const [fetching, setFetching] = useState(false);
   const [tableColumns, setTableColumns] = useState<ColumnDef<AnyDataRow>[]>([]);
+  const [fetchOptions, setFetchOptions] = useState<FetchOptions>({
+    publishProducts: false,
+    inventoryPolicyContinue: false,
+    handleSuffix: "",
+    appendTags: "",
+  });
 
   const papaParse = (data: File | string) => {
     Papa.parse(data, {
@@ -143,9 +271,25 @@ export function CrawlPage() {
     papaParse(file);
   }
 
-  const handleFetching = async () => {
+  const handleFetching = async (options: FetchOptions) => {
+    const settings = getAll() as AppSettings;
+
+    if (!settings.storeOrigin) {
+      toast.custom(() => <NoStoreOriginAlert />, {
+        position: "top-center",
+        duration: 1500,
+      });
+      return;
+    }
+
     setFetching(true);
-    fetchProductData(shopifyCsvContainer.handles, shopifyCsvContainer.headers).then((newData) => {
+    setFetchOptions(options);
+    fetchProductData(
+      shopifyCsvContainer.handles,
+      settings.storeOrigin,
+      shopifyCsvContainer.headers,
+      options
+    ).then((newData) => {
       setOutputContainer((prev) => ({
         ...prev,
         headers: shopifyCsvContainer.headers,
@@ -158,6 +302,10 @@ export function CrawlPage() {
       position: "top-center",
       duration: 3000,
     });
+  };
+
+  const handleRollback = () => {
+    papaParse(csvFile as File);
   };
 
   const handleDownload = () => {
@@ -214,11 +362,13 @@ export function CrawlPage() {
                       Fetching
                     </Button>
                   ) : (
-                    <Button className="cursor-pointer" onClick={handleFetching}>
-                      Fetch
-                    </Button>
+                    <FetchButtonGroup fetchOptions={fetchOptions} fetchHandler={handleFetching} />
                   )
                 }
+                <Button className="cursor-pointer" variant="secondary" onClick={handleRollback}
+                  disabled={fetching}>
+                  Rollback
+                </Button>
                 <Button className="cursor-pointer" variant="secondary" onClick={handleDownload}
                   disabled={outputContainer.data.length === 0}>
                   Download

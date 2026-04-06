@@ -7,6 +7,7 @@ import {
 import { CrawlPage } from "./pages/crawl-page"
 import { Toaster } from "./components/ui/sonner"
 import { Route, Routes } from "react-router-dom"
+import { SettingPage } from "./pages/setting-page"
 
 export default function ShadcnApp() {
   return (
@@ -27,7 +28,9 @@ export default function ShadcnApp() {
           <Routes>
             <Route index element={<CrawlPage />} />
             <Route path="/" element={<CrawlPage />} />
+            <Route path="/settings" element={<SettingPage />} />
             <Route path="/shopifytools" element={<CrawlPage />} />
+            <Route path="/shopifytools/settings" element={<SettingPage />} />
           </Routes>
           {/* <CrawlPage /> */}
         </SidebarInset>

@@ -29,7 +29,7 @@ const data = {
   navMain: [
     {
       title: "Sync",
-      url: "/sync",
+      url: "/",
       icon: (
         <CloudSyncIcon />
       ),
@@ -127,7 +127,7 @@ const data = {
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: (
         <Settings2Icon
         />
