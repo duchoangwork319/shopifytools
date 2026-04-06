@@ -2,7 +2,10 @@
 
 import {
   Card,
+  // CardAction,
+  CardContent,
   CardDescription,
+  // CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -36,5 +39,32 @@ export function SummaryCards({ container }: { container: ShopifyCSVContainer }) 
         </CardHeader>
       </Card>
     </div>
+  )
+}
+
+export function SingleSummaryCard({ container, ...props }: React.ComponentProps<"div"> & { container: ShopifyCSVContainer }) {
+  return (
+    <Card size="sm" {...props}>
+      <CardHeader>
+        <CardTitle>Summary</CardTitle>
+        <CardDescription>
+          Display a summary of the Shopify CSV data.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="text-base">
+        <p>
+          <strong>Total Handles:</strong> {container.handles.length}
+        </p>
+        <p>
+          <strong>Total Columns:</strong> {container.headers.length}
+        </p>
+        <p>
+          <strong>Total Rows:</strong> {container.data.length}
+        </p>
+      </CardContent>
+      {/* <CardFooter>
+        <p>Card Footer</p>
+      </CardFooter> */}
+    </Card>
   )
 }

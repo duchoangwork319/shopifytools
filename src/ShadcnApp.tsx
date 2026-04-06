@@ -4,9 +4,9 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-// import { Route, Routes } from "react-router-dom"
 import { CrawlPage } from "./pages/crawl-page"
 import { Toaster } from "./components/ui/sonner"
+import { Route, Routes } from "react-router-dom"
 
 export default function ShadcnApp() {
   return (
@@ -22,12 +22,12 @@ export default function ShadcnApp() {
       >
         <AppSidebar variant="inset" />
         <SidebarInset
-          className="max-w-[calc(100%-var(--sidebar-width))] peer-data-[state=collapsed]:max-w-[calc(100%-var(--spacing)*4)]">
+          className="md:max-w-[calc(100%-var(--sidebar-width))] md:peer-data-[state=collapsed]:max-w-[calc(100%-var(--spacing)*4)]">
           <SiteHeader />
-          {/* <Routes>
+          <Routes>
             <Route index element={<CrawlPage />} />
-          </Routes> */}
-          <CrawlPage />
+          </Routes>
+          {/* <CrawlPage /> */}
         </SidebarInset>
       </SidebarProvider>
       <Toaster />

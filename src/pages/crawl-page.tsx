@@ -21,7 +21,10 @@ import {
 } from "@/lib/csv"
 import { fetchByHandle } from "@/lib/shopify"
 import { Spinner } from "@/components/ui/spinner"
-import { SummaryCards } from "@/components/summary-cards"
+import {
+  SingleSummaryCard,
+  // SummaryCards
+} from "@/components/summary-cards"
 import { toast } from "sonner"
 import {
   type ShopifyCSVContainer,
@@ -29,10 +32,9 @@ import {
   createColumnsFromHeaders
 } from "@/types/crawl"
 import { TanstackProductDataTable } from "@/components/shopify-data-table"
-import { sleep } from "@/lib/utils"
 import type { ColumnDef } from "@tanstack/react-table"
 
-const SLEEP_MS_DURING_FETCH = 1000;
+const SLEEP_MS_DURING_FETCH = 750;
 const FETCH_MS_PER_PRODUCT = 1000;
 
 export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
@@ -69,6 +71,10 @@ export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
       </EmptyContent>
     </Empty>
   )
+}
+
+async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function fetchProductData(handles: string[], headers: string[]) {
@@ -194,7 +200,8 @@ export function CrawlPage() {
         <div className="p-6">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 pb-4 md:gap-6">
-              <SummaryCards container={shopifyCsvContainer} />
+              {/* <SummaryCards container={shopifyCsvContainer} /> */}
+              <SingleSummaryCard container={shopifyCsvContainer} className="w-full md:w-1/3" />
             </div>
           </div>
           <div className="flex flex-row flex-wrap">
