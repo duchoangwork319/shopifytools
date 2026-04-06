@@ -26,6 +26,7 @@ export default function ShadcnApp() {
           <SiteHeader />
           <Routes>
             <Route index element={<CrawlPage />} />
+            <Route path="/shopifytools" element={<CrawlPage />} />
           </Routes>
           {/* <CrawlPage /> */}
         </SidebarInset>
