@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/sidebar"
 import { CrawlPage } from "./pages/crawl-page"
 import { Toaster } from "./components/ui/sonner"
-// import { Route, Routes } from "react-router-dom"
+import { Route, Routes } from "react-router-dom"
 
 export default function ShadcnApp() {
   return (
@@ -24,11 +24,12 @@ export default function ShadcnApp() {
         <SidebarInset
           className="md:max-w-[calc(100%-var(--sidebar-width))] md:peer-data-[state=collapsed]:max-w-[calc(100%-var(--spacing)*4)]">
           <SiteHeader />
-          {/* <Routes>
+          <Routes>
             <Route index element={<CrawlPage />} />
+            <Route path="/" element={<CrawlPage />} />
             <Route path="/shopifytools" element={<CrawlPage />} />
-          </Routes> */}
-          <CrawlPage />
+          </Routes>
+          {/* <CrawlPage /> */}
         </SidebarInset>
       </SidebarProvider>
       <Toaster />
