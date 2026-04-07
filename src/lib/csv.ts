@@ -10,7 +10,7 @@ export function downloadCsv(filename: string, content: string) {
   URL.revokeObjectURL(url)
 }
 
-export function createTimestampedFilename() {
+export function createTimestampedFilename(file: File): string {
   const timestamp = new Date().toISOString().replaceAll(":", "-")
-  return `shopify-products-${timestamp}.csv`
+  return `${file.name.substring(0, file.name.lastIndexOf("."))}-${timestamp}.csv`
 }

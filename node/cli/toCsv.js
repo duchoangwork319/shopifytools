@@ -4,11 +4,11 @@ import { createArrayCsvWriter } from "csv-writer";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
 import * as cheerio from "cheerio";
-import header from "../shared/json/header.json" with { type: "json" };
-import config from "../shared/json/config.json" with { type: "json" };
-import { buildMainMap } from "../shared/csv/mapping.js";
-import { createProductCsvRowsWithMap } from "../shared/csv/rows.js";
-import { sanityHtml } from "../shared/util.js";
+import header from "../../src/shared/json/header.json" with { type: "json" };
+import config from "../../src/shared/json/config.json" with { type: "json" };
+import { buildMainMap } from "../../src/shared/csv/mapping.js";
+import { createProductCsvRowsWithMap } from "../../src/shared/csv/rows.js";
+import { sanityHtml } from "../../src/shared/util.js";
 
 /**
  * Lists all files in the client/js folder.
@@ -55,14 +55,23 @@ function safeImportJson(jsonPath) {
   return product;
 }
 
-function processProducts(options) {
-  const productFiles = listFiles(options.sourceDir, ".json");//.slice(0, 1);
-  const counters = { products: 0, variants: 0 };
-  const headers = header.headers.filter(h => ![
+/**
+ * Exclude specific headers from the list of headers.
+ * @param {string[]} headers - The original list of headers
+ * @returns {string[]} - The filtered list of headers with specific ones excluded
+ */
+function excludeHeaders(headers) {
+  return headers.filter(header => ![
     "Variant Inventory Qty",
     "Variant Price",
     "Size Chart (product.metafields.bwp_fields.size_chart)",
-  ].includes(h))
+  ].includes(header));
+}
+
+function processProducts(options) {
+  const productFiles = listFiles(options.sourceDir, ".json");//.slice(0, 1);
+  const counters = { products: 0, variants: 0 };
+  const headers = excludeHeaders(header.headers);
   const mainMap = buildMainMap(headers);
   const csvWriter = createArrayCsvWriter({
     header: mainMap.map(entry => entry.header),

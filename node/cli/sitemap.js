@@ -2,7 +2,7 @@
 
 import path from "path";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { fetchProduct, fetchXMLContent } from "../shared/api.js";
+import { fetchProduct, fetchXMLContent } from "../../src/shared/api.js";
 
 // Find product sitemap URL from sitemap index
 const findProductSitemapUrl = (sitemapIndex) => {

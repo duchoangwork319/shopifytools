@@ -24,7 +24,7 @@ export function PreviewDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">{triggerContent}</Button>
+        <Button className="cursor-pointer" variant="outline">{triggerContent}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -38,7 +38,7 @@ export function PreviewDialog({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button className="cursor-pointer" variant="outline">Close</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

@@ -61,7 +61,7 @@ import { PreviewDialog } from "@/components/preview-dialog"
 const SLEEP_MS_DURING_FETCH = 1000;
 const FETCH_MS_PER_PRODUCT = 1000;
 
-export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
+export function EmptyCover({ onImport }: { onImport: (file: File) => boolean }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const triggerUpload = () => {
@@ -72,7 +72,12 @@ export function EmptyCover({ onImport }: { onImport: (file: File) => void }) {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) onImport(file);
+    if (file) {
+      const isValid = onImport(file);
+      if (!isValid) {
+        event.target.value = "";
+      }
+    }
   }
 
   return (
@@ -121,18 +126,14 @@ export function FetchButtonGroup(
     setInnerFetchOptions(prev => ({ ...prev, ...textOptions }));
   };
 
-  // useEffect(() => {
-  //   console.log("Fetch options updated:", options);
-  // }, [options]);
-
   return (
     <ButtonGroup>
-      <Button variant="outline" onClick={() => fetchHandler(innerFetchOptions)}>
+      <Button className="cursor-pointer" variant="outline" onClick={() => fetchHandler(innerFetchOptions)}>
         Fetch
       </Button>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="pl-2!">
+          <Button variant="outline" className="pl-2! cursor-pointer">
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
@@ -180,13 +181,13 @@ export function FetchButtonGroup(
   )
 }
 
-export function NoStoreOriginAlert() {
+export function ErrorAlert({ title, description }: { title: string; description: string }) {
   return (
     <Alert variant="destructive">
       <AlertCircleIcon />
-      <AlertTitle>Missing Store Origin</AlertTitle>
+      <AlertTitle>{title}</AlertTitle>
       <AlertDescription>
-        Please go to Settings and set the store origin.
+        {description}
       </AlertDescription>
     </Alert>
   )
@@ -201,13 +202,13 @@ async function fetchProductData(
 ): Promise<string[][]> {
   const outputData: string[][] = [];
   for (const handle of handles) {
-    console.log("Crawling handle:", handle);
+    console.log("Fetching handle:", handle);
     try {
       const { rows: newRows } = await fetchByHandle(handle, storeOrigin, headers, options);
       outputData.push(...newRows);
       await sleep(SLEEP_MS_DURING_FETCH);
     } catch (error) {
-      console.error("Error crawling handle:", handle, error);
+      console.error("Error fetching handle:", handle, error);
       return [];
     }
   }
@@ -237,6 +238,14 @@ function createColumnsFromHeaders(headers: string[]): ColumnDef<AnyDataRow>[] {
   });
 }
 
+function excludeHeaders(headers: string[]): string[] {
+  return headers.filter(header => ![
+    "Variant Inventory Qty",
+    "Variant Price",
+    "Size Chart (product.metafields.bwp_fields.size_chart)",
+  ].includes(header));
+}
+
 export function CrawlPage() {
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [shopifyCsvContainer, setShopifyCsvContainer] = useState<ShopifyCSVContainer>({
@@ -261,54 +270,99 @@ export function CrawlPage() {
   });
 
   const papaParse = (data: File | string) => {
-    Papa.parse(data, {
-      header: true,
-      complete: (results: { data: AnyDataRow[] }) => {
-        const first = results.data[0];
+    return new Promise<string[]>((resolve, reject) => {
+      Papa.parse(data, {
+        header: true,
+        complete: (results: { data: AnyDataRow[] }) => {
+          const first = results.data[0];
 
-        console.log("Import completed with", results.data.length, "rows");
-        console.log("First row:", first);
+          console.log("Import completed with", results.data.length, "rows");
+          console.log("First row:", first);
 
-        if (first) {
-          const handles = Array.from(new Set<string>(results.data.map(row => row.Handle).filter(Boolean)));
-          const keys = Object.keys(first);
-          setShopifyCsvContainer((prev) => ({
-            ...prev,
-            headers: keys,
-            data: results.data as AnyDataRow[],
-            handles,
-          }));
-          setTableColumns(createColumnsFromHeaders(keys));
+          if (first) {
+            const handles = Array.from(new Set<string>(results.data.map(row => row.Handle).filter(Boolean)));
+            const csvHeaders = excludeHeaders(Object.keys(first));
+            setShopifyCsvContainer((prev) => ({
+              ...prev,
+              headers: csvHeaders,
+              data: results.data as AnyDataRow[],
+              handles,
+            }));
+            setTableColumns(createColumnsFromHeaders(csvHeaders));
+            resolve(handles);
+          }
+          resolve([]);
+        },
+        error: (error: Error) => {
+          console.error("Error parsing CSV:", error);
+          reject(error);
         }
-      },
-      error: (error: Error) => {
-        console.error("Error parsing CSV:", error);
-      }
+      });
     });
   }
 
   const handleFileImport = (file: File) => {
     console.log("Uploaded file:", file);
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      toast.custom(() => <ErrorAlert
+        title="Invalid File Type"
+        description="Please upload a valid CSV file." />, {
+        position: "bottom-right",
+        duration: 1500,
+      });
+      return false;
+    }
     setCsvFile(file);
-    papaParse(file);
+    papaParse(file).then((handles) => {
+      if (handles.length >= 50) {
+        toast.warning(`Too many handles (detected: ${handles.length}) could cause slow fetching issues.`, {
+          position: "top-center",
+          duration: 3000,
+        });
+      }
+    })
+    return true;
   }
 
-  const handleFetching = async (options: FetchOptions) => {
+  const handleFetching = (options: FetchOptions) => {
     const settings = getAll() as AppSettings;
 
-    if (!settings.storeOrigin) {
-      toast.custom(() => <NoStoreOriginAlert />, {
+    let storeOrigin = settings.storeOrigin;
+
+    if (!storeOrigin) {
+      toast.custom(() => <ErrorAlert
+        title="Missing Store Origin"
+        description="Please go to Settings and set the store origin." />, {
         position: "top-center",
         duration: 1500,
       });
       return;
     }
 
+    try {
+      storeOrigin = new URL(storeOrigin).origin;
+    } catch (error) {
+      console.error("Invalid store origin URL:", error);
+      toast.custom(() => <ErrorAlert
+        title="Invalid Store Origin"
+        description="Please check the store origin format." />, {
+        position: "top-center",
+        duration: 1500,
+      });
+      return;
+    }
+
+    let targetHandles = shopifyCsvContainer.handles;
+    if (options.handleSuffix) {
+      const re = new RegExp(`${options.handleSuffix}$`, "g");
+      targetHandles = targetHandles.map(handle => (re.test(handle) ? handle.replace(re, "") : handle));
+    }
+
     setFetching(true);
     setFetchOptions(options);
     fetchProductData(
-      shopifyCsvContainer.handles,
-      settings.storeOrigin,
+      targetHandles,
+      storeOrigin,
       shopifyCsvContainer.headers,
       options
     ).then((newData) => {
@@ -319,7 +373,7 @@ export function CrawlPage() {
       }));
       setFetching(false);
     });
-    const est = (shopifyCsvContainer.handles.length * (FETCH_MS_PER_PRODUCT + SLEEP_MS_DURING_FETCH)) / 1000;
+    const est = (targetHandles.length * (FETCH_MS_PER_PRODUCT + SLEEP_MS_DURING_FETCH)) / 1000;
     toast.info(`This may take about ${est.toFixed(1)} seconds depending on the number of products.`, {
       position: "top-center",
       duration: 3000,
@@ -328,11 +382,15 @@ export function CrawlPage() {
 
   const handleRollback = () => {
     papaParse(csvFile as File);
+    setOutputContainer({
+      headers: [],
+      data: [],
+    });
   };
 
   const handleDownload = () => {
     downloadCsv(
-      createTimestampedFilename(),
+      createTimestampedFilename(csvFile as File),
       Papa.unparse({
         fields: outputContainer.headers,
         data: outputContainer.data,
