@@ -4,8 +4,8 @@
 import { Command } from "commander";
 import * as sitemap from "./sitemap.js";
 import * as toCsv from "./toCsv.js";
-// import * as preprocess from "./preprocess.js";
 import * as filter from "./filter.js";
+import * as mapToJSON from "./mapToJSON.js";
 
 const program = new Command();
 
@@ -33,13 +33,13 @@ program
     toCsv.doAction(sourceDir, options);
   });
 
-// program
-//   .command("preprocess <sourceDir>")
-//   .description("Process Shopify product JSON files and transform them to a structured format")
-//   .requiredOption("-o, --output <path>", "Output path for the processed JSON file")
-//   .action((sourceDir, options) => {
-//     preprocess.doAction(sourceDir, options);
-//   });
+program
+  .command("group-to-one-json <sourceDir>")
+  .description("Group all Shopify product JSON files in a folder into a single JSON array file")
+  .requiredOption("-o, --output <path>", "Output path for the grouped JSON file")
+  .action((sourceDir, options) => {
+    mapToJSON.doAction(sourceDir, options);
+  });
 
 program
   .command("filter <source>")
