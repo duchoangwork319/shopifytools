@@ -6,22 +6,26 @@ function joinLowerTags(product) {
 }
 
 /**
- * Find the first matching tag from the tag map based on the haystacks.
+ * Find all matching tags from the tag map based on the haystacks.
  * @param {string[]} haystacks - Array of strings to search within (e.g., tags, title, description)
  * @param {Object[]} tagMap - Array of tag configurations with keywords and corresponding tags
- * @returns {string} - The first matching tag or an empty string if no match is found
+ * @returns {string[]} - All matching tags, in tagMap order (empty array if no match is found)
  */
-function findFirstMappedTag(haystacks, tagMap = []) {
+function findAllMappedTags(haystacks, tagMap = []) {
+  const matchedTags = [];
+
   for (const tagConfig of tagMap) {
     const keyword = String(tagConfig?.keywords || "").toLowerCase();
-    if (!keyword) continue;
+    if (!keyword || !tagConfig.tag) continue;
 
-    if (haystacks.some((value) => value.includes(keyword))) {
-      return tagConfig.tag || "";
+    const humanizedKeyword = keyword.replaceAll("_", " ");
+
+    if (haystacks.some((value) => value.includes(keyword) || value.includes(humanizedKeyword))) {
+      matchedTags.push(tagConfig.tag);
     }
   }
 
-  return "";
+  return matchedTags;
 }
 
 /**
@@ -55,11 +59,12 @@ export function collectTags(product, csvConfig = {}) {
   const haystacks = [lowerTags, handle, title, description];
   const tagGroups = csvConfig.tag || {};
 
-  const genderTag = findFirstMappedTag(haystacks, tagGroups.gender);
-  const activityTag = findFirstMappedTag(haystacks, tagGroups.activity);
-  const otherTag = findFirstMappedTag(haystacks, tagGroups.other);
+  const genderTags = findAllMappedTags(haystacks, tagGroups.gender);
+  const activityTags = findAllMappedTags(haystacks, tagGroups.activity);
+  const otherTags = findAllMappedTags(haystacks, tagGroups.other);
 
-  return [genderTag, activityTag, otherTag].filter(Boolean).join(", ");
+  const uniqueTags = Array.from(new Set([...genderTags, ...activityTags, ...otherTags]));
+  return uniqueTags.join(", ");
 }
 
 /**

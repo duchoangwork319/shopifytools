@@ -28,7 +28,7 @@ program
 program
   .command("tocsv <sourceDir>")
   .description("Convert Shopify product JSON files to a CSV file for bulk import")
-  .requiredOption("-o, --output <path>", "Output path for the CSV file")
+  .requiredOption("-o, --output <path>", "Output path for the CSV file, for example: ./output/products.csv")
   .action((sourceDir, options) => {
     toCsv.doAction(sourceDir, options);
   });

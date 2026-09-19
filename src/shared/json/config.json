@@ -11,8 +11,16 @@
           "keywords": "women"
         },
         {
+          "tag": "Women",
+          "keywords": "køn_dame"
+        },
+        {
           "tag": "Men",
           "keywords": "men"
+        },
+        {
+          "tag": "Men",
+          "keywords": "køn_herre"
         }
       ],
       "activity": [
@@ -35,6 +43,50 @@
         {
           "tag": "Running",
           "keywords": "running"
+        },
+        {
+          "tag": "Training",
+          "keywords": "training"
+        },
+        {
+          "tag": "Tempo",
+          "keywords": "tempo"
+        },
+        {
+          "tag": "Trail Running",
+          "keywords": "running_trail"
+        },
+        {
+          "tag": "Marathon",
+          "keywords": "running_marathon"
+        },
+        {
+          "tag": "Gravel",
+          "keywords": "cycling_gravel"
+        },
+        {
+          "tag": "Mountain Biking",
+          "keywords": "cycling_mtb"
+        },
+        {
+          "tag": "Road Cycling",
+          "keywords": "cycling_road"
+        },
+        {
+          "tag": "Indoor Cycling",
+          "keywords": "cycling_indoor"
+        },
+        {
+          "tag": "Yoga",
+          "keywords": "training_yoga"
+        },
+        {
+          "tag": "Crossfit",
+          "keywords": "crossfit"
+        },
+        {
+          "tag": "Padel",
+          "keywords": "activity_padel"
         }
       ],
       "other": [
@@ -43,8 +95,24 @@
           "keywords": "t-shirt"
         },
         {
+          "tag": "T-Shirt",
+          "keywords": "kategori_t-shirts"
+        },
+        {
           "tag": "Bib Shorts",
           "keywords": "bib short"
+        },
+        {
+          "tag": "Bib Shorts",
+          "keywords": "kategori_bibs"
+        },
+        {
+          "tag": "Tri Shorts",
+          "keywords": "tri short"
+        },
+        {
+          "tag": "Shorts",
+          "keywords": "kategori_shorts"
         },
         {
           "tag": "Tights",
@@ -55,8 +123,16 @@
           "keywords": "sock"
         },
         {
+          "tag": "Sock",
+          "keywords": "strømper"
+        },
+        {
           "tag": "Tri Suit",
           "keywords": "tri suit"
+        },
+        {
+          "tag": "Suit",
+          "keywords": "kategori_suits"
         },
         {
           "tag": "Calf Sleeves",
@@ -67,8 +143,100 @@
           "keywords": "singlet"
         },
         {
+          "tag": "Singlet",
+          "keywords": "kategori_singletter"
+        },
+        {
           "tag": "Jersey",
           "keywords": "jersey"
+        },
+        {
+          "tag": "Jersey",
+          "keywords": "kategori_jerseys"
+        },
+        {
+          "tag": "Jersey",
+          "keywords": "kategori_trøjer"
+        },
+        {
+          "tag": "Cycling Suit",
+          "keywords": "cycling suit"
+        },
+        {
+          "tag": "Cycling Shoes",
+          "keywords": "cycling shoe"
+        },
+        {
+          "tag": "Race Belt",
+          "keywords": "race belt"
+        },
+        {
+          "tag": "Accessories",
+          "keywords": "accessories"
+        },
+        {
+          "tag": "Accessories",
+          "keywords": "kategori_tilbehør"
+        },
+        {
+          "tag": "Tops",
+          "keywords": "kategori_overdele"
+        },
+        {
+          "tag": "Bottoms",
+          "keywords": "kategori_underdele"
+        },
+        {
+          "tag": "Pants",
+          "keywords": "kategori_bukser"
+        },
+        {
+          "tag": "Jacket",
+          "keywords": "kategori_jakker"
+        },
+        {
+          "tag": "Vest",
+          "keywords": "kategori_veste"
+        },
+        {
+          "tag": "Base Layer",
+          "keywords": "kategori_base layers"
+        },
+        {
+          "tag": "Base Layer",
+          "keywords": "kategori_undertrøjer"
+        },
+        {
+          "tag": "Mid Layer",
+          "keywords": "kategori_midlayer"
+        },
+        {
+          "tag": "Sweatshirt",
+          "keywords": "kategori_sweatshirt"
+        },
+        {
+          "tag": "Underwear",
+          "keywords": "kategori_undertøj"
+        },
+        {
+          "tag": "Bra",
+          "keywords": "kategori_bh"
+        },
+        {
+          "tag": "Merino",
+          "keywords": "merino"
+        },
+        {
+          "tag": "Sun Protection",
+          "keywords": "protection_sun"
+        },
+        {
+          "tag": "Waterproof",
+          "keywords": "waterproof"
+        },
+        {
+          "tag": "Pockets",
+          "keywords": "feature_pockets"
         }
       ]
     }

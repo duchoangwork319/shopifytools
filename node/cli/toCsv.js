@@ -4,7 +4,7 @@ import { createArrayCsvWriter } from "csv-writer";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
 import * as cheerio from "cheerio";
-import header from "../../src/shared/json/header.json" with { type: "json" };
+import headerConfig from "../../src/shared/json/header-new.json" with { type: "json" };
 import config from "../../src/shared/json/config.json" with { type: "json" };
 import { buildMainMap } from "../../src/shared/csv/mapping.js";
 import { createProductCsvRowsWithMap } from "../../src/shared/csv/rows.js";
@@ -56,22 +56,18 @@ function safeImportJson(jsonPath) {
 }
 
 /**
- * Exclude specific headers from the list of headers.
- * @param {string[]} headers - The original list of headers
- * @returns {string[]} - The filtered list of headers with specific ones excluded
+ * Exclude headers marked `exclude: true` in header-new.json.
+ * @param {{name: string, exclude?: boolean}[]} headerFields - Header configuration entries
+ * @returns {string[]} - Header names with excluded ones filtered out
  */
-function excludeHeaders(headers) {
-  return headers.filter(header => ![
-    "Variant Inventory Qty",
-    "Variant Price",
-    "Size Chart (product.metafields.bwp_fields.size_chart)",
-  ].includes(header));
+function excludeHeaders(headerFields) {
+  return headerFields.filter(field => !field.exclude).map(field => field.name);
 }
 
 function processProducts(options) {
   const productFiles = listFiles(options.sourceDir, ".json");//.slice(0, 1);
   const counters = { products: 0, variants: 0 };
-  const headers = excludeHeaders(header.headers);
+  const headers = excludeHeaders(headerConfig);
   const mainMap = buildMainMap(headers);
   const csvWriter = createArrayCsvWriter({
     header: mainMap.map(entry => entry.header),
@@ -92,7 +88,9 @@ function processProducts(options) {
         transformOption: {}
       };
 
-      const { rows } = createProductCsvRowsWithMap(finalOptions);
+      const { rows, counters: _counters } = createProductCsvRowsWithMap(finalOptions);
+      counters.products += _counters.products;
+      counters.variants += _counters.variants;
 
       await csvWriter.writeRecords(rows);
 
