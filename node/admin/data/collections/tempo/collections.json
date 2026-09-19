@@ -1,0 +1,35 @@
+[
+  {
+    "title": "TEMPO!",
+    "handle": "tempo",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tempo" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "TEMPO! Discover",
+    "handle": "tempo-discover",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tempo" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "TEMPO! Shop by Sport",
+    "handle": "tempo-shop-by-sport",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tempo" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  }
+]

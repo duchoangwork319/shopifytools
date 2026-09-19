@@ -1,0 +1,283 @@
+[
+  {
+    "title": "Shop by Sport",
+    "handle": "shop-by-sport",
+    "ruleSet": {
+      "appliedDisjunctively": true,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Triathlon",
+    "handle": "shop-by-sport-triathlon",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Triathlon - Shop All Triathlon",
+    "handle": "shop-by-sport-triathlon-shop-all-triathlon",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Triathlon - Tri Suits",
+    "handle": "shop-by-sport-triathlon-tri-suits",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tri Suit" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Triathlon - Tri Shorts",
+    "handle": "shop-by-sport-triathlon-tri-shorts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tri Shorts" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Triathlon - Race Belts",
+    "handle": "shop-by-sport-triathlon-race-belts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TITLE", "relation": "CONTAINS", "condition": "Race Belt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Triathlon - Triathlon Accessories",
+    "handle": "shop-by-sport-triathlon-triathlon-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Cycling",
+    "handle": "shop-by-sport-cycling",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Cycling - Shop All Cycling",
+    "handle": "shop-by-sport-cycling-shop-all-cycling",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Cycling - Jerseys",
+    "handle": "shop-by-sport-cycling-jerseys",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Jersey" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Cycling - Bib Shorts",
+    "handle": "shop-by-sport-cycling-bib-shorts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Bib Shorts" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Cycling - Cycling Suits",
+    "handle": "shop-by-sport-cycling-cycling-suits",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TITLE", "relation": "CONTAINS", "condition": "Suit" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Cycling - Cycling Shoes",
+    "handle": "shop-by-sport-cycling-cycling-shoes",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TITLE", "relation": "CONTAINS", "condition": "Shoe" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Cycling - Cycling Accessories",
+    "handle": "shop-by-sport-cycling-cycling-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Running",
+    "handle": "shop-by-sport-running",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Running - Shop All Running",
+    "handle": "shop-by-sport-running-shop-all-running",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Running - T-Shirts & Singlets",
+    "handle": "shop-by-sport-running-t-shirts-singlets",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "T-Shirt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Running - Shorts & Tights",
+    "handle": "shop-by-sport-running-shorts-tights",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tights" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Running - Race Belts",
+    "handle": "shop-by-sport-running-race-belts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TITLE", "relation": "CONTAINS", "condition": "Race Belt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Running - Running Accessories",
+    "handle": "shop-by-sport-running-running-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Training",
+    "handle": "shop-by-sport-training",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Training - Shop All Training",
+    "handle": "shop-by-sport-training-shop-all-training",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Training - Tops",
+    "handle": "shop-by-sport-training-tops",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "T-Shirt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Shop by Sport Training - Shorts & Tights",
+    "handle": "shop-by-sport-training-shorts-tights",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tights" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  }
+]

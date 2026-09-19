@@ -1,0 +1,142 @@
+[
+  {
+    "title": "Men's Featured",
+    "handle": "mens-featured",
+    "items": [
+      {
+        "title": "Shop All Men",
+        "type": "COLLECTION",
+        "url": "/collections/mens-featured-shop-all-men"
+      },
+      {
+        "title": "Bestsellers",
+        "type": "COLLECTION",
+        "url": "/collections/mens-featured-bestsellers"
+      },
+      {
+        "title": "New Arrivals",
+        "type": "COLLECTION",
+        "url": "/collections/mens-featured-new-arrivals"
+      }
+    ]
+  },
+  {
+    "title": "Men's Triathlon",
+    "handle": "mens-triathlon",
+    "items": [
+      {
+        "title": "Shop All Men's Triathlon",
+        "type": "COLLECTION",
+        "url": "/collections/mens-triathlon-shop-all-mens-triathlon"
+      },
+      {
+        "title": "Tri Suits",
+        "type": "COLLECTION",
+        "url": "/collections/mens-triathlon-tri-suits"
+      },
+      {
+        "title": "Tri Shorts",
+        "type": "COLLECTION",
+        "url": "/collections/mens-triathlon-tri-shorts"
+      },
+      {
+        "title": "Race Belts",
+        "type": "COLLECTION",
+        "url": "/collections/mens-triathlon-race-belts"
+      },
+      {
+        "title": "Triathlon Accessories",
+        "type": "COLLECTION",
+        "url": "/collections/mens-triathlon-triathlon-accessories"
+      }
+    ]
+  },
+  {
+    "title": "Men's Cycling",
+    "handle": "mens-cycling",
+    "items": [
+      {
+        "title": "Shop All Men's Cycling",
+        "type": "COLLECTION",
+        "url": "/collections/mens-cycling-shop-all-mens-cycling"
+      },
+      {
+        "title": "Jerseys",
+        "type": "COLLECTION",
+        "url": "/collections/mens-cycling-jerseys"
+      },
+      {
+        "title": "Bib Shorts",
+        "type": "COLLECTION",
+        "url": "/collections/mens-cycling-bib-shorts"
+      },
+      {
+        "title": "Cycling Suits",
+        "type": "COLLECTION",
+        "url": "/collections/mens-cycling-cycling-suits"
+      },
+      {
+        "title": "Cycling Shoes",
+        "type": "COLLECTION",
+        "url": "/collections/mens-cycling-cycling-shoes"
+      },
+      {
+        "title": "Cycling Accessories",
+        "type": "COLLECTION",
+        "url": "/collections/mens-cycling-cycling-accessories"
+      }
+    ]
+  },
+  {
+    "title": "Men's Running",
+    "handle": "mens-running",
+    "items": [
+      {
+        "title": "Shop All Men's Running",
+        "type": "COLLECTION",
+        "url": "/collections/mens-running-shop-all-mens-running"
+      },
+      {
+        "title": "T-Shirts & Singlets",
+        "type": "COLLECTION",
+        "url": "/collections/mens-running-t-shirts-singlets"
+      },
+      {
+        "title": "Shorts & Tights",
+        "type": "COLLECTION",
+        "url": "/collections/mens-running-shorts-tights"
+      },
+      {
+        "title": "Race Belts",
+        "type": "COLLECTION",
+        "url": "/collections/mens-running-race-belts"
+      },
+      {
+        "title": "Running Accessories",
+        "type": "COLLECTION",
+        "url": "/collections/mens-running-running-accessories"
+      }
+    ]
+  },
+  {
+    "title": "Men's Training",
+    "handle": "mens-training",
+    "items": [
+      {
+        "title": "Shop All Men's Training",
+        "type": "COLLECTION",
+        "url": "/collections/mens-training-shop-all-mens-training"
+      },
+      {
+        "title": "Tops",
+        "type": "COLLECTION",
+        "url": "/collections/mens-training-tops"
+      },
+      {
+        "title": "Shorts & Tights",
+        "type": "COLLECTION",
+        "url": "/collections/mens-training-shorts-tights"
+      }
+    ]
+  }
+]

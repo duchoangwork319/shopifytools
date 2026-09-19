@@ -1,0 +1,131 @@
+[
+  {
+    "title": "Brands",
+    "handle": "brands",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VENDOR",
+          "relation": "EQUALS",
+          "condition": "FUSION"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Brands FUSION",
+    "handle": "brands-fusion",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VENDOR",
+          "relation": "EQUALS",
+          "condition": "FUSION"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Brands FUSION - Shop All FUSION",
+    "handle": "brands-fusion-shop-all-fusion",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VENDOR",
+          "relation": "EQUALS",
+          "condition": "FUSION"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Brands FUSION - Triathlon",
+    "handle": "brands-fusion-triathlon",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VENDOR",
+          "relation": "EQUALS",
+          "condition": "FUSION"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Triathlon"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Brands FUSION - Cycling",
+    "handle": "brands-fusion-cycling",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VENDOR",
+          "relation": "EQUALS",
+          "condition": "FUSION"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Cycling"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Brands FUSION - Running",
+    "handle": "brands-fusion-running",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VENDOR",
+          "relation": "EQUALS",
+          "condition": "FUSION"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Running"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  }
+]

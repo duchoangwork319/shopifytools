@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Brands FUSION",
+    "handle": "brands-fusion",
+    "items": [
+      {
+        "title": "Shop All FUSION",
+        "type": "COLLECTION",
+        "url": "/collections/brands-fusion-shop-all-fusion"
+      },
+      {
+        "title": "Triathlon",
+        "type": "COLLECTION",
+        "url": "/collections/brands-fusion-triathlon"
+      },
+      {
+        "title": "Cycling",
+        "type": "COLLECTION",
+        "url": "/collections/brands-fusion-cycling"
+      },
+      {
+        "title": "Running",
+        "type": "COLLECTION",
+        "url": "/collections/brands-fusion-running"
+      }
+    ]
+  }
+]

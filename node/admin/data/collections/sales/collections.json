@@ -1,0 +1,299 @@
+[
+  {
+    "title": "Sale",
+    "handle": "sale",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale Shop Sale",
+    "handle": "sale-shop-sale",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale Shop Sale - All Sale",
+    "handle": "sale-shop-sale-all-sale",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale Shop Sale - Men",
+    "handle": "sale-shop-sale-men",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale Shop Sale - Women",
+    "handle": "sale-shop-sale-women",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Women"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale By Sport",
+    "handle": "sale-by-sport",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale By Sport - Triathlon",
+    "handle": "sale-by-sport-triathlon",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Triathlon"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale By Sport - Cycling",
+    "handle": "sale-by-sport-cycling",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Cycling"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale By Sport - Running",
+    "handle": "sale-by-sport-running",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Running"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale By Product",
+    "handle": "sale-by-product",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale By Product - Clothing",
+    "handle": "sale-by-product-clothing",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TYPE",
+          "relation": "NOT_CONTAINS",
+          "condition": "Accessories"
+        },
+        {
+          "column": "TITLE",
+          "relation": "NOT_CONTAINS",
+          "condition": "Shoe"
+        },
+        {
+          "column": "TITLE",
+          "relation": "NOT_CONTAINS",
+          "condition": "Sock"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale By Product - Cycling Shoes",
+    "handle": "sale-by-product-cycling-shoes",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TITLE",
+          "relation": "CONTAINS",
+          "condition": "Shoe"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sale By Product - Accessories",
+    "handle": "sale-by-product-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "VARIANT_COMPARE_AT_PRICE",
+          "relation": "GREATER_THAN",
+          "condition": "0"
+        },
+        {
+          "column": "TYPE",
+          "relation": "CONTAINS",
+          "condition": "Accessories"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  }
+]

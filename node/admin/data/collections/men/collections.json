@@ -1,0 +1,280 @@
+[
+  {
+    "title": "Men's Featured - Shop All Men",
+    "handle": "mens-featured-shop-all-men",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Featured - Bestsellers",
+    "handle": "mens-featured-bestsellers",
+    "sortOrder": "BEST_SELLING",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Featured - New Arrivals",
+    "handle": "mens-featured-new-arrivals",
+    "sortOrder": "CREATED_DESC",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Triathlon - Shop All Men's Triathlon",
+    "handle": "mens-triathlon-shop-all-mens-triathlon",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Triathlon - Tri Suits",
+    "handle": "mens-triathlon-tri-suits",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tri Suit" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Triathlon - Tri Shorts",
+    "handle": "mens-triathlon-tri-shorts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tri Shorts" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Triathlon - Race Belts",
+    "handle": "mens-triathlon-race-belts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TITLE", "relation": "CONTAINS", "condition": "Race Belt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Triathlon - Triathlon Accessories",
+    "handle": "mens-triathlon-triathlon-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Cycling - Shop All Men's Cycling",
+    "handle": "mens-cycling-shop-all-mens-cycling",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Cycling - Jerseys",
+    "handle": "mens-cycling-jerseys",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Jersey" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Cycling - Bib Shorts",
+    "handle": "mens-cycling-bib-shorts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Bib Shorts" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Cycling - Cycling Suits",
+    "handle": "mens-cycling-cycling-suits",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TITLE", "relation": "CONTAINS", "condition": "Suit" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Cycling - Cycling Shoes",
+    "handle": "mens-cycling-cycling-shoes",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TITLE", "relation": "CONTAINS", "condition": "Shoe" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Cycling - Cycling Accessories",
+    "handle": "mens-cycling-cycling-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Running - Shop All Men's Running",
+    "handle": "mens-running-shop-all-mens-running",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Running - T-Shirts & Singlets",
+    "handle": "mens-running-t-shirts-singlets",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "T-Shirt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Running - Shorts & Tights",
+    "handle": "mens-running-shorts-tights",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tights" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Running - Race Belts",
+    "handle": "mens-running-race-belts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TITLE", "relation": "CONTAINS", "condition": "Race Belt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Running - Running Accessories",
+    "handle": "mens-running-running-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Training - Shop All Men's Training",
+    "handle": "mens-training-shop-all-mens-training",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Training - Tops",
+    "handle": "mens-training-tops",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "T-Shirt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Men's Training - Shorts & Tights",
+    "handle": "mens-training-shorts-tights",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tights" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  }
+]

@@ -1,0 +1,280 @@
+[
+  {
+    "title": "Women's Featured - Shop All Women",
+    "handle": "womens-featured-shop-all-women",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Featured - Bestsellers",
+    "handle": "womens-featured-bestsellers",
+    "sortOrder": "BEST_SELLING",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Featured - New Arrivals",
+    "handle": "womens-featured-new-arrivals",
+    "sortOrder": "CREATED_DESC",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Triathlon - Shop All Women's Triathlon",
+    "handle": "womens-triathlon-shop-all-womens-triathlon",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Triathlon - Tri Suits",
+    "handle": "womens-triathlon-tri-suits",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tri Suit" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Triathlon - Tri Shorts",
+    "handle": "womens-triathlon-tri-shorts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tri Shorts" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Triathlon - Race Belts",
+    "handle": "womens-triathlon-race-belts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Race Belt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Triathlon - Triathlon Accessories",
+    "handle": "womens-triathlon-triathlon-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Cycling - Shop All Women's Cycling",
+    "handle": "womens-cycling-shop-all-womens-cycling",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Cycling - Jerseys",
+    "handle": "womens-cycling-jerseys",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Jersey" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Cycling - Bibs & Cycling Shorts",
+    "handle": "womens-cycling-bib-shorts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Bib Shorts" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Cycling - Cycling Suits",
+    "handle": "womens-cycling-cycling-suits",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling Suit" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Cycling - Cycling Shoes",
+    "handle": "womens-cycling-cycling-shoes",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling Shoes" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Cycling - Cycling Accessories",
+    "handle": "womens-cycling-cycling-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Running - Shop All Women's Running",
+    "handle": "womens-running-shop-all-womens-running",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Running - T-Shirts & Singlets",
+    "handle": "womens-running-t-shirts-singlets",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "T-Shirt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Running - Shorts & Tights",
+    "handle": "womens-running-shorts-tights",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tights" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Running - Race Belts",
+    "handle": "womens-running-race-belts",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Race Belt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Running - Running Accessories",
+    "handle": "womens-running-running-accessories",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Training - Shop All Women's Training",
+    "handle": "womens-training-shop-all-womens-training",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Training - Tops",
+    "handle": "womens-training-tops",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "T-Shirt" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  },
+  {
+    "title": "Women's Training - Shorts & Tights",
+    "handle": "womens-training-shorts-tights",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        { "column": "TAG", "relation": "EQUALS", "condition": "Women" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
+        { "column": "TAG", "relation": "EQUALS", "condition": "Tights" },
+        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+      ]
+    }
+  }
+]

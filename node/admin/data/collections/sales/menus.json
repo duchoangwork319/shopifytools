@@ -1,0 +1,65 @@
+[
+  {
+    "title": "Sale Shop Sale",
+    "handle": "sale-shop-sale",
+    "items": [
+      {
+        "title": "All Sale",
+        "type": "COLLECTION",
+        "url": "/collections/sale-shop-sale-all-sale"
+      },
+      {
+        "title": "Men",
+        "type": "COLLECTION",
+        "url": "/collections/sale-shop-sale-men"
+      },
+      {
+        "title": "Women",
+        "type": "COLLECTION",
+        "url": "/collections/sale-shop-sale-women"
+      }
+    ]
+  },
+  {
+    "title": "Sale By Sport",
+    "handle": "sale-by-sport",
+    "items": [
+      {
+        "title": "Triathlon",
+        "type": "COLLECTION",
+        "url": "/collections/sale-by-sport-triathlon"
+      },
+      {
+        "title": "Cycling",
+        "type": "COLLECTION",
+        "url": "/collections/sale-by-sport-cycling"
+      },
+      {
+        "title": "Running",
+        "type": "COLLECTION",
+        "url": "/collections/sale-by-sport-running"
+      }
+    ]
+  },
+  {
+    "title": "Sale By Product",
+    "handle": "sale-by-product",
+    "items": [
+      {
+        "title": "Clothing",
+        "type": "COLLECTION",
+        "url": "/collections/sale-by-product-clothing"
+      },
+      {
+        "title": "Cycling Shoes",
+        "type": "COLLECTION",
+        "url": "/collections/sale-by-product-cycling-shoes"
+      },
+      {
+        "title": "Accessories",
+        "type": "COLLECTION",
+        "url": "/collections/sale-by-product-accessories"
+      }
+    ]
+  }
+]

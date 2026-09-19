@@ -1,0 +1,142 @@
+[
+  {
+    "title": "Women's Featured",
+    "handle": "womens-featured",
+    "items": [
+      {
+        "title": "Shop All Women",
+        "type": "COLLECTION",
+        "url": "/collections/womens-featured-shop-all-women"
+      },
+      {
+        "title": "Bestsellers",
+        "type": "COLLECTION",
+        "url": "/collections/womens-featured-bestsellers"
+      },
+      {
+        "title": "New Arrivals",
+        "type": "COLLECTION",
+        "url": "/collections/womens-featured-new-arrivals"
+      }
+    ]
+  },
+  {
+    "title": "Women's Triathlon",
+    "handle": "womens-triathlon",
+    "items": [
+      {
+        "title": "Shop All Women's Triathlon",
+        "type": "COLLECTION",
+        "url": "/collections/womens-triathlon-shop-all-womens-triathlon"
+      },
+      {
+        "title": "Tri Suits",
+        "type": "COLLECTION",
+        "url": "/collections/womens-triathlon-tri-suits"
+      },
+      {
+        "title": "Tri Shorts",
+        "type": "COLLECTION",
+        "url": "/collections/womens-triathlon-tri-shorts"
+      },
+      {
+        "title": "Race Belts",
+        "type": "COLLECTION",
+        "url": "/collections/womens-triathlon-race-belts"
+      },
+      {
+        "title": "Triathlon Accessories",
+        "type": "COLLECTION",
+        "url": "/collections/womens-triathlon-triathlon-accessories"
+      }
+    ]
+  },
+  {
+    "title": "Women's Cycling",
+    "handle": "womens-cycling",
+    "items": [
+      {
+        "title": "Shop All Women's Cycling",
+        "type": "COLLECTION",
+        "url": "/collections/womens-cycling-shop-all-womens-cycling"
+      },
+      {
+        "title": "Jerseys",
+        "type": "COLLECTION",
+        "url": "/collections/womens-cycling-jerseys"
+      },
+      {
+        "title": "Bib Shorts",
+        "type": "COLLECTION",
+        "url": "/collections/womens-cycling-bib-shorts"
+      },
+      {
+        "title": "Cycling Suits",
+        "type": "COLLECTION",
+        "url": "/collections/womens-cycling-cycling-suits"
+      },
+      {
+        "title": "Cycling Shoes",
+        "type": "COLLECTION",
+        "url": "/collections/womens-cycling-cycling-shoes"
+      },
+      {
+        "title": "Cycling Accessories",
+        "type": "COLLECTION",
+        "url": "/collections/womens-cycling-cycling-accessories"
+      }
+    ]
+  },
+  {
+    "title": "Women's Running",
+    "handle": "womens-running",
+    "items": [
+      {
+        "title": "Shop All Women's Running",
+        "type": "COLLECTION",
+        "url": "/collections/womens-running-shop-all-womens-running"
+      },
+      {
+        "title": "T-Shirts & Singlets",
+        "type": "COLLECTION",
+        "url": "/collections/womens-running-t-shirts-singlets"
+      },
+      {
+        "title": "Shorts & Tights",
+        "type": "COLLECTION",
+        "url": "/collections/womens-running-shorts-tights"
+      },
+      {
+        "title": "Race Belts",
+        "type": "COLLECTION",
+        "url": "/collections/womens-running-race-belts"
+      },
+      {
+        "title": "Running Accessories",
+        "type": "COLLECTION",
+        "url": "/collections/womens-running-running-accessories"
+      }
+    ]
+  },
+  {
+    "title": "Women's Training",
+    "handle": "womens-training",
+    "items": [
+      {
+        "title": "Shop All Women's Training",
+        "type": "COLLECTION",
+        "url": "/collections/womens-training-shop-all-womens-training"
+      },
+      {
+        "title": "Tops",
+        "type": "COLLECTION",
+        "url": "/collections/womens-training-tops"
+      },
+      {
+        "title": "Shorts & Tights",
+        "type": "COLLECTION",
+        "url": "/collections/womens-training-shorts-tights"
+      }
+    ]
+  }
+]
