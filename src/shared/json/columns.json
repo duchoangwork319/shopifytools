@@ -1,7 +1,7 @@
 [
   {
     "name": "Handle",
-    "overrideDefault": false
+    "overrideForbidden": true
   },
   {
     "name": "Title",
@@ -30,7 +30,7 @@
   },
   {
     "name": "Published",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Option1 Name",
@@ -42,7 +42,7 @@
   },
   {
     "name": "Option1 Linked To",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Option2 Name",
@@ -54,7 +54,7 @@
   },
   {
     "name": "Option2 Linked To",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Option3 Name",
@@ -66,11 +66,11 @@
   },
   {
     "name": "Option3 Linked To",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Variant SKU",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Variant Grams",
@@ -78,7 +78,7 @@
   },
   {
     "name": "Variant Inventory Tracker",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Variant Inventory Qty",
@@ -87,11 +87,11 @@
   },
   {
     "name": "Variant Inventory Policy",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Variant Fulfillment Service",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Variant Price",
@@ -100,31 +100,36 @@
   },
   {
     "name": "Variant Compare At Price",
-    "overrideDefault": false
+    "overrideDefault": false,
+    "exclude": true
   },
   {
     "name": "Variant Requires Shipping",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Variant Taxable",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Unit Price Total Measure",
-    "overrideDefault": false
+    "overrideDefault": false,
+    "exclude": true
   },
   {
     "name": "Unit Price Total Measure Unit",
-    "overrideDefault": false
+    "overrideDefault": false,
+    "exclude": true
   },
   {
     "name": "Unit Price Base Measure",
-    "overrideDefault": false
+    "overrideDefault": false,
+    "exclude": true
   },
   {
     "name": "Unit Price Base Measure Unit",
-    "overrideDefault": false
+    "overrideDefault": false,
+    "exclude": true
   },
   {
     "name": "Variant Barcode",
@@ -144,7 +149,7 @@
   },
   {
     "name": "Gift Card",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "SEO Title",
@@ -200,11 +205,11 @@
   },
   {
     "name": "Badge Label (product.metafields.bwp_fields.badge_label)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Bundle (product.metafields.bwp_fields.bundle)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Size Chart (product.metafields.bwp_fields.size_chart)",
@@ -213,51 +218,51 @@
   },
   {
     "name": "Google: Custom Product (product.metafields.mm-google-shopping.custom_product)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Product rating count (product.metafields.reviews.rating_count)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Accessory size (product.metafields.shopify.accessory-size)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Activity (product.metafields.shopify.activity)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Age group (product.metafields.shopify.age-group)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Color (product.metafields.shopify.color-pattern)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Fabric (product.metafields.shopify.fabric)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Target gender (product.metafields.shopify.target-gender)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Complementary products (product.metafields.shopify--discovery--product_recommendation.complementary_products)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Related products (product.metafields.shopify--discovery--product_recommendation.related_products)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Related products settings (product.metafields.shopify--discovery--product_recommendation.related_products_display)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Search product boosts (product.metafields.shopify--discovery--product_search_boost.queries)",
-    "overrideDefault": true
+    "overrideDefault": false
   },
   {
     "name": "Variant Image",
@@ -269,11 +274,11 @@
   },
   {
     "name": "Variant Tax Code",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Cost per item",
-    "overrideDefault": false
+    "overrideDefault": true
   },
   {
     "name": "Status",

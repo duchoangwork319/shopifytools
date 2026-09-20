@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import { buildProductData, fetchProduct } from "@/lib/shopify";
 import { sleep } from "@/lib/helpers";
 import { showError } from "@/lib/toast";
-import { getAll, type AppSettings } from "@/lib/setting";
 import type { AnyDataRow, FetchError, FetchOptions, ShopifyCSVContainer } from "@/types/crawl";
 
 const SLEEP_MS_DURING_FETCH = 1000;
@@ -45,16 +44,11 @@ async function fetchProductData(
  * Owns talking to the store (fetch loop + fetching status). The fetch result
  * is kept as internal state and exposed via `toReactTableData` (a `ShopifyCSVContainer`,
  * same shape as `useCSVFile`'s), for `CrawlPage` to sync into `useTableDataControl`
- * via an effect. This hook does not know about the table-control hook.
+ * via an effect. This hook does not know about the table-control hook, and
+ * takes `storeOrigin`/`options` from the caller rather than owning configuration.
  */
 export function useShopifyAPI() {
   const [fetching, setFetching] = useState(false);
-  const [fetchOptions, setFetchOptions] = useState<FetchOptions>({
-    publishProducts: false,
-    inventoryPolicyContinue: false,
-    handleSuffix: "",
-    appendTags: "",
-  });
   const [toReactTableData, setFetchResult] = useState<ShopifyCSVContainer>(EMPTY_RESULT);
   const [fetchErrors, setFetchErrors] = useState<FetchError[]>([]);
 
@@ -62,17 +56,15 @@ export function useShopifyAPI() {
     setFetchErrors([]);
   };
 
-  const startFetch = (handles: string[], headers: string[], options: FetchOptions) => {
-    const settings = getAll() as AppSettings;
-    let storeOrigin = settings.storeOrigin;
-
+  const startFetch = (handles: string[], headers: string[], storeOrigin: string, options: FetchOptions) => {
     if (!storeOrigin) {
-      showError("Missing Store Origin", "Please go to Settings and set the store origin.");
+      showError("Missing Store Origin", "Please set the store origin in Configuration.");
       return;
     }
 
+    let resolvedStoreOrigin: string;
     try {
-      storeOrigin = new URL(storeOrigin).origin;
+      resolvedStoreOrigin = new URL(storeOrigin).origin;
     } catch (error) {
       console.error("Invalid store origin URL:", error);
       showError("Invalid Store Origin", "Please check the store origin format.");
@@ -86,8 +78,7 @@ export function useShopifyAPI() {
     }
 
     setFetching(true);
-    setFetchOptions(options);
-    fetchProductData(targetHandles, storeOrigin, headers, options).then(({ data, errors }) => {
+    fetchProductData(targetHandles, resolvedStoreOrigin, headers, options).then(({ data, errors }) => {
       const fetchedHandles = Array.from(new Set(data.map((row) => row.Handle).filter(Boolean)));
       setFetchResult({ headers, data, handles: fetchedHandles });
       setFetchErrors(errors);
@@ -100,5 +91,5 @@ export function useShopifyAPI() {
     });
   };
 
-  return { fetching, fetchOptions, startFetch, toReactTableData, fetchErrors, acknowledgeFetchErrors };
+  return { fetching, startFetch, toReactTableData, fetchErrors, acknowledgeFetchErrors };
 }

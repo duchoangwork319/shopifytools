@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sidebar"
 import {
   // ChartBarIcon, FolderIcon, UsersIcon, SearchIcon, ListIcon,
-  CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon,
+  CameraIcon, FileTextIcon, CircleHelpIcon,
   DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon,
   CloudSyncIcon
 } from "lucide-react"
@@ -101,14 +101,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
     ],
     navSecondary: [
-      {
-        title: "Settings",
-        url: withDomain("settings"),
-        icon: (
-          <Settings2Icon
-          />
-        ),
-      },
       {
         title: "Get Help",
         url: "https://duchoangwork319.github.io/theme-azeno-v1-guideline/shopify_tools.html",

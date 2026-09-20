@@ -5,22 +5,22 @@ import {
 } from "@/components/summary-cards";
 import { TanstackProductDataTable } from "@/components/shopify-data-table";
 import { EmptyCover } from "@/components/custom/empty-cover";
-import { FetchButtonGroup } from "@/components/custom/fetch-button-group";
-import { ColumnConfigurationDialog } from "@/components/custom/column-configuration-dialog";
+import { ConfigurationDrawer } from "@/components/custom/configuration-drawer";
 import { FetchErrorsDialog } from "@/components/custom/fetch-errors-dialog";
 import { useCSVFile } from "@/hooks/use-csv-file";
 import { useShopifyAPI } from "@/hooks/use-shopify-api";
 import { useTableDataControl } from "@/hooks/use-table-data-control";
+import { useConfiguration } from "@/hooks/use-configuration";
 import { IconAdjustments } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import type { FetchOptions } from "@/types/crawl";
 
 export function CrawlPage() {
-  const tableControl = useTableDataControl();
+  const { configuration, setConfiguration } = useConfiguration();
+  const tableControl = useTableDataControl(configuration.columnConfiguration);
   const { setOrigin, setIncomingData } = tableControl;
   const csvFile = useCSVFile();
   const shopifyApi = useShopifyAPI();
-  const [columnConfigOpen, setColumnConfigOpen] = useState(false);
+  const [configOpen, setConfigOpen] = useState(false);
 
   useEffect(() => {
     setOrigin(csvFile.toReactTableData);
@@ -30,8 +30,13 @@ export function CrawlPage() {
     setIncomingData(shopifyApi.toReactTableData);
   }, [shopifyApi.toReactTableData, setIncomingData]);
 
-  const handleFetching = (options: FetchOptions) => {
-    shopifyApi.startFetch(tableControl.origin.handles, tableControl.origin.headers, options);
+  const handleFetching = () => {
+    shopifyApi.startFetch(
+      tableControl.origin.handles,
+      tableControl.origin.headers,
+      configuration.storeOrigin,
+      configuration.fetchOptions
+    );
   };
 
   const handleDownload = () => {
@@ -62,12 +67,14 @@ export function CrawlPage() {
                       Fetching
                     </Button>
                   ) : (
-                    <FetchButtonGroup fetchOptions={shopifyApi.fetchOptions} fetchHandler={handleFetching} />
+                    <Button className="cursor-pointer" variant="outline" onClick={handleFetching}>
+                      Fetch
+                    </Button>
                   )
                 }
-                <Button className="cursor-pointer" variant="outline" onClick={() => setColumnConfigOpen(true)}>
+                <Button className="cursor-pointer" variant="outline" onClick={() => setConfigOpen(true)}>
                   <IconAdjustments />
-                  Configure Columns
+                  Configuration
                 </Button>
                 <Button className="cursor-pointer" variant="secondary" onClick={tableControl.clearIncoming}
                   disabled={shopifyApi.fetching || !tableControl.hasIncoming}>
@@ -96,11 +103,11 @@ export function CrawlPage() {
       ) : (
         <EmptyCover onImport={csvFile.uploadFile} />
       )}
-      <ColumnConfigurationDialog
-        open={columnConfigOpen}
-        onOpenChange={setColumnConfigOpen}
-        columnConfiguration={tableControl.columnConfiguration}
-        onSave={tableControl.setColumnConfiguration}
+      <ConfigurationDrawer
+        open={configOpen}
+        onOpenChange={setConfigOpen}
+        configuration={configuration}
+        onSave={setConfiguration}
       />
       <FetchErrorsDialog
         errors={shopifyApi.fetchErrors}

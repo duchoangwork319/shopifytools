@@ -17,6 +17,7 @@ export interface ShopifyCSVContainer {
 export interface ColumnConfig {
   name: string
   allowOverride: boolean
+  overrideForbidden?: boolean
 }
 
 export interface FetchError {
@@ -29,5 +30,12 @@ export interface HeaderConfigEntry {
   overrideDefault: boolean
   exclude?: boolean
   showInPreviewDialog?: boolean
+  overrideForbidden?: boolean
+}
+
+export interface AppConfiguration {
+  storeOrigin: string
+  fetchOptions: FetchOptions
+  columnConfiguration: ColumnConfig[]
 }
 

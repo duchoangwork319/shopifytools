@@ -2,11 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { PreviewDialog } from "@/components/preview-dialog";
 import { mergeOriginWithOutput } from "@/lib/merge";
-import {
-  getPreviewDialogHeaderNames,
-  loadColumnConfiguration,
-  saveColumnConfiguration,
-} from "@/lib/column-configuration";
+import { getPreviewDialogHeaderNames } from "@/lib/column-configuration";
 import type { AnyDataRow, ColumnConfig, ShopifyCSVContainer } from "@/types/crawl";
 
 const EMPTY_CONTAINER: ShopifyCSVContainer = { headers: [], data: [], handles: [] };
@@ -52,10 +48,9 @@ function rowsToObjects(headers: string[], rows: string[][]): AnyDataRow[] {
  * `setOrigin`/`setIncomingData`; this hook never talks to the file system or
  * the network itself.
  */
-export function useTableDataControl() {
+export function useTableDataControl(columnConfiguration: ColumnConfig[]) {
   const [origin, setOrigin] = useState<ShopifyCSVContainer>(EMPTY_CONTAINER);
   const [incoming, setIncoming] = useState<ShopifyCSVContainer>(EMPTY_CONTAINER);
-  const [columnConfiguration, setColumnConfigurationState] = useState<ColumnConfig[]>(() => loadColumnConfiguration());
 
   const previewDialogHeaders = useMemo(() => getPreviewDialogHeaderNames(), []);
   const tableColumns = useMemo(
@@ -93,11 +88,6 @@ export function useTableDataControl() {
     setIncoming(EMPTY_CONTAINER);
   }, []);
 
-  const setColumnConfiguration = useCallback((config: ColumnConfig[]) => {
-    setColumnConfigurationState(config);
-    saveColumnConfiguration(config);
-  }, []);
-
   return {
     origin,
     setOrigin,
@@ -105,8 +95,6 @@ export function useTableDataControl() {
     tableColumns,
     stagingRows,
     stagingCsv,
-    columnConfiguration,
-    setColumnConfiguration,
     setIncomingData,
     clearIncoming,
     reset,
