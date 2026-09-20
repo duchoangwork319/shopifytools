@@ -4,7 +4,7 @@ import { createArrayCsvWriter } from "csv-writer";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
 import * as cheerio from "cheerio";
-import headerConfig from "../../src/shared/json/header-new.json" with { type: "json" };
+import headerConfig from "../../src/shared/json/columns.json" with { type: "json" };
 import config from "../../src/shared/json/config.json" with { type: "json" };
 import { buildMainMap } from "../../src/shared/csv/mapping.js";
 import { createProductCsvRowsWithMap } from "../../src/shared/csv/rows.js";
@@ -56,7 +56,7 @@ function safeImportJson(jsonPath) {
 }
 
 /**
- * Exclude headers marked `exclude: true` in header-new.json.
+ * Exclude headers marked `exclude: true` in columns.json.
  * @param {{name: string, exclude?: boolean}[]} headerFields - Header configuration entries
  * @returns {string[]} - Header names with excluded ones filtered out
  */

@@ -6,7 +6,14 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores([
+    'dist',
+    'web',
+    // src/components is shadcn's generated library; only components/custom is ours to lint.
+    'src/components/ui/**',
+    'src/components/flex/**',
+    'src/components/*.tsx',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -18,6 +25,10 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+    },
+    rules: {
+      semi: 'off',
+      '@/semi': ['error', 'always'],
     },
   },
 ])

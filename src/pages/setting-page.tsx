@@ -1,7 +1,7 @@
 "use strict";
 
-import { useState, type FormEvent } from "react"
-import { Button } from "@/components/ui/button"
+import { useState, type FormEvent } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
@@ -9,15 +9,15 @@ import {
   FieldLabel,
   FieldLegend,
   FieldSet,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { getByKey, setByKey } from "@/lib/setting"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { getByKey, setByKey } from "@/lib/setting";
 import { toast } from "sonner";
 
 export function SettingPage() {
-  const STORE_ORIGIN_KEY = "storeOrigin"
-  const savedOrigin = getByKey(STORE_ORIGIN_KEY)
-  const [storeOrigin, setStoreOrigin] = useState(savedOrigin ? String(savedOrigin) : "")
+  const STORE_ORIGIN_KEY = "storeOrigin";
+  const savedOrigin = getByKey(STORE_ORIGIN_KEY);
+  const [storeOrigin, setStoreOrigin] = useState(savedOrigin ? String(savedOrigin) : "");
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -59,5 +59,5 @@ export function SettingPage() {
         </FieldGroup>
       </form>
     </div>
-  )
+  );
 }

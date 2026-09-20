@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "reset": "git reset --soft HEAD~1"
   },
@@ -27,6 +28,7 @@
     "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cn": "^0.3.0",
     "commander": "^14.0.3",
     "csv-writer": "^1.6.0",
     "dotenv": "^17.4.2",

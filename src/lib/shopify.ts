@@ -1,21 +1,12 @@
-import { buildMainMap } from "@/shared/csv/mapping"
-import { createProductCsvRowsWithMap } from "@/shared/csv/rows"
-import type { FetchByHandleResult, FetchOptions } from "@/types/crawl"
-import type { ShopifyProduct } from "@/types/shopify"
-import csvConfig from "@/shared/json/config.json"
-import headerConfig from "@/shared/json/header.json"
-
-type CsvHeader = (typeof headerConfig.headers)[number]
-
-const HEADERS = headerConfig.headers as CsvHeader[]
-
-export function getCsvHeaders() {
-  return HEADERS
-}
+import { buildMainMap } from "@/shared/csv/mapping";
+import { createProductCsvRowsWithMap } from "@/shared/csv/rows";
+import type { AnyDataRow, FetchOptions } from "@/types/crawl";
+import type { ShopifyProduct } from "@/types/shopify";
+import csvConfig from "@/shared/json/config.json";
 
 export function buildProductUrl(storeOrigin: string, handle: string) {
-  const base = storeOrigin.replace(/\/+$/u, "")
-  return `${base}/products/${handle}`
+  const base = storeOrigin.replace(/\/+$/u, "");
+  return `${base}/products/${handle}`;
 }
 
 export function cleanConfusables(str: string) {
@@ -48,48 +39,64 @@ export function sanityHtml(html: string) {
   regexGroup.forEach((regex) => {
     cleanedHtml = cleanedHtml.replace(regex, "");
   });
-  const doc = new DOMParser().parseFromString(cleanedHtml, "text/html")
-  return doc
+  const doc = new DOMParser().parseFromString(cleanedHtml, "text/html");
+  return doc;
 }
 
-export async function fetchByHandle(
-  handle: string,
-  storeOrigin: string,
-  headers: string[],
-  options: FetchOptions
-): Promise<FetchByHandleResult> {
-  const productUrl = buildProductUrl(storeOrigin, handle)
+export interface FetchedProduct {
+  handle: string
+  json: string
+  html: string
+  product: ShopifyProduct
+  htmlDocument: Document
+}
+
+/**
+ * Fetch a product's JSON and HTML from the storefront. Pure I/O — no CSV row
+ * building here, so this can be reused wherever the raw product is needed.
+ */
+export async function fetchProduct(handle: string, storeOrigin: string): Promise<FetchedProduct> {
+  const productUrl = buildProductUrl(storeOrigin, handle);
   const [jsonResponse, htmlResponse] = await Promise.all([
     fetch(`${productUrl}.js`),
     fetch(productUrl),
-  ])
+  ]);
 
   if (!jsonResponse.ok) {
-    throw new Error(`Failed to fetch ${handle}.js (${jsonResponse.status})`)
+    throw new Error(`Failed to fetch ${handle}.js (${jsonResponse.status})`);
   }
 
   if (!htmlResponse.ok) {
-    throw new Error(`Failed to fetch ${handle} HTML (${htmlResponse.status})`)
+    throw new Error(`Failed to fetch ${handle} HTML (${htmlResponse.status})`);
   }
 
-  const json = await jsonResponse.text()
-  const html = await htmlResponse.text()
-  const product = JSON.parse(json) as ShopifyProduct
-  const htmlDocument = sanityHtml(html)
-  const mainMap = buildMainMap(headers || getCsvHeaders());
+  const json = await jsonResponse.text();
+  const html = await htmlResponse.text();
+  const product = JSON.parse(json) as ShopifyProduct;
+  const htmlDocument = sanityHtml(html);
+
+  return { handle, json, html, product, htmlDocument };
+}
+
+/**
+ * Build CSV rows (as header-keyed objects, matching `ShopifyCSVContainer`) from
+ * an already-fetched product. Pure data transform — no network I/O.
+ */
+export function buildProductData(
+  fetched: FetchedProduct,
+  headers: string[],
+  options: FetchOptions
+): { rows: AnyDataRow[] } {
+  const mainMap = buildMainMap(headers);
   const finalOptions = {
-    product: product,
-    html: htmlDocument,
+    product: fetched.product,
+    html: fetched.htmlDocument,
     mainMap,
     csvConfig: csvConfig.csv || {},
-    valuesOnly: true,
+    valuesOnly: false,
     transformOption: options
   };
-  console.log("Create CSV rows with options:", finalOptions);
   const { rows } = createProductCsvRowsWithMap(finalOptions);
 
-  // localStorage.setItem(`spf_${handle}_json`, json)
-  // localStorage.setItem(`spf_${handle}_html`, html)
-
-  return { handle, json, html, rows }
+  return { rows: rows as unknown as AnyDataRow[] };
 }

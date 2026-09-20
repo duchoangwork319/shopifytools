@@ -149,10 +149,10 @@ export function TanstackProductDataTable<TData, TValue>({
               <Table>
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
+                    <TableRow key={`headerGroup-${headerGroup.id}`}>
                       {headerGroup.headers.map((header) => {
                         return (
-                          <TableHead key={header.id}>
+                          <TableHead key={`headerGroup-${headerGroup.id}-header-${header.id}`}>
                             {header.isPlaceholder
                               ? null
                               : flexRender(
@@ -169,11 +169,11 @@ export function TanstackProductDataTable<TData, TValue>({
                   {table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) => (
                       <TableRow
-                        key={row.id}
+                        key={`row-${row.id}`}
                         data-state={row.getIsSelected() && "selected"}
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
+                          <TableCell key={`row-${row.id}-cell-${cell.id}`}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
                         ))}

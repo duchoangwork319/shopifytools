@@ -1,13 +1,13 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
 import {
   SidebarInset,
   SidebarProvider,
-} from "@/components/ui/sidebar"
-import { CrawlPage } from "./pages/crawl-page"
-import { Toaster } from "./components/ui/sonner"
-import { Route, Routes } from "react-router-dom"
-import { SettingPage } from "./pages/setting-page"
+} from "@/components/ui/sidebar";
+import { CrawlPage } from "./pages/crawl-page";
+import { Toaster } from "./components/ui/sonner";
+import { Route, Routes } from "react-router-dom";
+import { SettingPage } from "./pages/setting-page";
 
 export default function ShadcnApp() {
   return (
@@ -37,5 +37,5 @@ export default function ShadcnApp() {
       </SidebarProvider>
       <Toaster />
     </>
-  )
+  );
 }
