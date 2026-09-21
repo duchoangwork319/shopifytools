@@ -4,34 +4,39 @@ import type { ColumnConfig, HeaderConfigEntry } from "@/types/crawl";
 const HEADER_CONFIG = columnsConfig as HeaderConfigEntry[];
 
 /**
+ * A column's inclusion is forced on when it's `overrideForbidden` (e.g.
+ * Handle) or `required` — the user can't exclude it regardless of what
+ * `include` says in columns.json or was previously saved.
+ */
+function isIncludeLocked(field: Pick<HeaderConfigEntry, "overrideForbidden" | "required">): boolean {
+  return Boolean(field.overrideForbidden || field.required);
+}
+
+/**
  * Default column configuration derived from columns.json — one entry per
- * column the user can actually see and configure overriding for.
- *
- * Excluded columns (`exclude: true`) are left out entirely: they never
- * appear in the table or the exported CSV, so there's nothing to configure
- * an override for. This is distinct from `overrideForbidden`, which still
- * shows the column (read-only) since it's visible in the table, just not
- * user-toggleable.
+ * column, since the Configuration drawer's checkbox for each one directly
+ * toggles `include` (whether the column appears in the table/downloaded CSV
+ * at all), so every column must be listed to be toggleable.
  */
 export function getDefaultColumnConfiguration(): ColumnConfig[] {
-  return HEADER_CONFIG.filter((field) => !field.exclude).map((field) => ({
+  return HEADER_CONFIG.map((field) => ({
     name: field.name,
-    // A column that's override-forbidden must always keep the origin CSV
-    // value — the user can't opt in, so its checkbox is forced off
-    // regardless of overrideDefault.
-    allowOverride: field.overrideForbidden ? false : field.overrideDefault,
+    include: isIncludeLocked(field) ? true : field.include,
     overrideForbidden: field.overrideForbidden,
+    required: field.required,
   }));
 }
 
 /**
- * Filter out headers marked `exclude: true` in columns.json.
+ * The column names currently included, in columns.json's ordinal order,
+ * given a (possibly user-edited) column configuration. This defines the
+ * *output* column set for the table/fetch/download — independent of
+ * whatever columns happened to be present in the uploaded CSV, so a CSV
+ * with only a `Handle` column still fetches and produces every configured
+ * column.
  */
-export function excludeHeaders(headers: string[]): string[] {
-  const excludedNames = new Set(
-    HEADER_CONFIG.filter((field) => field.exclude).map((field) => field.name)
-  );
-  return headers.filter((header) => !excludedNames.has(header));
+export function getIncludedHeaders(columnConfiguration: ColumnConfig[]): string[] {
+  return columnConfiguration.filter((field) => field.include).map((field) => field.name);
 }
 
 /**

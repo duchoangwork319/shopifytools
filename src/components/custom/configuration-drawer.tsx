@@ -41,11 +41,11 @@ function ConfigurationDrawerContent({
 }) {
   const [draft, setDraft] = useState<AppConfiguration>(configuration);
 
-  const toggleColumn = (name: string, allowOverride: boolean) => {
+  const toggleColumn = (name: string, include: boolean) => {
     setDraft((prev) => ({
       ...prev,
       columnConfiguration: prev.columnConfiguration.map((field) =>
-        field.name === name && !field.overrideForbidden ? { ...field, allowOverride } : field
+        field.name === name && !field.overrideForbidden && !field.required ? { ...field, include } : field
       ),
     }));
   };
@@ -164,7 +164,12 @@ function ConfigurationDrawerContent({
           <FieldSet>
             <FieldLegend>Columns</FieldLegend>
             <FieldDescription>
-              Choose which columns should be overridden by data fetched from the store. Unchecked columns keep the value from the imported CSV.
+              Choose which columns should be included in the table and the downloaded CSV. Unchecked columns are
+              left out entirely.{" "}
+              <span className="font-bold text-red-600">Red</span> columns are always included and can never be
+              excluded — their value never changes. <span className="font-bold text-yellow-600">Yellow</span>{" "}
+              columns are always included and can never be excluded, but their value can still be updated when
+              fetching.
             </FieldDescription>
             <div className="h-72 w-full min-w-0 overflow-y-auto rounded-md border">
               <Table className="table-fixed">
@@ -178,17 +183,25 @@ function ConfigurationDrawerContent({
                   {draft.columnConfiguration.map((field) => (
                     <TableRow key={field.name}>
                       <TableCell>
-                        <Checkbox
-                          id={`column-override-${field.name}`}
-                          checked={field.overrideForbidden ? false : field.allowOverride}
-                          disabled={field.overrideForbidden}
-                          onCheckedChange={(checked: boolean) => toggleColumn(field.name, checked)}
-                        />
+                        {!field.overrideForbidden && (
+                          <Checkbox
+                            id={`column-include-${field.name}`}
+                            checked={field.required ? true : field.include}
+                            disabled={field.required}
+                            onCheckedChange={(checked: boolean) => toggleColumn(field.name, checked)}
+                          />
+                        )}
                       </TableCell>
                       <TableCell className="whitespace-normal break-words">
                         <label
-                          htmlFor={`column-override-${field.name}`}
-                          className={field.overrideForbidden ? "font-bold" : "cursor-pointer"}
+                          htmlFor={`column-include-${field.name}`}
+                          className={
+                            field.overrideForbidden
+                              ? "font-bold text-red-600"
+                              : field.required
+                                ? "font-bold text-yellow-600"
+                                : "cursor-pointer"
+                          }
                         >
                           {field.name}
                         </label>

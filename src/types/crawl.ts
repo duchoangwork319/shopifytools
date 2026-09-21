@@ -16,8 +16,9 @@ export interface ShopifyCSVContainer {
 
 export interface ColumnConfig {
   name: string
-  allowOverride: boolean
+  include: boolean
   overrideForbidden?: boolean
+  required?: boolean
 }
 
 export interface FetchError {
@@ -27,10 +28,10 @@ export interface FetchError {
 
 export interface HeaderConfigEntry {
   name: string
-  overrideDefault: boolean
-  exclude?: boolean
-  showInPreviewDialog?: boolean
+  include: boolean
   overrideForbidden?: boolean
+  required?: boolean
+  showInPreviewDialog?: boolean
 }
 
 export interface AppConfiguration {

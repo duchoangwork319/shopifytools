@@ -33,7 +33,7 @@ export function CrawlPage() {
   const handleFetching = () => {
     shopifyApi.startFetch(
       tableControl.origin.handles,
-      tableControl.origin.headers,
+      tableControl.visibleHeaders,
       configuration.storeOrigin,
       configuration.fetchOptions
     );

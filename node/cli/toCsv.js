@@ -56,18 +56,18 @@ function safeImportJson(jsonPath) {
 }
 
 /**
- * Exclude headers marked `exclude: true` in columns.json.
- * @param {{name: string, exclude?: boolean}[]} headerFields - Header configuration entries
+ * Keep only headers marked `include: true` in columns.json.
+ * @param {{name: string, include: boolean}[]} headerFields - Header configuration entries
  * @returns {string[]} - Header names with excluded ones filtered out
  */
-function excludeHeaders(headerFields) {
-  return headerFields.filter(field => !field.exclude).map(field => field.name);
+function includedHeaders(headerFields) {
+  return headerFields.filter(field => field.include).map(field => field.name);
 }
 
 function processProducts(options) {
   const productFiles = listFiles(options.sourceDir, ".json");//.slice(0, 1);
   const counters = { products: 0, variants: 0 };
-  const headers = excludeHeaders(headerConfig);
+  const headers = includedHeaders(headerConfig);
   const mainMap = buildMainMap(headers);
   const csvWriter = createArrayCsvWriter({
     header: mainMap.map(entry => entry.header),

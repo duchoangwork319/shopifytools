@@ -2,7 +2,6 @@ import { useState } from "react";
 import Papa from "papaparse";
 import { toast } from "sonner";
 import { createTimestampedFilename, downloadCsv } from "@/lib/csv";
-import { excludeHeaders } from "@/lib/column-configuration";
 import { showError } from "@/lib/toast";
 import type { AnyDataRow, ShopifyCSVContainer } from "@/types/crawl";
 
@@ -12,7 +11,10 @@ const EMPTY_RESULT: ShopifyCSVContainer = { headers: [], data: [], handles: [] }
  * Owns the uploaded CSV `File` and the mechanics of parsing/downloading it.
  * The parsed result is kept as internal state and exposed via `toReactTableData`
  * (a `ShopifyCSVContainer`), for `CrawlPage` to sync into `useTableDataControl`
- * via an effect. This hook does not know about the table-control hook.
+ * via an effect. This hook does not know about the table-control hook, and
+ * does not filter headers by column configuration — `useTableDataControl`
+ * applies `include` reactively so the table/download stay in sync with the
+ * live configuration even for an already-imported CSV.
  */
 export function useCSVFile() {
   const [csvFile, setCsvFile] = useState<File | null>(null);
@@ -27,7 +29,7 @@ export function useCSVFile() {
 
           if (first) {
             const handles = Array.from(new Set<string>(results.data.map((row) => row.Handle).filter(Boolean)));
-            const headers = excludeHeaders(Object.keys(first));
+            const headers = Object.keys(first);
             setParsedResult({ headers, data: results.data as AnyDataRow[], handles });
             resolve(handles);
             return;

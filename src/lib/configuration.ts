@@ -30,16 +30,16 @@ function mergeColumnConfiguration(defaults: ColumnConfig[], saved: unknown): Col
   const savedByName = new Map(
     saved
       .filter((field): field is ColumnConfig => typeof field?.name === "string")
-      .map((field) => [field.name, field.allowOverride])
+      .map((field) => [field.name, field.include])
   );
 
   return defaults.map((field) => ({
     ...field,
-    // overrideForbidden always wins, even over a stale saved value — the
-    // user was never able to opt this column in in the first place.
-    allowOverride: field.overrideForbidden
-      ? false
-      : savedByName.has(field.name) ? Boolean(savedByName.get(field.name)) : field.allowOverride,
+    // overrideForbidden/required always win, even over a stale saved value —
+    // the user was never able to exclude this column in the first place.
+    include: field.overrideForbidden || field.required
+      ? true
+      : savedByName.has(field.name) ? Boolean(savedByName.get(field.name)) : field.include,
   }));
 }
 

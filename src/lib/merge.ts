@@ -17,13 +17,15 @@ function groupByHandle(handleColumn: string[]): Map<string, number[]> {
 }
 
 /**
- * Merge the original CSV (`origin`) with freshly fetched rows (`output`) using
- * a per-field override configuration.
+ * Merge the original CSV (`origin`) with freshly fetched rows (`output`).
  *
  * Rows are matched by Handle, then paired in order within each handle's row
  * block (master/variant rows are emitted in the same order on both sides).
- * - A field is only taken from `output` when its config says `allowOverride`
- *   AND the fetched value is non-empty; otherwise the `origin` value wins.
+ * - Every field is taken from `output` unconditionally — including empty
+ *   values — except `overrideForbidden` columns (e.g. Handle), which always
+ *   keep the `origin` value. Taking empty fetched values as-is (rather than
+ *   silently falling back to origin) is deliberate: a blank cell after
+ *   fetching signals a fetch/mapping problem instead of hiding it.
  * - Extra `output` rows beyond `origin`'s count for a handle (e.g. a new
  *   variant appeared on the live store) are appended as-is, since there is no
  *   origin row to preserve values from.
@@ -36,7 +38,7 @@ export function mergeOriginWithOutput(
   columnConfig: ColumnConfig[]
 ): { headers: string[]; data: string[][] } {
   const headers = origin.headers;
-  const allowOverrideByHeader = new Map(columnConfig.map((field) => [field.name, field.allowOverride]));
+  const overrideForbiddenByHeader = new Map(columnConfig.map((field) => [field.name, Boolean(field.overrideForbidden)]));
 
   const originHandleIndex = headers.indexOf("Handle");
 
@@ -66,9 +68,8 @@ export function mergeOriginWithOutput(
 
       const outputRow = outputRows[outputRowIndex];
       const mergedRow = headers.map((header, columnIndex) => {
-        const allowOverride = allowOverrideByHeader.get(header) ?? false;
-        const outputValue = outputRow[columnIndex] ?? "";
-        return allowOverride && outputValue !== "" ? outputValue : originRow[columnIndex];
+        const overrideForbidden = overrideForbiddenByHeader.get(header) ?? false;
+        return overrideForbidden ? originRow[columnIndex] : outputRow[columnIndex];
       });
       mergedRows.push(mergedRow);
     });

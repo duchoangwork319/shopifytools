@@ -29,17 +29,29 @@ function findAllMappedTags(haystacks, tagMap = []) {
 }
 
 /**
- * Collect Google target gender from product content.
- * @param {Object} product - Product data
- * @returns {string}
+ * Find the first matching tag from the tag map based on the haystacks,
+ * stopping at the first hit in tagMap order. Used for gender, where
+ * collecting every match is wrong — e.g. "women" contains "men" as a
+ * substring, so an all-matches search would incorrectly tag a women's
+ * product as also being a men's product. Config order (Unisex, Women, Men)
+ * establishes the priority: Unisex is checked before Women/Men, and Women
+ * is checked before Men so its match wins first.
+ * @param {string[]} haystacks - Array of strings to search within
+ * @param {Object[]} tagMap - Array of tag configurations with keywords and corresponding tags
+ * @returns {string} - The first matching tag, or "" if no match is found
  */
-export function collectGender(product) {
-  if (!product) return "";
+function findFirstMappedTag(haystacks, tagMap = []) {
+  for (const tagConfig of tagMap) {
+    const keyword = String(tagConfig?.keywords || "").toLowerCase();
+    if (!keyword || !tagConfig.tag) continue;
 
-  const lowerTags = joinLowerTags(product);
-  if (lowerTags.includes("unisex")) return "female; unisex; male";
-  if (lowerTags.includes("women")) return "female";
-  if (lowerTags.includes("men")) return "male";
+    const humanizedKeyword = keyword.replaceAll("_", " ");
+
+    if (haystacks.some((value) => value.includes(keyword) || value.includes(humanizedKeyword))) {
+      return tagConfig.tag;
+    }
+  }
+
   return "";
 }
 
@@ -56,14 +68,15 @@ export function collectTags(product, csvConfig = {}) {
   const handle = String(product.handle || "").toLowerCase();
   const title = String(product.title || "").toLowerCase();
   const description = String(product.description || "").toLowerCase();
+  const genderHaystacks = [lowerTags, handle, title];
   const haystacks = [lowerTags, handle, title, description];
   const tagGroups = csvConfig.tag || {};
 
-  const genderTags = findAllMappedTags(haystacks, tagGroups.gender);
+  const genderTag = findFirstMappedTag(genderHaystacks, tagGroups.gender);
   const activityTags = findAllMappedTags(haystacks, tagGroups.activity);
   const otherTags = findAllMappedTags(haystacks, tagGroups.other);
 
-  const uniqueTags = Array.from(new Set([...genderTags, ...activityTags, ...otherTags]));
+  const uniqueTags = Array.from(new Set([genderTag, ...activityTags, ...otherTags].filter(Boolean)));
   return uniqueTags.join(", ");
 }
 
@@ -75,7 +88,6 @@ export function collectTags(product, csvConfig = {}) {
  * @returns {Object}
  */
 export function createDerivedProductData(product, html, csvConfig = {}) {
-  const gender = collectGender(product);
   const tags = collectTags(product, csvConfig);
 
   return {
@@ -83,7 +95,6 @@ export function createDerivedProductData(product, html, csvConfig = {}) {
     _variant: null,
     _media: undefined,
     html,
-    gender,
     _tags: tags
   };
 }

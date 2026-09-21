@@ -1,287 +1,290 @@
 [
   {
     "name": "Handle",
+    "include": true,
     "overrideForbidden": true
   },
   {
     "name": "Title",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Body (HTML)",
-    "overrideDefault": true,
+    "include": true,
     "showInPreviewDialog": true
   },
   {
     "name": "Vendor",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Product Category",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Type",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Tags",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Published",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Option1 Name",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Option1 Value",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Option1 Linked To",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Option2 Name",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Option2 Value",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Option2 Linked To",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Option3 Name",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Option3 Value",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Option3 Linked To",
-    "overrideDefault": true
+    "include": true,
+    "required": true
   },
   {
     "name": "Variant SKU",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Variant Grams",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Variant Inventory Tracker",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Variant Inventory Qty",
-    "overrideDefault": false,
-    "exclude": true
+    "include": false
   },
   {
     "name": "Variant Inventory Policy",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Variant Fulfillment Service",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Variant Price",
-    "overrideDefault": false,
-    "exclude": true
+    "include": false
   },
   {
     "name": "Variant Compare At Price",
-    "overrideDefault": false,
-    "exclude": true
+    "include": false
   },
   {
     "name": "Variant Requires Shipping",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Variant Taxable",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Unit Price Total Measure",
-    "overrideDefault": false,
-    "exclude": true
+    "include": false
   },
   {
     "name": "Unit Price Total Measure Unit",
-    "overrideDefault": false,
-    "exclude": true
+    "include": false
   },
   {
     "name": "Unit Price Base Measure",
-    "overrideDefault": false,
-    "exclude": true
+    "include": false
   },
   {
     "name": "Unit Price Base Measure Unit",
-    "overrideDefault": false,
-    "exclude": true
+    "include": false
   },
   {
     "name": "Variant Barcode",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Image Src",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Image Position",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Image Alt Text",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Gift Card",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "SEO Title",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "SEO Description",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Google Product Category",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Gender",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Age Group",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / MPN",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Condition",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Custom Product",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Custom Label 0",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Custom Label 1",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Custom Label 2",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Custom Label 3",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Google Shopping / Custom Label 4",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Badge Label (product.metafields.bwp_fields.badge_label)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Bundle (product.metafields.bwp_fields.bundle)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Size Chart (product.metafields.bwp_fields.size_chart)",
-    "overrideDefault": false,
-    "exclude": true
+    "include": false
   },
   {
     "name": "Google: Custom Product (product.metafields.mm-google-shopping.custom_product)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Product rating count (product.metafields.reviews.rating_count)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Accessory size (product.metafields.shopify.accessory-size)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Activity (product.metafields.shopify.activity)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Age group (product.metafields.shopify.age-group)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Color (product.metafields.shopify.color-pattern)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Fabric (product.metafields.shopify.fabric)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Target gender (product.metafields.shopify.target-gender)",
-    "overrideDefault": false
+    "include": true
   },
   {
     "name": "Complementary products (product.metafields.shopify--discovery--product_recommendation.complementary_products)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Related products (product.metafields.shopify--discovery--product_recommendation.related_products)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Related products settings (product.metafields.shopify--discovery--product_recommendation.related_products_display)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Search product boosts (product.metafields.shopify--discovery--product_search_boost.queries)",
-    "overrideDefault": false
+    "include": false
   },
   {
     "name": "Variant Image",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Variant Weight Unit",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Variant Tax Code",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Cost per item",
-    "overrideDefault": true
+    "include": true
   },
   {
     "name": "Status",
-    "overrideDefault": true
+    "include": true
   }
 ]

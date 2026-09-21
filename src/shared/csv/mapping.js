@@ -34,6 +34,21 @@ function mapEmpty() {
   return "";
 }
 
+/**
+ * Derive a Google-Shopping-style gender value from the product's collected
+ * tags (Unisex/Women/Men, set by `collectTags`). Unisex maps to all three
+ * genders per Google's schema; Women/Men map to a single value.
+ * @param {string} tags - Comma-separated tag list (product._tags)
+ * @returns {string}
+ */
+function genderFromTags(tags) {
+  const tagList = String(tags || "").split(",").map((tag) => tag.trim().toLowerCase());
+  if (tagList.includes("unisex")) return "female; unisex; male";
+  if (tagList.includes("women")) return "female";
+  if (tagList.includes("men")) return "male";
+  return "";
+}
+
 function mapHandle(p, isMaster, isMediaOnly, { handleSuffix }) {
   let handle = (p.handle || (p.url && p.url.split("/").pop()) || "");
   if (typeof handleSuffix === "string" && handleSuffix) {
@@ -212,12 +227,12 @@ function mapSeoDescription(p, isMaster, isMediaOnly) {
 
 function mapGoogleShoppingGender(p, isMaster, isMediaOnly) {
   if (isMediaOnly) return "";
-  return isMaster && has(p, "gender") ? p.gender : "";
+  return isMaster ? genderFromTags(p._tags) : "";
 }
 
 function mapTargetGender(p, isMaster, isMediaOnly) {
   if (isMediaOnly) return "";
-  return isMaster && has(p, "gender") ? p.gender : "";
+  return isMaster ? genderFromTags(p._tags) : "";
 }
 
 function mapVariantImage(p, isMaster, isMediaOnly) {
