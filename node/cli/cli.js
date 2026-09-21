@@ -7,6 +7,7 @@ import * as toCsv from "./toCsv.js";
 import * as filter from "./filter.js";
 import * as mapToJSON from "./mapToJSON.js";
 import * as fetchCmd from "./fetch.js";
+import * as mapTagGender from "./mapTagGender.js";
 
 const program = new Command();
 
@@ -54,6 +55,14 @@ program
   .option("--only <columns>", "Comma-separated column names to output, in addition to overrideForbidden/required columns which are always included, for example: \"Tags, Image Src\"")
   .action((originCsv, options) => {
     fetchCmd.doAction(originCsv, options);
+  });
+
+program
+  .command("map-tag-gender <originCsv>")
+  .description("Regenerate the Tags and gender columns from an origin CSV, without fetching from a store")
+  .requiredOption("-o, --output <path>", "Output path for the result CSV file, for example: ./output/tagged.csv")
+  .action((originCsv, options) => {
+    mapTagGender.doAction(originCsv, options);
   });
 
 program
