@@ -45,13 +45,10 @@ program
 
 program
   .command("fetch <originCsv>")
-  .description("Fetch the latest product data from a Shopify store for handles in a CSV file, merging into a new CSV (same behavior as the web app's Fetch)")
+  .description("Fetch the latest product data for handles in a CSV file from a store (or a local product data folder), merging into a new CSV (same behavior as the web app's Fetch)")
   .requiredOption("-o, --output <path>", "Output path for the merged CSV file, for example: ./output/merged.csv")
-  .requiredOption("-s, --store-origin <url>", "Shopify store origin URL, e.g. https://examplestore.com")
-  .option("--publish-products", "Mark products as published and active after fetching", false)
-  .option("--inventory-policy-continue", "Allow continued selling when out of stock", false)
-  .option("--handle-suffix <suffix>", "Suffix to append to product handles after fetching", "")
-  .option("--append-tags <tags>", "Comma-separated tags to append to every product", "")
+  .option("-s, --store-origin <url>", "Shopify store origin URL, e.g. https://examplestore.com")
+  .option("-L, --local-source <path>", "Path to a local product data folder (JSON + HTML pairs downloaded by the sitemap command) to read from instead of fetching from a store. Takes priority over --store-origin when both are set.")
   .option("--only <columns>", "Comma-separated column names to output, in addition to overrideForbidden/required columns which are always included, for example: \"Tags, Image Src\"")
   .action((originCsv, options) => {
     fetchCmd.doAction(originCsv, options);

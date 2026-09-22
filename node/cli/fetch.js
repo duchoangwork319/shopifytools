@@ -68,12 +68,12 @@ function buildProductUrl(storeOrigin, handle) {
 }
 
 /**
- * Fetch a product's JSON and HTML from the storefront. Pure I/O.
+ * Fetch a product's JSON and HTML from the storefront over the network.
  * @param {string} handle - Product handle
  * @param {string} storeOrigin - Store origin URL
- * @returns {Promise<{ handle: string, product: Object, htmlDocument: string }>}
+ * @returns {Promise<{ handle: string, product: Object, htmlDocument: import("cheerio").CheerioAPI }>}
  */
-async function fetchProduct(handle, storeOrigin) {
+async function fetchProductRemote(handle, storeOrigin) {
   const productUrl = buildProductUrl(storeOrigin, handle);
   const [jsonResponse, htmlResponse] = await Promise.all([
     fetch(`${productUrl}.js`),
@@ -96,8 +96,34 @@ async function fetchProduct(handle, storeOrigin) {
 }
 
 /**
+ * Read a product's JSON and HTML from a local folder previously downloaded
+ * by the `sitemap` command (one `<handle>.json` + `<handle>.html` pair per
+ * product). Pure disk I/O — no network involved.
+ * @param {string} handle - Product handle
+ * @param {string} sourceDir - Local product data folder
+ * @returns {{ handle: string, product: Object, htmlDocument: import("cheerio").CheerioAPI }}
+ */
+function readProductLocal(handle, sourceDir) {
+  const jsonPath = path.join(sourceDir, `${handle}.json`);
+  const htmlPath = path.join(sourceDir, `${handle}.html`);
+
+  if (!existsSync(jsonPath)) {
+    throw new Error(`Local product JSON not found: ${jsonPath}`);
+  }
+  if (!existsSync(htmlPath)) {
+    throw new Error(`Local product HTML not found: ${htmlPath}`);
+  }
+
+  const product = JSON.parse(readFileSync(jsonPath, "utf8"));
+  const html = readFileSync(htmlPath, "utf8");
+  const htmlDocument = cheerio.load(sanityHtml(html) || "");
+
+  return { handle, product, htmlDocument };
+}
+
+/**
  * Build CSV rows (as header-keyed objects) from an already-fetched product.
- * Pure data transform — no network I/O.
+ * Pure data transform — no I/O.
  */
 function buildProductData(fetched, headers, options) {
   const mainMap = buildMainMap(headers);
@@ -114,30 +140,8 @@ function buildProductData(fetched, headers, options) {
 }
 
 /**
- * Fetch every handle, continuing past individual failures instead of
- * aborting the whole batch. Failed handles are collected (not silently
- * dropped); successfully fetched rows are kept.
+ * Group row indices by their Handle value, preserving first-seen order.
  */
-async function fetchAllProducts(handles, storeOrigin, headers, options) {
-  const outputData = [];
-  const errors = [];
-
-  for (const handle of handles) {
-    console.log(`Fetching handle: ${handle}`);
-    try {
-      const fetched = await fetchProduct(handle, storeOrigin);
-      const rows = buildProductData(fetched, headers, options);
-      outputData.push(...rows);
-    } catch (error) {
-      console.error(`✗ Failed to fetch ${handle}: ${error.message}`);
-      errors.push({ handle, message: error.message });
-    }
-    await sleep(SLEEP_MS_DURING_FETCH);
-  }
-
-  return { data: outputData, errors };
-}
-
 function groupByHandle(rows) {
   const groups = new Map();
   rows.forEach((row, index) => {
@@ -153,39 +157,32 @@ function groupByHandle(rows) {
 }
 
 /**
- * Merge the origin CSV rows with freshly fetched rows, mirroring the web
- * app's `mergeOriginWithOutput`: every included column always takes the
- * fetched value (even if empty), except `overrideForbidden` columns, which
- * always keep the origin value.
+ * Merge one product's origin CSV rows with its freshly fetched rows,
+ * mirroring the web app's `mergeOriginWithOutput`: every included column
+ * always takes the fetched value (even if empty), except `overrideForbidden`
+ * columns, which always keep the origin value. Scoped to a single handle so
+ * each product's rows can be merged and written immediately, rather than
+ * accumulating every product's rows in memory before merging/writing.
  */
-function mergeOriginWithOutput(originRows, outputRows, headers, overrideForbiddenHeaders) {
-  const originGroups = groupByHandle(originRows);
-  const outputGroups = groupByHandle(outputRows);
+function mergeHandleRows(originRows, outputRows, headers, overrideForbiddenHeaders) {
   const merged = [];
 
-  for (const [handle, originIndices] of originGroups) {
-    const outputIndices = outputGroups.get(handle) ?? [];
+  originRows.forEach((originRow, position) => {
+    const outputRow = outputRows[position];
 
-    originIndices.forEach((originRowIndex, position) => {
-      const originRow = originRows[originRowIndex];
-      const outputRowIndex = outputIndices[position];
+    if (!outputRow) {
+      merged.push(headers.map((header) => originRow[header] ?? ""));
+      return;
+    }
 
-      if (outputRowIndex === undefined) {
-        merged.push(headers.map((header) => originRow[header] ?? ""));
-        return;
-      }
+    merged.push(headers.map((header) =>
+      overrideForbiddenHeaders.has(header) ? (originRow[header] ?? "") : (outputRow[header] ?? "")
+    ));
+  });
 
-      const outputRow = outputRows[outputRowIndex];
-      merged.push(headers.map((header) =>
-        overrideForbiddenHeaders.has(header) ? (originRow[header] ?? "") : (outputRow[header] ?? "")
-      ));
-    });
-
-    if (outputIndices.length > originIndices.length) {
-      for (let i = originIndices.length; i < outputIndices.length; i++) {
-        const outputRow = outputRows[outputIndices[i]];
-        merged.push(headers.map((header) => outputRow[header] ?? ""));
-      }
+  if (outputRows.length > originRows.length) {
+    for (let i = originRows.length; i < outputRows.length; i++) {
+      merged.push(headers.map((header) => outputRows[i][header] ?? ""));
     }
   }
 
@@ -196,31 +193,61 @@ async function processFetch(originCsvPath, options) {
   const { data: originData, handles } = readOriginCsv(originCsvPath);
   const headers = options.only ? getOnlyHeaders(options.only) : getIncludedHeaders();
   const overrideForbiddenHeaders = getOverrideForbiddenHeaders();
+  const originGroups = groupByHandle(originData);
 
-  let targetHandles = handles;
-  if (options.handleSuffix) {
-    const re = new RegExp(`${options.handleSuffix}$`, "g");
-    targetHandles = targetHandles.map((handle) => (re.test(handle) ? handle.replace(re, "") : handle));
-  }
+  // --local-source takes priority over --store-origin when both are set.
+  const usingLocalSource = Boolean(options.localSource);
+  const getProduct = usingLocalSource
+    ? (handle) => readProductLocal(handle, options.localSource)
+    : (handle) => fetchProductRemote(handle, options.storeOrigin);
 
-  console.log(`Fetching ${targetHandles.length} product(s) from ${options.storeOrigin}...`);
+  console.log(
+    usingLocalSource
+      ? `Reading ${handles.length} product(s) from local source: ${options.localSource}...`
+      : `Fetching ${handles.length} product(s) from ${options.storeOrigin}...`
+  );
 
-  const { data: outputData, errors } = await fetchAllProducts(targetHandles, options.storeOrigin, headers, options);
-
-  if (errors.length > 0) {
-    console.warn(`\n⚠ ${errors.length} handle(s) failed to fetch:`);
-    errors.forEach((error) => console.warn(`  - ${error.handle}: ${error.message}`));
-  }
-
-  const mergedRows = mergeOriginWithOutput(originData, outputData, headers, overrideForbiddenHeaders);
-
+  // append:false (the default) truncates any existing file on the writer's
+  // first writeRecords() call; every call after that appends without
+  // re-writing the header, so rows are streamed out per-product instead of
+  // accumulating the whole result in memory.
   const csvWriter = createArrayCsvWriter({
     header: headers,
     path: options.output,
   });
-  await csvWriter.writeRecords(mergedRows);
 
-  console.log(`\n✓ Wrote ${mergedRows.length} row(s) to ${options.output}`);
+  const errors = [];
+  let totalRows = 0;
+
+  for (const handle of handles) {
+    console.log(`Processing handle: ${handle}`);
+    const originIndices = originGroups.get(handle) ?? [];
+    const originRowsForHandle = originIndices.map((index) => originData[index]);
+    let outputRowsForHandle = [];
+
+    try {
+      const fetched = await getProduct(handle);
+      outputRowsForHandle = buildProductData(fetched, headers, options);
+    } catch (error) {
+      console.error(`✗ Failed to process ${handle}: ${error.message}`);
+      errors.push({ handle, message: error.message });
+    }
+
+    const mergedRowsForHandle = mergeHandleRows(originRowsForHandle, outputRowsForHandle, headers, overrideForbiddenHeaders);
+    await csvWriter.writeRecords(mergedRowsForHandle);
+    totalRows += mergedRowsForHandle.length;
+
+    if (!usingLocalSource) {
+      await sleep(SLEEP_MS_DURING_FETCH);
+    }
+  }
+
+  if (errors.length > 0) {
+    console.warn(`\n⚠ ${errors.length} handle(s) failed:`);
+    errors.forEach((error) => console.warn(`  - ${error.handle}: ${error.message}`));
+  }
+
+  console.log(`\n✓ Wrote ${totalRows} row(s) to ${options.output}`);
 }
 
 export function doAction(originCsv, options) {
@@ -230,27 +257,36 @@ export function doAction(originCsv, options) {
     process.exit(1);
   }
 
-  let storeOrigin;
-  try {
-    storeOrigin = new URL(options.storeOrigin).origin;
-  } catch (error) {
-    console.error(`✗ Invalid store origin URL: ${options.storeOrigin}`);
+  if (!options.localSource && !options.storeOrigin) {
+    console.error("✗ Either --local-source or --store-origin is required.");
     process.exit(1);
   }
 
-  const only = options.only
-    ? String(options.only).split(",").map((name) => name.trim()).filter(Boolean)
-    : null;
-
   const resolvedOptions = {
     output: path.resolve(options.output),
-    storeOrigin,
-    publishProducts: Boolean(options.publishProducts),
-    inventoryPolicyContinue: Boolean(options.inventoryPolicyContinue),
-    handleSuffix: options.handleSuffix || "",
-    appendTags: options.appendTags || "",
-    only,
+    only: options.only
+      ? String(options.only).split(",").map((name) => name.trim()).filter(Boolean)
+      : null,
   };
+
+  if (options.localSource) {
+    if (options.storeOrigin) {
+      console.log("Both --local-source and --store-origin were provided; --local-source takes priority.");
+    }
+
+    resolvedOptions.localSource = path.resolve(options.localSource);
+    if (!existsSync(resolvedOptions.localSource)) {
+      console.error(`✗ Local source folder does not exist: ${resolvedOptions.localSource}`);
+      process.exit(1);
+    }
+  } else {
+    try {
+      resolvedOptions.storeOrigin = new URL(options.storeOrigin).origin;
+    } catch (error) {
+      console.error(`✗ Invalid store origin URL: ${options.storeOrigin}`);
+      process.exit(1);
+    }
+  }
 
   processFetch(resolvedSource, resolvedOptions).catch((error) => {
     console.error("Fatal error:", error);
