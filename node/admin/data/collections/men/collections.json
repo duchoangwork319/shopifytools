@@ -5,8 +5,16 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -17,8 +25,16 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -29,8 +45,16 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -40,9 +64,21 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Triathlon"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -52,10 +88,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Tri Suit" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Triathlon"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Tri Suit"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -65,10 +117,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Tri Shorts" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Triathlon"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Tri Shorts"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -78,10 +146,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
-        { "column": "TITLE", "relation": "CONTAINS", "condition": "Race Belt" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Triathlon"
+        },
+        {
+          "column": "TITLE",
+          "relation": "CONTAINS",
+          "condition": "Race Belt"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -91,10 +175,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Triathlon" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Triathlon"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Accessories"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -104,9 +204,21 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Cycling"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -116,10 +228,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Jersey" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Cycling"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Jersey"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -129,10 +257,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Bib Shorts" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Cycling"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Bib Shorts"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -142,10 +286,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
-        { "column": "TITLE", "relation": "CONTAINS", "condition": "Suit" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Cycling"
+        },
+        {
+          "column": "TITLE",
+          "relation": "CONTAINS",
+          "condition": "Suit"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -155,10 +315,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
-        { "column": "TITLE", "relation": "CONTAINS", "condition": "Shoe" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Cycling"
+        },
+        {
+          "column": "TITLE",
+          "relation": "CONTAINS",
+          "condition": "Shoe"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -168,10 +344,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Cycling" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Cycling"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Accessories"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -181,9 +373,21 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Running"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -193,10 +397,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "T-Shirt" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Running"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "T-Shirt"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -206,10 +426,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Tights" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Running"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Tights"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -219,10 +455,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
-        { "column": "TITLE", "relation": "CONTAINS", "condition": "Race Belt" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Running"
+        },
+        {
+          "column": "TITLE",
+          "relation": "CONTAINS",
+          "condition": "Race Belt"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -232,10 +484,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Running" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Accessories" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Running"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Accessories"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -245,9 +513,21 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Training"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -257,10 +537,26 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "T-Shirt" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Training"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "T-Shirt"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   },
@@ -270,10 +566,160 @@
     "ruleSet": {
       "appliedDisjunctively": false,
       "rules": [
-        { "column": "TAG", "relation": "EQUALS", "condition": "Men" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Training" },
-        { "column": "TAG", "relation": "EQUALS", "condition": "Tights" },
-        { "column": "TAG", "relation": "NOT_EQUALS", "condition": "Preorder" }
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Training"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Tights"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Men's",
+    "handle": "men-1",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Men's Featured",
+    "handle": "mens-featured",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Men's Triathlon",
+    "handle": "mens-triathlon",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Triathlon"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Men's Cycling",
+    "handle": "mens-cycling",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Cycling"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Men's Running",
+    "handle": "mens-running",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Running"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Men's Training",
+    "handle": "mens-training",
+    "ruleSet": {
+      "appliedDisjunctively": false,
+      "rules": [
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Men"
+        },
+        {
+          "column": "TAG",
+          "relation": "EQUALS",
+          "condition": "Training"
+        },
+        {
+          "column": "TAG",
+          "relation": "NOT_EQUALS",
+          "condition": "Preorder"
+        }
       ]
     }
   }
