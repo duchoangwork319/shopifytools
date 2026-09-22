@@ -1,5 +1,7 @@
 "use strict";
 
+import { buildBodyDescription, buildMetaTags } from "./html.js";
+
 function joinLowerTags(product) {
   if (!product) return "";
   return Array.isArray(product.tags) ? product.tags.join(";").toLowerCase() : "";
@@ -75,26 +77,38 @@ export function collectTags(product, csvConfig = {}) {
   const genderTag = findFirstMappedTag(genderHaystacks, tagGroups.gender);
   const activityTags = findAllMappedTags(haystacks, tagGroups.activity);
   const otherTags = findAllMappedTags(haystacks, tagGroups.other);
+  const unisexTag = findFirstMappedTag(haystacks, tagGroups.unisex);
 
-  const uniqueTags = Array.from(new Set([genderTag, ...activityTags, ...otherTags].filter(Boolean)));
+  const uniqueTags = Array.from(new Set([genderTag, unisexTag, ...activityTags, ...otherTags].filter(Boolean)));
   return uniqueTags.join(", ");
 }
 
 /**
- * Prepare shared derived fields used by CSV row generation.
+ * Prepare shared derived fields used by CSV row generation. `buildBodyDescription`
+ * and `buildMetaTags` are run once here (rather than lazily inside each
+ * column mapper in mapping.js), so their output is available up front and
+ * can also feed `collectTags` — the cleaned body description is a better
+ * haystack for tag keyword matching than the raw, unprocessed product
+ * description.
  * @param {Object} product - Product data
- * @param {import("cheerio").CheerioAPI|null|undefined} html - Cheerio API instance
+ * @param {import("cheerio").CheerioAPI|Document|null|undefined} html - Parsed HTML
  * @param {Object} csvConfig - CSV config containing tag groups
  * @returns {Object}
  */
 export function createDerivedProductData(product, html, csvConfig = {}) {
-  const tags = collectTags(product, csvConfig);
+  const bodyDescription = buildBodyDescription(html, product) || "";
+  const joinDescription = [bodyDescription, product.description].filter(Boolean).join(" ");
+  const metaTags = buildMetaTags(html);
+  const tags = collectTags({ ...product, description: joinDescription }, csvConfig);
 
   return {
     ...product,
     _variant: null,
     _media: undefined,
     html,
-    _tags: tags
+    _tags: tags,
+    _bodyDescription: bodyDescription,
+    _seoTitle: metaTags.title || "",
+    _seoDescription: metaTags.description || ""
   };
 }

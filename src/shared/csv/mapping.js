@@ -1,7 +1,5 @@
 "use strict";
 
-import { buildBodyDescription, buildMetaTags } from "./html.js";
-
 function fmtPrice(v) {
   return (v === null || v === undefined || v === "") ? "" : (Number(v) / 100).toFixed(2);
 }
@@ -65,7 +63,7 @@ function mapTitle(p, isMaster, isMediaOnly) {
 
 function mapBodyHtml(p, isMaster, isMediaOnly) {
   if (isMediaOnly) return "";
-  return isMaster ? (buildBodyDescription(p.html, p) || p.description || "") : "";
+  return isMaster ? (p._bodyDescription || "") : "";
 }
 
 function mapVendor(p, isMaster, isMediaOnly) {
@@ -214,15 +212,13 @@ function mapGiftCard(p, isMaster, isMediaOnly) {
 function mapSeoTitle(p, isMaster, isMediaOnly) {
   if (isMediaOnly) return "";
   if (!isMaster) return "";
-  const metaTags = buildMetaTags(p.html);
-  return metaTags.title || "";
+  return p._seoTitle || "";
 }
 
 function mapSeoDescription(p, isMaster, isMediaOnly) {
   if (isMediaOnly) return "";
   if (!isMaster) return "";
-  const metaTags = buildMetaTags(p.html);
-  return metaTags.description || "";
+  return p._seoDescription || "";
 }
 
 function mapGoogleShoppingGender(p, isMaster, isMediaOnly) {

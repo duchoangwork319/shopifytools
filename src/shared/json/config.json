@@ -1,11 +1,13 @@
 {
   "csv": {
     "tag": {
-      "gender": [
+      "unisex": [
         {
           "tag": "Unisex",
           "keywords": "unisex"
-        },
+        }
+      ],
+      "gender": [
         {
           "tag": "Women",
           "keywords": "women"
