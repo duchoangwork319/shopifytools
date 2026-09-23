@@ -74,12 +74,12 @@ export function collectTags(product, csvConfig = {}) {
   const haystacks = [lowerTags, handle, title, description];
   const tagGroups = csvConfig.tag || {};
 
-  const genderTag = findFirstMappedTag(genderHaystacks, tagGroups.gender);
+  const unisexTag = findFirstMappedTag(haystacks, tagGroups.unisex);
+  const genderTag = unisexTag ? ["Unisex", "Women", "Men"] : [findFirstMappedTag(genderHaystacks, tagGroups.gender)];
   const activityTags = findAllMappedTags(haystacks, tagGroups.activity);
   const otherTags = findAllMappedTags(haystacks, tagGroups.other);
-  const unisexTag = findFirstMappedTag(haystacks, tagGroups.unisex);
 
-  const uniqueTags = Array.from(new Set([genderTag, unisexTag, ...activityTags, ...otherTags].filter(Boolean)));
+  const uniqueTags = Array.from(new Set([...genderTag, ...activityTags, ...otherTags].filter(Boolean)));
   return uniqueTags.join(", ");
 }
 
