@@ -1,6 +1,21 @@
 "use strict";
 
 import { buildBodyDescription, buildMetaTags } from "./html.js";
+import productTagOverrides from "../json/productTagOverrides.json" with { type: "json" };
+
+/**
+ * Some products have title/description text that the keyword matcher gets
+ * wrong (e.g. "TEMPO! PRO Shield Torso" keeps matching "jersey" despite not
+ * being one, or "Cycling Training Jersey" incidentally matches "tights").
+ * For these known handles, use the hardcoded, known-correct tag list
+ * instead of the keyword-matched result.
+ * @param {string} handle - Product handle
+ * @param {string[]} tags - Tags collected from keyword matching
+ * @returns {string[]}
+ */
+function applyTagOverrides(handle, tags) {
+  return productTagOverrides[handle] || tags;
+}
 
 function joinLowerTags(product) {
   if (!product) return "";
@@ -80,7 +95,7 @@ export function collectTags(product, csvConfig = {}) {
   const otherTags = findAllMappedTags(haystacks, tagGroups.other);
 
   const uniqueTags = Array.from(new Set([...genderTag, ...activityTags, ...otherTags].filter(Boolean)));
-  return uniqueTags.join(", ");
+  return applyTagOverrides(handle, uniqueTags).join(", ");
 }
 
 /**

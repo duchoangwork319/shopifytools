@@ -6,9 +6,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -25,9 +25,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -44,9 +44,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -63,9 +63,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -87,9 +87,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -111,9 +111,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -130,9 +130,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -154,9 +154,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -178,9 +178,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -202,9 +202,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TAG",
@@ -221,9 +221,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TYPE",
@@ -255,9 +255,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TITLE",
@@ -279,9 +279,9 @@
       "appliedDisjunctively": false,
       "rules": [
         {
-          "column": "VARIANT_COMPARE_AT_PRICE",
-          "relation": "GREATER_THAN",
-          "condition": "0"
+          "column": "IS_PRICE_REDUCED",
+          "relation": "IS_SET",
+          "condition": ""
         },
         {
           "column": "TYPE",
