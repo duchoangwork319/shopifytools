@@ -1,9 +1,7 @@
-// list-smart-collections-with-rules.js
-import fetch from 'node-fetch';
-import 'dotenv/config';
-
-const SHOP = process.env.SHOPIFY_SHOP;
-const ACCESS_TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+// query-collections.mjs
+// Library: lists "smart" collections (those with a non-null ruleSet) from
+// the Admin GraphQL API, paging through all collections.
+import { graphqlRequest } from './lib/api-client.mjs';
 
 const LIST_COLLECTIONS_WITH_RULES_QUERY = `
   query ListCollectionsWithRules($first: Int!, $after: String) {
@@ -31,42 +29,25 @@ const LIST_COLLECTIONS_WITH_RULES_QUERY = `
   }
 `;
 
-async function fetchCollectionsPage(first = 50, after = null) {
-  const endpoint = `https://${SHOP}/admin/api/2026-04/graphql.json`;
-
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': ACCESS_TOKEN,
-    },
-    body: JSON.stringify({
-      query: LIST_COLLECTIONS_WITH_RULES_QUERY,
-      variables: { first, after },
-    }),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`HTTP ${response.status}: ${text}`);
-  }
-
-  const json = await response.json();
+export async function fetchCollectionsPage(client, first = 50, after = null) {
+  const json = await graphqlRequest(client, LIST_COLLECTIONS_WITH_RULES_QUERY, { first, after });
   if (json.errors) {
     console.error('GraphQL errors:', JSON.stringify(json.errors, null, 2));
   }
   return json.data.collections;
 }
 
-async function run() {
+// Pages through all collections and returns only those with a non-null
+// ruleSet ("smart" collections).
+export async function listSmartCollections({ client }) {
+  const smartCollections = [];
   let after = null;
   let page = 1;
 
   do {
     console.log(`Fetching page ${page}...`);
-    const collections = await fetchCollectionsPage(50, after);
+    const collections = await fetchCollectionsPage(client, 50, after);
 
-    // “Smart” collections = those with a non-null ruleSet
     collections.edges
       .filter(({ node }) => node.ruleSet !== null)
       .forEach(({ node }) => {
@@ -76,15 +57,13 @@ async function run() {
         console.log(`Title:  ${node.title}`);
         console.log('Rule set:');
         console.dir(node.ruleSet, { depth: null });
+        smartCollections.push(node);
       });
 
     const lastEdge = collections.edges[collections.edges.length - 1];
     after = collections.pageInfo.hasNextPage && lastEdge ? lastEdge.cursor : null;
     page += 1;
   } while (after);
-}
 
-run().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+  return smartCollections;
+}
