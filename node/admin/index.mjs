@@ -16,6 +16,7 @@ import { queryCollectionsWildcard } from './query-collections-wildcard.mjs';
 import { createMenus } from './create-menus.mjs';
 import { createPages } from './create-pages.mjs';
 import { queryPages } from './query-pages.mjs';
+import { updatePages } from './update-pages.mjs';
 
 loadEnv();
 
@@ -157,9 +158,25 @@ page
     if (result.failed) process.exitCode = 1;
   });
 
-page.command('update <file>').description('not implemented yet').action(() => {
-  console.log('page update: not implemented yet');
-});
+page
+  .command('update <source>')
+  .description(
+    'update page(s) from <source>/store.json. Narrows to one handle with -d, or to ' +
+    'titles matching a pattern with -t; updates everything in store.json if neither is given.',
+  )
+  .option('-t, --title <pattern>', 'match pages by title - a full title, a wildcard (*, ?), or a /regex/flags')
+  .option('-d, --handle <handle>', 'match a page by its exact, existing handle')
+  .action(async (source, opts, cmd) => {
+    const client = clientFromCommand(cmd);
+    const sourceDir = path.resolve(source);
+    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+      console.error(`Source must be an existing directory: ${sourceDir}`);
+      process.exitCode = 1;
+      return;
+    }
+    const result = await updatePages({ client, sourceDir, title: opts.title, handle: opts.handle });
+    if (result.failed) process.exitCode = 1;
+  });
 
 page
   .command('query <source> [handles]')
