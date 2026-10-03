@@ -150,7 +150,7 @@ page
     'create page(s) from an .html file, or every *.html file in a directory. ' +
     'Skips handles already recorded in store.json next to <source>.',
   )
-  .option('-d, --dry-run', 'log what would be created without calling the API or writing store.json', false)
+  .option('--dry-run', 'log what would be created without calling the API or writing store.json', false)
   .action(async (source, opts, cmd) => {
     const client = clientFromCommand(cmd);
     const resolvedSource = path.resolve(source);
@@ -166,6 +166,7 @@ page
   )
   .option('-t, --title <pattern>', 'match pages by title - a full title, a wildcard (*, ?), or a /regex/flags')
   .option('-d, --handle <handle>', 'match a page by its exact, existing handle')
+  .option('--dry-run', 'log what would be updated without calling the API', false)
   .action(async (source, opts, cmd) => {
     const client = clientFromCommand(cmd);
     const sourceDir = path.resolve(source);
@@ -174,7 +175,7 @@ page
       process.exitCode = 1;
       return;
     }
-    const result = await updatePages({ client, sourceDir, title: opts.title, handle: opts.handle });
+    const result = await updatePages({ client, sourceDir, title: opts.title, handle: opts.handle, dryRun: opts.dryRun });
     if (result.failed) process.exitCode = 1;
   });
 

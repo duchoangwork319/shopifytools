@@ -84,7 +84,7 @@ export function selectEntries(store, { title, handle } = {}) {
 // via `title`/`handle`, and updates each matched page's title/body. Every
 // selected entry's bodyFilePath must exist on disk - if a store.json record
 // points to a missing file, this exits before updating anything.
-export async function updatePages({ client, sourceDir, title, handle }) {
+export async function updatePages({ client, sourceDir, title, handle, dryRun = false }) {
   const storeFile = path.resolve(sourceDir, 'store.json');
   if (!fs.existsSync(storeFile)) {
     console.error(`Missing store.json in ${sourceDir}. Run "page query" or "page create" first.`);
@@ -105,6 +105,12 @@ export async function updatePages({ client, sourceDir, title, handle }) {
   let failed = 0;
 
   for (const entry of entries) {
+    if (dryRun) {
+      console.log(`[dry run] Would update page "${entry.title}" (${entry.handle}) from ${entry.bodyFilePath}.`);
+      updated += 1;
+      continue;
+    }
+
     const remotePage = await fetchPageByHandle(client, entry.handle);
     if (!remotePage) {
       console.error(`No page found on Shopify for handle "${entry.handle}" - skipping.`);
