@@ -45,3 +45,17 @@ export function chunk(items, size) {
   }
   return chunks;
 }
+
+function csvEscape(value) {
+  if (value === null || value === undefined) return '';
+  const str = typeof value === 'object' ? JSON.stringify(value) : String(value);
+  return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+}
+
+// Renders an array of row objects as CSV text, with one column per field in
+// `fields` (in that order), using only the given fields of each row.
+export function toCsv(rows, fields) {
+  const header = fields.map(csvEscape).join(',');
+  const lines = rows.map((row) => fields.map((field) => csvEscape(row[field])).join(','));
+  return [header, ...lines].join('\n');
+}

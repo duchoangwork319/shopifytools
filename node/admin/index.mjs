@@ -11,8 +11,8 @@ import { createAdminApiClient, loadEnv, readAuth } from './lib/api-client.mjs';
 import { resourceIdsFileFor } from './lib/io.mjs';
 import { createCollections, DEFAULT_CHUNK_SIZE as CREATE_CHUNK_SIZE, DEFAULT_DELAY_MS as CREATE_DELAY_MS } from './create-collections.mjs';
 import { updateCollections, DEFAULT_CHUNK_SIZE as UPDATE_CHUNK_SIZE, DEFAULT_DELAY_MS as UPDATE_DELAY_MS } from './update-collections.mjs';
-import { listSmartCollections } from './query-collections.mjs';
-import { queryCollectionsWildcard } from './query-collections-wildcard.mjs';
+import { queryCollections } from './query-collections.mjs';
+import { collectionsToCsv } from './to-csv-collections.mjs';
 import { createMenus } from './create-menus.mjs';
 import { createPages } from './create-pages.mjs';
 import { queryPages } from './query-pages.mjs';
@@ -99,20 +99,41 @@ collection
   });
 
 collection
-  .command('query <file> [titleWildcard]')
+  .command('query <source> [handles]')
   .description(
-    'without titleWildcard: list all smart collections (with a ruleSet). ' +
-    'with titleWildcard (e.g. "*summer*"): search by title and append new collections to <file>',
+    'fetch collection(s) by comma-separated handles, by -t/--title search (wildcard supported), ' +
+    'or all collections if neither is given, writing <source>/collections.json and ' +
+    '<source>/collection-resource-ids.json',
   )
-  .action(async (file, titleWildcard, opts, cmd) => {
+  .option('-t, --title <pattern>', 'search collections by title (wildcard supported, e.g. "*summer*")')
+  .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    if (!titleWildcard) {
-      await listSmartCollections({ client });
+    const sourceDir = path.resolve(source);
+    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+      console.error(`Source must be an existing directory: ${sourceDir}`);
+      process.exitCode = 1;
       return;
     }
-    const collectionsFile = path.resolve(file);
-    const resourceIdsFile = resourceIdsFileFor(collectionsFile);
-    await queryCollectionsWildcard({ client, collectionsFile, resourceIdsFile, titleWildcard });
+    const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
+    await queryCollections({ client, sourceDir, handles: handleList, title: opts.title });
+  });
+
+collection
+  .command('to-csv <source> [props]')
+  .description(
+    'convert <source>/collections.json to a CSV, with columns from the comma-separated ' +
+    '[props] (e.g. "handle,title"); defaults to every key on the first collection',
+  )
+  .option('-o, --output <file>', 'path to write the CSV to (default: <source>/collections.csv)')
+  .action((source, props, opts) => {
+    const sourceDir = path.resolve(source);
+    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+      console.error(`Source must be an existing directory: ${sourceDir}`);
+      process.exitCode = 1;
+      return;
+    }
+    const propList = props ? props.split(',').map((p) => p.trim()).filter(Boolean) : [];
+    collectionsToCsv({ sourceDir, props: propList, output: opts.output });
   });
 
 // ---------------------------------------------------------------------------
