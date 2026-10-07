@@ -14,6 +14,8 @@ import { updateCollections, DEFAULT_CHUNK_SIZE as UPDATE_CHUNK_SIZE, DEFAULT_DEL
 import { queryCollections } from './query-collections.mjs';
 import { collectionsToCsv } from './to-csv-collections.mjs';
 import { createMenus } from './create-menus.mjs';
+import { queryMenus } from './query-menus.mjs';
+import { updateMenus } from './update-menus.mjs';
 import { createPages } from './create-pages.mjs';
 import { queryPages } from './query-pages.mjs';
 import { updatePages } from './update-pages.mjs';
@@ -152,13 +154,38 @@ menu
     exitOnErrors(result);
   });
 
-menu.command('update <file>').description('not implemented yet').action(() => {
-  console.log('menu update: not implemented yet');
-});
+menu
+  .command('query <source> [handles]')
+  .description(
+    'fetch menu(s) by comma-separated handles, or all menus if omitted, ' +
+    'writing <source>/menus.json',
+  )
+  .action(async (source, handles, opts, cmd) => {
+    const client = clientFromCommand(cmd);
+    const sourceDir = path.resolve(source);
+    const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
+    await queryMenus({ client, sourceDir, handles: handleList });
+  });
 
-menu.command('query [file]').description('not implemented yet').action(() => {
-  console.log('menu query: not implemented yet');
-});
+menu
+  .command('update <source> [handles]')
+  .description(
+    'update menu(s) from <source>/menus.json (keyed by handle), by comma-separated ' +
+    'handles, or every entry if omitted',
+  )
+  .option('--dryrun', 'log what would be updated without calling the API', false)
+  .action(async (source, handles, opts, cmd) => {
+    const client = clientFromCommand(cmd);
+    const sourceDir = path.resolve(source);
+    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+      console.error(`Source must be an existing directory: ${sourceDir}`);
+      process.exitCode = 1;
+      return;
+    }
+    const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
+    const result = await updateMenus({ client, sourceDir, handles: handleList, dryRun: opts.dryrun });
+    if (result.failed) process.exitCode = 1;
+  });
 
 // ---------------------------------------------------------------------------
 // page
