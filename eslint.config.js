@@ -14,6 +14,7 @@ export default defineConfig([
     'src/components/ui/**',
     'src/components/flex/**',
     'src/components/*.tsx',
+    'src/hooks/use-mobile.ts'
   ]),
   {
     files: ['**/*.{ts,tsx}'],
