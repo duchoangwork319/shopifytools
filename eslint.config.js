@@ -9,6 +9,7 @@ export default defineConfig([
   globalIgnores([
     'dist',
     'web',
+    'ignore',
     // src/components is shadcn's generated library; only components/custom is ours to lint.
     'src/components/ui/**',
     'src/components/flex/**',
@@ -29,6 +30,14 @@ export default defineConfig([
     rules: {
       semi: 'off',
       '@/semi': ['error', 'always'],
+    },
+  },
+  {
+    // Doc content files intentionally pair a `*Content` component with a
+    // plain `*Article` metadata object so the registry can compose them.
+    files: ['src/content/docs/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 ])

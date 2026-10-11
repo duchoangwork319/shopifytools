@@ -14,7 +14,7 @@ import { useConfiguration } from "@/hooks/use-configuration";
 import { IconAdjustments } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
-export function CrawlPage() {
+export function ProductDataTool() {
   const { configuration, setConfiguration } = useConfiguration();
   const tableControl = useTableDataControl(configuration.columnConfiguration);
   const { setOrigin, setIncomingData } = tableControl;
