@@ -1,4 +1,4 @@
-import { DocImagePlaceholder, DocList, DocNote, DocSectionBlock } from "@/components/custom/doc-content";
+import { DocImage, DocList, DocNote, DocSectionBlock } from "@/components/custom/doc-content";
 import type { DocArticleMeta } from "@/content/docs/types";
 
 export function CollectionBreadcrumbContent() {
@@ -11,7 +11,8 @@ export function CollectionBreadcrumbContent() {
           Running" so shoppers can see where they are and get back to the
           homepage or the full catalog quickly.
         </p>
-        <DocImagePlaceholder label="the breadcrumb trail at the top of a collection page" />
+        <DocImage src="/docs/page-section-mapping/product-listing-page/chrome_zCNFwtMgdv.png" alt="the breadcrumb trail at the top of a collection page" />
+        {/* <DocImagePlaceholder label="the breadcrumb trail at the top of a collection page" /> */}
       </DocSectionBlock>
 
       <DocSectionBlock id="settings" heading="Settings">

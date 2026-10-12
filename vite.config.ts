@@ -15,7 +15,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
       xml2js: "browser-xml2js",
       "./html.js": path.resolve(process.cwd(), "./src/lib/html.js")
     },

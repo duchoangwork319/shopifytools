@@ -1,4 +1,5 @@
-import { DocImagePlaceholder, DocList, DocSectionBlock, DocSubHeading } from "@/components/custom/doc-content";
+import { Separator } from "@/components/ui/separator";
+import { DocImage, DocList, DocSectionBlock, DocSubHeading } from "@/components/custom/doc-content";
 import type { DocArticleMeta } from "@/content/docs/types";
 
 export function CollectionSubcollectionsContent() {
@@ -10,20 +11,23 @@ export function CollectionSubcollectionsContent() {
           collection page, letting shoppers jump straight to related
           collections (for example "Tri Suits", "Jerseys", "Shop all").
         </p>
-        <DocImagePlaceholder label="the category shortcut buttons below the banner" />
+        <DocImage src="/docs/section-settings-reference/collection-product-grid/chrome_UvxVa6gGj9.png" alt="the category shortcut buttons below the banner" />
+        {/* <DocImagePlaceholder label="the category shortcut buttons below the banner" /> */}
       </DocSectionBlock>
 
       <DocSectionBlock id="settings" heading="Settings">
+        <DocSubHeading>Section settings</DocSubHeading>
         <DocList>
           <li><b>Enable</b> — turns the whole row on or off.</li>
         </DocList>
-      </DocSectionBlock>
 
-      <DocSectionBlock id="activity-links" heading="Activity Links">
+        <Separator className="my-6" />
+
+        <DocSubHeading>Block settings</DocSubHeading>
         <p>
-          Add one or more of these to build the row of shortcut buttons.
+          Add one or more <b>Activity Links</b> blocks to build the row of
+          shortcut buttons.
         </p>
-        <DocSubHeading>Each set of buttons has</DocSubHeading>
         <DocList>
           <li><b>Title</b> — a tooltip shown when hovering the buttons (not visible text on the page).</li>
           <li><b>Links</b> — pick a menu (link list) whose links will be displayed as buttons, in that menu's order.</li>
@@ -33,6 +37,8 @@ export function CollectionSubcollectionsContent() {
           A button automatically appears bold/active when it points to the
           collection the shopper is currently viewing.
         </p>
+        <DocImage src="/docs/section-settings-reference/collection-product-grid/chrome_4pz4Ba4rH0.png" alt="an Activity Links block shown as shortcut buttons" />
+        {/* <DocImagePlaceholder label="an Activity Links block shown as shortcut buttons" /> */}
       </DocSectionBlock>
     </>
   );
@@ -45,6 +51,5 @@ export const collectionSubcollectionsArticle: DocArticleMeta = {
   sections: [
     { id: "where-it-appears", heading: "Where it appears" },
     { id: "settings", heading: "Settings" },
-    { id: "activity-links", heading: "Activity Links" },
   ],
 };

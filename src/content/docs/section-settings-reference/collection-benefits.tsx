@@ -1,4 +1,4 @@
-import { DocImagePlaceholder, DocList, DocSectionBlock } from "@/components/custom/doc-content";
+import { DocImage, DocList, DocSectionBlock } from "@/components/custom/doc-content";
 import type { DocArticleMeta } from "@/content/docs/types";
 
 export function CollectionBenefitsContent() {
@@ -9,7 +9,8 @@ export function CollectionBenefitsContent() {
           A simple strip at the very bottom of a collection page, highlighting
           three shopping benefits side by side.
         </p>
-        <DocImagePlaceholder label="the benefits strip at the bottom of a collection page" />
+        <DocImage src="/docs/page-section-mapping/product-listing-page/chrome_RAHWWnMq3T.png" alt="the benefits strip at the bottom of a collection page" />
+        {/* <DocImagePlaceholder label="the benefits strip at the bottom of a collection page" /> */}
       </DocSectionBlock>
 
       <DocSectionBlock id="settings" heading="Settings">

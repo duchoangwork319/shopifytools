@@ -1,10 +1,13 @@
 import {
   DocImagePlaceholder,
+  DocImage,
   DocList,
   DocSectionBlock,
   DocSubHeading,
 } from "@/components/custom/doc-content";
 import type { DocArticleMeta } from "@/content/docs/types";
+
+const ASSETS = "/docs/page-section-mapping/product-listing-page";
 
 export function ProductListingPageContent() {
   return (
@@ -18,6 +21,8 @@ export function ProductListingPageContent() {
           itself with its filter and sort panel, optional extra content, and
           a shipping/returns benefits strip.
         </p>
+        <DocImage src={`${ASSETS}/64348060-0eefb4a2f7a374fe7372a5ce9a1a9237.png`} alt="the full collection page, top to bottom" />
+        {/* <DocImagePlaceholder label="the full collection page, top to bottom" /> */}
       </DocSectionBlock>
 
       <DocSectionBlock id="breadcrumb" heading="Breadcrumb trail">
@@ -26,6 +31,8 @@ export function ProductListingPageContent() {
           Running") that helps shoppers find their way back. You can turn it
           off, change the "Home" wording, and change the separator character.
         </p>
+        <DocImage src={`${ASSETS}/chrome_zCNFwtMgdv.png`} alt="the breadcrumb trail at the top of a collection page" />
+        {/* <DocImagePlaceholder label="the breadcrumb trail at the top of a collection page" /> */}
       </DocSectionBlock>
 
       <DocSectionBlock id="banner" heading="Banner">
@@ -40,6 +47,7 @@ export function ProductListingPageContent() {
           Each set of links can be limited to show only on chosen
           collections.
         </p>
+        <DocImagePlaceholder label="the banner on a collection page" />
       </DocSectionBlock>
 
       <DocSectionBlock id="category-shortcuts" heading="Category shortcuts">
@@ -50,6 +58,7 @@ export function ProductListingPageContent() {
           buttons can be limited to specific collections, so different
           collections can show different shortcuts.
         </p>
+        <DocImagePlaceholder label="the category shortcut buttons below the banner" />
       </DocSectionBlock>
 
       <DocSectionBlock id="product-grid" heading="Product grid">
@@ -58,6 +67,7 @@ export function ProductListingPageContent() {
           what to show here — either a specific collection, or a hand-picked
           list of products — and how it looks.
         </p>
+        <DocImagePlaceholder label="the product grid on a collection page" />
         <DocSubHeading>Layout</DocSubHeading>
         <DocList>
           <li>Which product card style to use.</li>
@@ -100,6 +110,7 @@ export function ProductListingPageContent() {
           already manage elsewhere in the store, so there's nothing extra to
           set up in the page editor itself.
         </p>
+        <DocImagePlaceholder label="the extra content shown below the product grid" />
       </DocSectionBlock>
 
       <DocSectionBlock id="benefits" heading="Benefits strip">
@@ -108,7 +119,8 @@ export function ProductListingPageContent() {
           Free Returns, and Crash Replacement, each linking to the matching
           policy page in your store.
         </p>
-        <DocImagePlaceholder label="the benefits strip at the bottom of a collection page" />
+        <DocImage src={`${ASSETS}/chrome_RAHWWnMq3T.png`} alt="the benefits strip at the bottom of a collection page" />
+        {/* <DocImagePlaceholder label="the benefits strip at the bottom of a collection page" /> */}
       </DocSectionBlock>
     </>
   );

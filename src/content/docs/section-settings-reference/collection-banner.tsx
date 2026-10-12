@@ -1,3 +1,4 @@
+import { Separator } from "@/components/ui/separator";
 import { DocImagePlaceholder, DocList, DocNote, DocSectionBlock, DocSubHeading } from "@/components/custom/doc-content";
 import type { DocArticleMeta } from "@/content/docs/types";
 
@@ -14,6 +15,7 @@ export function CollectionBannerContent() {
       </DocSectionBlock>
 
       <DocSectionBlock id="settings" heading="Settings">
+        <DocSubHeading>Section settings</DocSubHeading>
         <DocList>
           <li><b>Enable</b> — turns the whole banner on or off.</li>
         </DocList>
@@ -24,14 +26,14 @@ export function CollectionBannerContent() {
           very start of the collection's description, it's used as a
           background image behind the title.
         </DocNote>
-      </DocSectionBlock>
 
-      <DocSectionBlock id="related-collection-links" heading="Related Collection Links">
+        <Separator className="my-6" />
+
+        <DocSubHeading>Block settings</DocSubHeading>
         <p>
-          Add one or more of these to show a row of quick links underneath
-          the banner.
+          Add one or more <b>Related Collection Links</b> blocks to show a row
+          of quick links underneath the banner.
         </p>
-        <DocSubHeading>Each set of links has</DocSubHeading>
         <DocList>
           <li><b>Title</b> — a tooltip shown when hovering the links (not visible text on the page).</li>
           <li><b>Links</b> — pick a menu (link list) whose links will be displayed, in that menu's order.</li>
@@ -41,6 +43,7 @@ export function CollectionBannerContent() {
           A link automatically appears bold/active when it points to the
           collection the shopper is currently viewing.
         </p>
+        <DocImagePlaceholder label="a Related Collection Links block shown under the banner" />
       </DocSectionBlock>
     </>
   );
@@ -53,6 +56,5 @@ export const collectionBannerArticle: DocArticleMeta = {
   sections: [
     { id: "where-it-appears", heading: "Where it appears" },
     { id: "settings", heading: "Settings" },
-    { id: "related-collection-links", heading: "Related Collection Links" },
   ],
 };
