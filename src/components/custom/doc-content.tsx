@@ -25,6 +25,17 @@ export function DocSubHeading({ children }: { children: React.ReactNode }) {
   return <h3 className="text-base font-semibold text-foreground">{children}</h3>;
 }
 
+const LOCAL_HOSTNAMES = new Set(["localhost", "127.0.0.1"]);
+
+function resolveDocAssetUrl(src: string) {
+  if (LOCAL_HOSTNAMES.has(window.location.hostname)) return src;
+  // The app is served from a sub-path on static hosts like GitHub Pages
+  // (e.g. /shopifytools/). With HashRouter, location.pathname always
+  // stays at that deployment root, so it doubles as the base prefix.
+  const base = window.location.pathname.replace(/\/$/, "");
+  return `${base}${src}`;
+}
+
 export function DocImage({
   src,
   alt,
@@ -34,12 +45,13 @@ export function DocImage({
   alt: string;
   caption?: string;
 }) {
+  const resolvedSrc = resolveDocAssetUrl(src);
   return (
-    <a href={src} data-fancybox data-caption={caption ?? alt} className="block mb-4">
+    <a href={resolvedSrc} data-fancybox data-caption={caption ?? alt} className="block mt-4 mb-4">
       <img
-        src={src}
+        src={resolvedSrc}
         alt={alt}
-        className="rounded-lg border object-cover max-h-[400px] w-auto"
+        className="rounded-lg border object-cover max-h-[240px] lg:max-h-[400px] w-auto"
         loading="lazy"
       />
     </a>

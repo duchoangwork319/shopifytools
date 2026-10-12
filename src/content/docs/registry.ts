@@ -37,6 +37,7 @@ import { contentSlotsArticle, ContentSlotsContent } from "@/content/docs/section
 import { pageContentArticle, PageContentContent } from "@/content/docs/section-settings-reference/page-content";
 import { themeSettingsArticle, ThemeSettingsContent } from "@/content/docs/global-theme-settings/theme-settings";
 import { customVariantArticle, CustomVariantContent } from "@/content/docs/global-theme-settings/custom-variant";
+import { mainMenuArticle, MainMenuContent } from "@/content/docs/global-theme-settings/main-menu";
 import { searchArticle, SearchContent } from "@/content/docs/operational-guidelines/search";
 import { shopifyToolsArticle, ShopifyToolsContent } from "@/content/docs/operational-guidelines/shopify-tools";
 import {
@@ -78,6 +79,7 @@ export const docCategories: DocCategory[] = [
     articles: [
       withContent(themeSettingsArticle, ThemeSettingsContent),
       withContent(customVariantArticle, CustomVariantContent),
+      withContent(mainMenuArticle, MainMenuContent),
     ],
   },
   {
