@@ -1,12 +1,13 @@
 // query-collections.mjs
 // Library: queries collections from the Admin GraphQL API - all of them
 // (paged), by exact handle(s), or by a title search (wildcard supported,
-// e.g. "*summer*"). Each collection's metafields are fetched (paged) and
-// attached as a `metafields` property.
+// e.g. "*summer*"). Each collection is written to its own
+// `<sourceDir>/<handle>.json`, enriched in place with a `metafields`
+// property fetched (paged) per collection.
 import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from './lib/api-client.mjs';
-import { writeJsonFile } from './lib/io.mjs';
+import { writeJsonFile, readJsonFileIfExists } from './lib/io.mjs';
 
 const COLLECTION_FIELDS = `
   id
@@ -196,26 +197,31 @@ export async function fetchCollectionMetafields(client, collectionId) {
   return metafields;
 }
 
-// Attaches each collection's metafields as a `metafields` property.
-// Requests run sequentially (one collection at a time) to avoid a large
-// burst of API requests.
-async function withMetafields(client, collections) {
-  const enriched = [];
-  for (const collection of collections) {
-    console.log(`Fetching metafields for "${collection.handle}"...`);
-    const metafields = await fetchCollectionMetafields(client, collection.id);
-    enriched.push({ ...collection, metafields });
-  }
-  return enriched;
+// Fetches and attaches a single collection's metafields as a `metafields`
+// property. Collections are enriched one at a time (by the caller, looping)
+// to avoid a large burst of API requests.
+async function withMetafields(client, collection) {
+  console.log(`Fetching metafields for "${collection.handle}"...`);
+  const metafields = await fetchCollectionMetafields(client, collection.id);
+  return { ...collection, metafields };
+}
+
+// Picks the fields written to each collection's JSON file.
+function toEntry({ title, handle, description, descriptionHtml, templateSuffix, seo, ruleSet, metafields }) {
+  return { title, handle, description, descriptionHtml, templateSuffix, seo, ruleSet, metafields };
 }
 
 // Fetches collections (by `handles`, by `title` search, or all of them if
-// neither is given), attaches each one's metafields, and writes
-// `<sourceDir>/collections.json`
-// ({ title, handle, description, descriptionHtml, templateSuffix, seo,
-// ruleSet, metafields }[]) and `<sourceDir>/collection-resource-ids.json`
-// ({ handle: id }). Both files are purely outputs - their existing content,
-// if any, is not read.
+// neither is given) and writes one JSON file per collection -
+// `<sourceDir>/<handle>.json` ({ title, handle, description, descriptionHtml,
+// templateSuffix, seo, ruleSet, metafields }) - plus `<sourceDir>/store.json`
+// ({ handle, title, filePath }[], appended to, never truncated) and
+// `<sourceDir>/collection-resource-ids.json` ({ handle: id }).
+//
+// Each collection's JSON file is written twice: first right after fetching
+// (without `metafields`), then again once its metafields have been fetched -
+// so a run that's interrupted mid-way still leaves usable per-collection
+// files on disk.
 export async function queryCollections({ client, sourceDir, handles, title }) {
   fs.mkdirSync(sourceDir, { recursive: true });
 
@@ -236,30 +242,28 @@ export async function queryCollections({ client, sourceDir, handles, title }) {
     collections = await fetchAllCollections(client);
   }
 
-  collections = await withMetafields(client, collections);
+  const collectionFile = (handle) => path.resolve(sourceDir, `${handle}.json`);
 
-  const collectionsFile = path.resolve(sourceDir, 'collections.json');
-  const entries = collections.map(({
-    title: collectionTitle,
-    handle,
-    description,
-    descriptionHtml,
-    templateSuffix,
-    seo,
-    ruleSet,
-    metafields,
-  }) => ({
-    title: collectionTitle,
-    handle,
-    description,
-    descriptionHtml,
-    templateSuffix,
-    seo,
-    ruleSet,
-    metafields,
-  }));
-  writeJsonFile(collectionsFile, entries);
-  console.log(`Saved ${entries.length} collection(s) to ${collectionsFile}`);
+  for (const collection of collections) {
+    writeJsonFile(collectionFile(collection.handle), toEntry(collection));
+  }
+  console.log(`Saved ${collections.length} collection JSON file(s) to ${sourceDir}`);
+
+  const storeFile = path.resolve(sourceDir, 'store.json');
+  const store = readJsonFileIfExists(storeFile, []);
+  const existingHandles = new Set(store.map((entry) => entry.handle));
+  for (const collection of collections) {
+    if (existingHandles.has(collection.handle)) continue;
+    store.push({ handle: collection.handle, title: collection.title, filePath: collectionFile(collection.handle) });
+    existingHandles.add(collection.handle);
+  }
+  writeJsonFile(storeFile, store);
+  console.log(`Saved ${store.length} collection entrie(s) to ${storeFile}`);
+
+  for (const collection of collections) {
+    const enriched = await withMetafields(client, collection);
+    writeJsonFile(collectionFile(collection.handle), toEntry(enriched));
+  }
 
   const resourceIdsFile = path.resolve(sourceDir, 'collection-resource-ids.json');
   const resourceIds = {};
@@ -269,5 +273,5 @@ export async function queryCollections({ client, sourceDir, handles, title }) {
   writeJsonFile(resourceIdsFile, resourceIds);
   console.log(`Saved ${Object.keys(resourceIds).length} collection resource ID(s) to ${resourceIdsFile}`);
 
-  return { count: entries.length };
+  return { count: collections.length };
 }
