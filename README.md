@@ -25,10 +25,10 @@ Fetch options include publishing fetched products, choosing whether inventory ca
 
 ### Product data CLI
 
-The CLI in `node/cli` fetches product data from Shopify sitemaps or storefronts and transforms Shopify product data and CSV files. Run it from the project root:
+The CLI in `scripts/cli` fetches product data from Shopify sitemaps or storefronts and transforms Shopify product data and CSV files. Run it from the project root:
 
 ```sh
-node node/cli/cli.js --help
+node scripts/cli/cli.js --help
 ```
 
 Available commands:
@@ -46,19 +46,19 @@ Examples:
 
 ```sh
 # Download product JSON files from a Shopify sitemap
-node node/cli/cli.js sitemap https://store.example.com/sitemap.xml --output ./data/products
+node scripts/cli/cli.js sitemap https://store.example.com/sitemap.xml --output ./data/products
 
 # Convert downloaded JSON files to CSV
-node node/cli/cli.js tocsv ./data/products --output ./data/products.csv
+node scripts/cli/cli.js tocsv ./data/products --output ./data/products.csv
 
 # Refresh a CSV from the storefront
-node node/cli/cli.js fetch ./data/products.csv --store-origin https://store.example.com --output ./data/refreshed.csv
+node scripts/cli/cli.js fetch ./data/products.csv --store-origin https://store.example.com --output ./data/refreshed.csv
 
 # Or refresh from previously downloaded JSON and HTML files (one pair per handle)
-node node/cli/cli.js fetch ./data/products.csv --local-source ./data/products --output ./data/refreshed.csv
+node scripts/cli/cli.js fetch ./data/products.csv --local-source ./data/products --output ./data/refreshed.csv
 
 # Keep handles matching a wildcard pattern
-node node/cli/cli.js filter ./data/products.csv --pattern "*-preorder" --output ./data/preorders.csv
+node scripts/cli/cli.js filter ./data/products.csv --pattern "*-preorder" --output ./data/preorders.csv
 ```
 
 Common options (`-o, --output` is required by every command except `filter`, which defaults to `<source>_filtered.csv`):
@@ -70,42 +70,42 @@ Common options (`-o, --output` is required by every command except `filter`, whi
 | `filter` | `-d, --handle <handles>`, `-p, --pattern <pattern>`, `-r, --regex <pattern>`, `--not-match` (inverts `--regex`); at least one of handle, pattern, or regex is required, and a row is kept if it matches any of them. |
 | `tocsv`, `map-tag-gender`, `group-to-one-json` | Only `-o, --output`. |
 
-Use `sitemap --mode html` to download HTML pages. To use the local-source `fetch` command, the source directory must contain both `<handle>.json` and `<handle>.html` for each product. `fetch --only` accepts a comma-separated list of columns; protected and required columns are included automatically. See each command's help for all options, for example `node node/cli/cli.js fetch --help`.
+Use `sitemap --mode html` to download HTML pages. To use the local-source `fetch` command, the source directory must contain both `<handle>.json` and `<handle>.html` for each product. `fetch --only` accepts a comma-separated list of columns; protected and required columns are included automatically. See each command's help for all options, for example `node scripts/cli/cli.js fetch --help`.
 
 ### Shopify Admin CLI
 
-The separate CLI in `node/admin` uses the Shopify Admin GraphQL API to query and create or update collections, create menus, and query, create, or update pages.
+The separate CLI in `scripts/admin` uses the Shopify Admin GraphQL API to query and create or update collections, create menus, and query, create, or update pages.
 
 Before running Admin API commands:
 
 1. Create `.env/.env.prd` in the project root with `SHOPIFY_SHOP`, `SHOPIFY_API_KEY`, `SHOPIFY_API_SECRET`, `SHOPIFY_SCOPES`, and `SHOPIFY_REDIRECT_URI`. `PORT` and `SHOPIFY_API_VERSION` are optional.
-2. Make sure the HTTPS certificate and key required by the local OAuth callback are available at `node/admin/cert/server.cert` and `node/admin/cert/server.key`.
+2. Make sure the HTTPS certificate and key required by the local OAuth callback are available at `scripts/admin/cert/server.cert` and `scripts/admin/cert/server.key`.
 3. Run the OAuth flow to install the app and save its access token:
 
    ```sh
-   node node/admin/auth.mjs
+   node scripts/admin/auth.mjs
    ```
 
-   The token is written to `node/admin/data/access-token.json`, which is ignored by Git.
+   The token is written to `scripts/admin/data/access-token.json`, which is ignored by Git.
 4. Inspect command options:
 
    ```sh
-   node node/admin/index.mjs --help
-   node node/admin/index.mjs collection --help
-   node node/admin/index.mjs page --help
+   node scripts/admin/index.mjs --help
+   node scripts/admin/index.mjs collection --help
+   node scripts/admin/index.mjs page --help
    ```
 
 Examples:
 
 ```sh
 # Query collections into an existing directory
-node node/admin/index.mjs collection query ./data/collections
+node scripts/admin/index.mjs collection query ./data/collections
 
 # Query selected pages into an existing directory
-node node/admin/index.mjs page query ./data/pages about-us,contact
+node scripts/admin/index.mjs page query ./data/pages about-us,contact
 
 # Preview page creation from an HTML file without making an API mutation
-node node/admin/index.mjs page create ./data/pages/about-us.html --dry-run
+node scripts/admin/index.mjs page create ./data/pages/about-us.html --dry-run
 ```
 
 | Command | Purpose and options |
@@ -119,7 +119,7 @@ node node/admin/index.mjs page create ./data/pages/about-us.html --dry-run
 | `page update <source>` | Update pages listed in `<source>/store.json`. `-t, --title <pattern>`, `-d, --handle <handle>`, `--dry-run`. |
 | `page query <source> [handles]` | Download page bodies by comma-separated handles, or all pages. |
 
-Every command accepts the global option `-a, --auth <file>`. Admin commands use `node/admin/data/access-token.json` by default. Supply `--auth <file>` to use a different token file. Collection create/update inputs and menu inputs are JSON files; page commands work with HTML files and directories. Collection queries produce `collections.json` and `collection-resource-ids.json`; page queries produce HTML files and a `store.json` manifest. Menu query and update commands are not implemented yet.
+Every command accepts the global option `-a, --auth <file>`. Admin commands use `scripts/admin/data/access-token.json` by default. Supply `--auth <file>` to use a different token file. Collection create/update inputs and menu inputs are JSON files; page commands work with HTML files and directories. Collection queries produce `collections.json` and `collection-resource-ids.json`; page queries produce HTML files and a `store.json` manifest. Menu query and update commands are not implemented yet.
 
 ## Development
 
@@ -145,9 +145,9 @@ The GitHub Pages workflow deploys the contents of `web/` on pushes to `master` o
 ## Project layout
 
 ```text
-src/                 React app, UI components, Shopify fetching and CSV mapping
-node/cli/             Product sitemap, CSV, and JSON command-line tools
-node/admin/           Shopify Admin GraphQL commands and OAuth flow
+src/                  React app, UI components, Shopify fetching and CSV mapping
+scripts/cli/          Product sitemap, CSV, and JSON command-line tools
+scripts/admin/        Shopify Admin GraphQL commands and OAuth flow
 src/shared/json/      Shared CSV column and tag-mapping configuration
 public/               Static logos and icons
 web/                  Built static site used by the Pages workflow
