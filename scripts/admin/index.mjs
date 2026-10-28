@@ -13,6 +13,7 @@ import { createCollections, DEFAULT_CHUNK_SIZE as CREATE_CHUNK_SIZE, DEFAULT_DEL
 import { updateCollections, DEFAULT_CHUNK_SIZE as UPDATE_CHUNK_SIZE, DEFAULT_DELAY_MS as UPDATE_DELAY_MS } from './update-collections.mjs';
 import { queryCollections } from './query-collections.mjs';
 import { collectionsToCsv } from './to-csv-collections.mjs';
+import { loadCsvCollections } from './load-csv-collections.mjs';
 import { createMenus } from './create-menus.mjs';
 import { queryMenus } from './query-menus.mjs';
 import { updateMenus } from './update-menus.mjs';
@@ -136,6 +137,28 @@ collection
     }
     const propList = props ? props.split(',').map((p) => p.trim()).filter(Boolean) : [];
     collectionsToCsv({ sourceDir, props: propList, output: opts.output });
+  });
+
+collection
+  .command('load-csv <csvPath> <source>')
+  .description(
+    'merge a CSV file (header row incl. "handle") into each matching <source>/<handle>.json ' +
+    'collection file; also updates title in <source>/store.json when the CSV has a title column',
+  )
+  .action((csvPath, source) => {
+    const csvFile = path.resolve(csvPath);
+    if (!fs.existsSync(csvFile) || !fs.statSync(csvFile).isFile()) {
+      console.error(`CSV path must be an existing file: ${csvFile}`);
+      process.exitCode = 1;
+      return;
+    }
+    const sourceDir = path.resolve(source);
+    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+      console.error(`Source must be an existing directory: ${sourceDir}`);
+      process.exitCode = 1;
+      return;
+    }
+    loadCsvCollections({ csvFile, sourceDir });
   });
 
 // ---------------------------------------------------------------------------

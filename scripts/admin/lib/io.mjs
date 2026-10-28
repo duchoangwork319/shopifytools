@@ -2,6 +2,7 @@
 // Small shared filesystem helpers used by the admin library scripts.
 import fs from 'fs';
 import path from 'path';
+import Papa from 'papaparse';
 
 export function readJsonFile(file, label) {
   if (!fs.existsSync(file)) {
@@ -58,4 +59,15 @@ export function toCsv(rows, fields) {
   const header = fields.map(csvEscape).join(',');
   const lines = rows.map((row) => fields.map((field) => csvEscape(row[field])).join(','));
   return [header, ...lines].join('\n');
+}
+
+// Parses CSV text with a header row into an array of row objects, keyed by
+// the header's column names.
+export function parseCsv(text) {
+  const result = Papa.parse(text, { header: true, skipEmptyLines: true });
+  if (result.errors.length) {
+    console.error('CSV parse errors:', JSON.stringify(result.errors, null, 2));
+    throw new Error('CSV parse error');
+  }
+  return result.data;
 }
