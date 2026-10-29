@@ -1,0 +1,5 @@
+{
+  "bwp_fields.faq_content": {
+    "type": "multi_line_text_field"
+  }
+}

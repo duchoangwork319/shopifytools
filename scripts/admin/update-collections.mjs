@@ -1,133 +1,219 @@
 // update-collections.mjs
-// Library: updates collections against the Admin GraphQL API from a JSON
-// input (a bare array of CollectionInput objects, keyed by `handle` - no
-// `id`). resourceIdsFile (written by create-collections.mjs) must already
-// exist - it's read to map each collection's `handle` to its real `id`
-// (gid://shopify/Collection/...), since the `collectionUpdate` mutation
-// requires `id` and the input file only has `handle`. Collections are
-// updated in chunks (10 per request by default), each chunk batched into
-// one GraphQL call via aliased `collectionUpdate` mutations, using the
-// legacy `input: CollectionInput!` argument (same as create-collections.mjs,
-// since the current data uses `ruleSet` rather than `sources`). After each
-// chunk's API call finishes, the caller waits `delayMs` before firing the
-// next one.
+// Library: updates collections against the Admin GraphQL API from the
+// per-collection JSON files written by query-collections.mjs
+// (<sourceDir>/store.json + <sourceDir>/<handle>.json), resolving each
+// handle's `id` via <sourceDir>/collection-resource-ids.json. Collections
+// are updated sequentially, one at a time: a `collectionUpdate` mutation
+// first (waiting for its `job` to finish - rule changes recompute
+// collection membership asynchronously), then its metafields via
+// `metafieldsSet` (chunked 25 per request, Shopify's limit). Metafields are
+// linked to their collection via `ownerId`, which fetchCollectionMetafields
+// in query-collections.mjs stores on each metafield alongside its node data.
+import path from 'path';
 import { graphqlRequest } from './lib/api-client.mjs';
-import { chunk, readJsonFile, sleep } from './lib/io.mjs';
+import { readJsonFile, sleep } from './lib/io.mjs';
 
-export const DEFAULT_CHUNK_SIZE = 10;
-export const DEFAULT_DELAY_MS = 500;
+export const METAFIELDS_CHUNK_SIZE = 25;
+const JOB_POLL_INTERVAL_MS = 1000;
+const JOB_POLL_MAX_ATTEMPTS = 120;
 
-// Resolves each collection's `handle` to its real `id` via the
-// { handle: id } map from resourceIdsFile. Collections whose handle isn't
-// in the map are dropped (and reported) since collectionUpdate can't run
-// without an id.
-export function resolveCollectionIds(collections, collectionResourceIds) {
-  const resolved = [];
-  for (const col of collections) {
-    const id = collectionResourceIds[col.handle];
-    if (!id) {
-      console.warn(`No collection resource ID found for handle "${col.handle}" - skipping.`);
-      continue;
-    }
-    resolved.push({ ...col, id });
-  }
-  return resolved;
-}
-
-// Batches a chunk of collections into one GraphQL call using aliased
-// `collectionUpdate` mutations - one alias per collection in the chunk.
-export function buildBulkUpdateMutation(collections) {
-  const varDefs = [];
-  const fields = [];
-  const variables = {};
-
-  collections.forEach((col, index) => {
-    const varName = `input${index}`;
-    const alias = `collection${index}`;
-    const { handle, ...input } = col;
-
-    varDefs.push(`$${varName}: CollectionInput!`);
-    variables[varName] = input;
-
-    fields.push(`
-      ${alias}: collectionUpdate(input: $${varName}) {
-        collection {
-          id
-          title
-          handle
-          sortOrder
-          ruleSet {
-            appliedDisjunctively
-            rules {
-              column
-              relation
-              condition
-            }
-          }
-        }
-        userErrors {
-          field
-          message
-        }
+const UPDATE_COLLECTION_MUTATION = `
+  mutation UpdateCollection($input: CollectionInput!) {
+    collectionUpdate(input: $input) {
+      collection {
+        id
       }
-    `);
-  });
-
-  const mutation = `
-    mutation BulkUpdateCollections(${varDefs.join(', ')}) {
-      ${fields.join('\n')}
+      job {
+        id
+        done
+      }
+      userErrors {
+        field
+        message
+      }
     }
-  `;
+  }
+`;
 
-  return { mutation, variables };
+const SET_COLLECTION_METAFIELDS_MUTATION = `
+  mutation SetCollectionMetafields($metafields: [MetafieldsSetInput!]!) {
+    metafieldsSet(metafields: $metafields) {
+      metafields {
+        id
+      }
+      userErrors {
+        field
+        message
+        code
+      }
+    }
+  }
+`;
+
+const COLLECTION_UPDATE_JOB_QUERY = `
+  query CollectionUpdateJob($id: ID!) {
+    job(id: $id) {
+      id
+      done
+    }
+  }
+`;
+
+// Whitelists the fields collectionUpdate accepts, rather than sending the
+// saved collection JSON directly. `ruleSet` is only included when
+// `updateRules` is set, since changing rules changes collection membership -
+// manual collections have ruleSet: null, which is skipped either way.
+export function buildCollectionInput(collection, { id, updateRules }) {
+  const input = { id };
+
+  for (const field of ['title', 'handle', 'descriptionHtml', 'templateSuffix']) {
+    if (collection[field] !== undefined) {
+      input[field] = collection[field];
+    }
+  }
+
+  if (collection.seo != null) {
+    input.seo = {};
+    for (const field of ['title', 'description']) {
+      if (collection.seo[field] !== undefined) {
+        input.seo[field] = collection.seo[field];
+      }
+    }
+  }
+
+  if (updateRules && collection.ruleSet != null) {
+    input.ruleSet = {
+      appliedDisjunctively: collection.ruleSet.appliedDisjunctively,
+      rules: collection.ruleSet.rules.map(({ column, relation, condition }) => ({ column, relation, condition })),
+    };
+  }
+
+  return input;
 }
 
-export async function updateCollectionsChunk(client, collections) {
-  const { mutation, variables } = buildBulkUpdateMutation(collections);
-  return graphqlRequest(client, mutation, variables);
+// Builds the metafieldsSet input from a collection's saved `metafields`.
+// Each one already carries its `ownerId` (the collection's id). Shopify
+// requires metafield values to remain strings, including JSON and
+// list-type values.
+export function buildMetafieldsInput(metafields) {
+  return (metafields ?? []).map((field) => {
+    if (typeof field.value !== 'string') {
+      throw new Error(`Metafield ${field.namespace}.${field.key} must have a string value.`);
+    }
+    return {
+      ownerId: field.ownerId,
+      namespace: field.namespace,
+      key: field.key,
+      type: field.type,
+      value: field.value,
+    };
+  });
 }
 
-export function chunkHadErrors(result) {
-  if (result.errors?.length) return true;
-  return Object.values(result.data || {}).some((field) => field?.userErrors?.length);
+function checkUserErrors(payload) {
+  if (payload.userErrors?.length) {
+    throw new Error(JSON.stringify(payload.userErrors));
+  }
 }
 
-// Reads collections from collectionsFile and resourceIdsFile, resolves
-// handles to ids, and updates them, chunked.
+async function waitForJob(client, job) {
+  if (!job || job.done) return;
+
+  for (let attempt = 0; attempt < JOB_POLL_MAX_ATTEMPTS; attempt++) {
+    await sleep(JOB_POLL_INTERVAL_MS);
+
+    const json = await graphqlRequest(client, COLLECTION_UPDATE_JOB_QUERY, { id: job.id });
+    if (json.errors) {
+      console.error('GraphQL errors:', JSON.stringify(json.errors, null, 2));
+      throw new Error('GraphQL error');
+    }
+    if (!json.data.job) {
+      throw new Error(`Job not found: ${job.id}`);
+    }
+    if (json.data.job.done) return;
+  }
+
+  throw new Error(`Timed out waiting for job ${job.id}`);
+}
+
+async function setCollectionMetafields(client, metafields) {
+  const metafieldsInput = buildMetafieldsInput(metafields);
+
+  for (let index = 0; index < metafieldsInput.length; index += METAFIELDS_CHUNK_SIZE) {
+    const chunkInput = metafieldsInput.slice(index, index + METAFIELDS_CHUNK_SIZE);
+    const json = await graphqlRequest(client, SET_COLLECTION_METAFIELDS_MUTATION, { metafields: chunkInput });
+
+    if (json.errors) {
+      console.error('GraphQL errors:', JSON.stringify(json.errors, null, 2));
+      throw new Error('GraphQL error');
+    }
+    checkUserErrors(json.data.metafieldsSet);
+  }
+}
+
+async function updateCollection(client, collection, { id, updateRules, includeMetafields, dryRun }) {
+  const input = buildCollectionInput(collection, { id, updateRules });
+
+  if (dryRun) {
+    console.log(`[dry run] Would update collection "${collection.handle}" with:`, JSON.stringify(input, null, 2));
+    if (includeMetafields && collection.metafields?.length) {
+      console.log(`[dry run] Would set ${collection.metafields.length} metafield(s) for "${collection.handle}".`);
+    }
+    return;
+  }
+
+  const json = await graphqlRequest(client, UPDATE_COLLECTION_MUTATION, { input });
+  if (json.errors) {
+    console.error('GraphQL errors:', JSON.stringify(json.errors, null, 2));
+    throw new Error('GraphQL error');
+  }
+  checkUserErrors(json.data.collectionUpdate);
+  await waitForJob(client, json.data.collectionUpdate.job);
+
+  if (includeMetafields) {
+    await setCollectionMetafields(client, collection.metafields);
+  }
+}
+
+// Updates collections from the per-collection JSON files written by
+// query-collections.mjs: reads <sourceDir>/store.json (narrowed to
+// `handles`, or every entry if omitted), resolves each handle's `id` via
+// <sourceDir>/collection-resource-ids.json, and updates its writable fields,
+// one collection at a time. Metafields are a separate request on top of the
+// basic fields, so they're only pushed via metafieldsSet when
+// `includeMetafields` is set.
 export async function updateCollections({
   client,
-  collectionsFile,
-  resourceIdsFile,
-  chunkSize = DEFAULT_CHUNK_SIZE,
-  delayMs = DEFAULT_DELAY_MS,
+  sourceDir,
+  handles,
+  updateRules = false,
+  includeMetafields = false,
+  dryRun = false,
 }) {
-  const collections = readJsonFile(collectionsFile, 'collections');
+  const storeFile = path.resolve(sourceDir, 'store.json');
+  const store = readJsonFile(storeFile, 'collection store');
+  const resourceIdsFile = path.resolve(sourceDir, 'collection-resource-ids.json');
   const collectionResourceIds = readJsonFile(resourceIdsFile, 'collection resource ids');
 
-  const collectionsWithIds = resolveCollectionIds(collections, collectionResourceIds);
-  const chunks = chunk(collectionsWithIds, chunkSize);
+  const entries = handles?.length ? store.filter((entry) => handles.includes(entry.handle)) : store;
   let hadErrors = false;
 
-  for (const [index, collectionsChunk] of chunks.entries()) {
-    console.log(
-      `\nUpdating chunk ${index + 1}/${chunks.length} (${collectionsChunk.length} collections)...`,
-    );
-
-    try {
-      const result = await updateCollectionsChunk(client, collectionsChunk);
-      console.log(JSON.stringify(result, null, 2));
-
-      if (chunkHadErrors(result)) {
-        hadErrors = true;
-      }
-    } catch (err) {
-      hadErrors = true;
-      console.error(`Chunk ${index + 1} failed:`, err.message);
+  for (const entry of entries) {
+    const id = collectionResourceIds[entry.handle];
+    if (!id) {
+      console.warn(`No collection resource ID found for handle "${entry.handle}" - skipping.`);
+      continue;
     }
 
-    const isLastChunk = index === chunks.length - 1;
-    if (!isLastChunk) {
-      await sleep(delayMs);
+    const collectionFile = path.resolve(entry.filePath);
+    const collection = readJsonFile(collectionFile, `collection "${entry.handle}"`);
+
+    try {
+      await updateCollection(client, collection, { id, updateRules, includeMetafields, dryRun });
+      console.log(`Updated: ${collection.title ?? entry.handle}`);
+    } catch (err) {
+      hadErrors = true;
+      console.error(`Failed: ${entry.handle}: ${err.message}`);
     }
   }
 

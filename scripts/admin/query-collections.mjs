@@ -187,7 +187,10 @@ export async function fetchCollectionMetafields(client, collectionId) {
 
     const connection = json.data.collection.metafields;
     for (const edge of connection.edges) {
-      metafields.push(edge.node);
+      // Metafields are linked to their collection via `ownerId` - carry it
+      // along so update-collections.mjs can pass it straight to
+      // metafieldsSet without needing the collection's id separately.
+      metafields.push({ ...edge.node, ownerId: collectionId });
       cursor = edge.cursor;
     }
 
@@ -218,11 +221,15 @@ function toEntry({ title, handle, description, descriptionHtml, templateSuffix, 
 // ({ handle, title, filePath }[], appended to, never truncated) and
 // `<sourceDir>/collection-resource-ids.json` ({ handle: id }).
 //
-// Each collection's JSON file is written twice: first right after fetching
-// (without `metafields`), then again once its metafields have been fetched -
-// so a run that's interrupted mid-way still leaves usable per-collection
-// files on disk.
-export async function queryCollections({ client, sourceDir, handles, title }) {
+// Metafields are a separate, per-collection paged request on top of the
+// basic fields, so they're only fetched when `includeMetafields` is set -
+// otherwise each collection's JSON file simply has no `metafields` property.
+//
+// When `includeMetafields` is set, each collection's JSON file is written
+// twice: first right after fetching (without `metafields`), then again once
+// its metafields have been fetched - so a run that's interrupted mid-way
+// still leaves usable per-collection files on disk.
+export async function queryCollections({ client, sourceDir, handles, title, includeMetafields = false }) {
   fs.mkdirSync(sourceDir, { recursive: true });
 
   let collections;
@@ -260,9 +267,11 @@ export async function queryCollections({ client, sourceDir, handles, title }) {
   writeJsonFile(storeFile, store);
   console.log(`Saved ${store.length} collection entrie(s) to ${storeFile}`);
 
-  for (const collection of collections) {
-    const enriched = await withMetafields(client, collection);
-    writeJsonFile(collectionFile(collection.handle), toEntry(enriched));
+  if (includeMetafields) {
+    for (const collection of collections) {
+      const enriched = await withMetafields(client, collection);
+      writeJsonFile(collectionFile(collection.handle), toEntry(enriched));
+    }
   }
 
   const resourceIdsFile = path.resolve(sourceDir, 'collection-resource-ids.json');

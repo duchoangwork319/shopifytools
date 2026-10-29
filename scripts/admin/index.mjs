@@ -10,7 +10,7 @@ import path from 'path';
 import { createAdminApiClient, loadEnv, readAuth } from './lib/api-client.mjs';
 import { resourceIdsFileFor } from './lib/io.mjs';
 import { createCollections, DEFAULT_CHUNK_SIZE as CREATE_CHUNK_SIZE, DEFAULT_DELAY_MS as CREATE_DELAY_MS } from './create-collections.mjs';
-import { updateCollections, DEFAULT_CHUNK_SIZE as UPDATE_CHUNK_SIZE, DEFAULT_DELAY_MS as UPDATE_DELAY_MS } from './update-collections.mjs';
+import { updateCollections } from './update-collections.mjs';
 import { queryCollections } from './query-collections.mjs';
 import { collectionsToCsv } from './to-csv-collections.mjs';
 import { loadCsvCollections } from './load-csv-collections.mjs';
@@ -83,20 +83,34 @@ collection
   });
 
 collection
-  .command('update <file>')
-  .description('update collections from a CollectionInput JSON file (keyed by handle)')
-  .option('--chunk-size <n>', 'collections per GraphQL request', String(UPDATE_CHUNK_SIZE))
-  .option('--delay-ms <n>', 'delay between chunk requests, in ms', String(UPDATE_DELAY_MS))
-  .action(async (file, opts, cmd) => {
+  .command('update <source> [handles]')
+  .description(
+    'update collections from <source>/store.json (the per-collection JSON files written by ' +
+    '"collection query"), by comma-separated handles, or every entry if omitted',
+  )
+  .option(
+    '-r, --update-rules',
+    'also update smart collection rules (ruleSet) - skipped by default since it changes collection membership',
+    false,
+  )
+  .option('--with-metafields', 'also push each collection\'s metafields via metafieldsSet (a separate request per collection)', false)
+  .option('--dry-run', 'log what would be updated without calling the API', false)
+  .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const collectionsFile = path.resolve(file);
-    const resourceIdsFile = resourceIdsFileFor(collectionsFile);
+    const sourceDir = path.resolve(source);
+    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+      console.error(`Source must be an existing directory: ${sourceDir}`);
+      process.exitCode = 1;
+      return;
+    }
+    const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     const result = await updateCollections({
       client,
-      collectionsFile,
-      resourceIdsFile,
-      chunkSize: Number(opts.chunkSize),
-      delayMs: Number(opts.delayMs),
+      sourceDir,
+      handles: handleList,
+      updateRules: opts.updateRules,
+      includeMetafields: opts.withMetafields,
+      dryRun: opts.dryRun,
     });
     exitOnErrors(result);
   });
@@ -109,6 +123,7 @@ collection
     '<source>/collection-resource-ids.json',
   )
   .option('-t, --title <pattern>', 'search collections by title (wildcard supported, e.g. "*summer*")')
+  .option('--with-metafields', 'also fetch each collection\'s metafields (a separate, paged request per collection)', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
     const sourceDir = path.resolve(source);
@@ -118,7 +133,13 @@ collection
       return;
     }
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
-    await queryCollections({ client, sourceDir, handles: handleList, title: opts.title });
+    await queryCollections({
+      client,
+      sourceDir,
+      handles: handleList,
+      title: opts.title,
+      includeMetafields: opts.withMetafields,
+    });
   });
 
 collection

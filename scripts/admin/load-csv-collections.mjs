@@ -2,7 +2,10 @@
 // Library: reads a CSV file (header row incl. "handle") and merges its other
 // columns into each matching `<sourceDir>/<handle>.json` collection file
 // written by query-collections.mjs. If the CSV includes a `title` column,
-// the matching entry's title in `<sourceDir>/store.json` is updated too.
+// the matching entry's title in `<sourceDir>/store.json` is updated too. A
+// `description` column also auto-assigns `descriptionHtml` to the same
+// value, since `descriptionHtml` - not `description` - is the field
+// update-collections.mjs actually sends to collectionUpdate.
 import fs from 'fs';
 import path from 'path';
 import { parseCsv, readJsonFile, readJsonFileIfExists, writeJsonFile } from './lib/io.mjs';
@@ -32,6 +35,9 @@ export function loadCsvCollections({ csvFile, sourceDir }) {
     const entry = readJsonFile(collectionFile, `collection "${handle}"`);
     for (const column of columns) {
       entry[column] = row[column];
+      if (column === 'description') {
+        entry.descriptionHtml = row[column];
+      }
     }
     writeJsonFile(collectionFile, entry);
     updatedCount += 1;
