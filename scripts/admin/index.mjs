@@ -90,11 +90,11 @@ collection
     '"collection query"), by comma-separated handles, or every entry if omitted',
   )
   .option(
-    '-r, --update-rules',
+    '--update-rules',
     'also update smart collection rules (ruleSet) - skipped by default since it changes collection membership',
     false,
   )
-  .option('--with-metafields', 'also push each collection\'s metafields via metafieldsSet (a separate request per collection)', false)
+  .option('--update-metafields', 'also push each collection\'s metafields via metafieldsSet (a separate request per collection)', false)
   .option('--dry-run', 'log what would be updated without calling the API', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
@@ -110,7 +110,7 @@ collection
       sourceDir,
       handles: handleList,
       updateRules: opts.updateRules,
-      includeMetafields: opts.withMetafields,
+      includeMetafields: opts.updateMetafields,
       dryRun: opts.dryRun,
     });
     exitOnErrors(result);
@@ -189,21 +189,43 @@ collection
 const menu = program.command('menu').description('manage navigation menus');
 
 menu
-  .command('create <file>')
-  .description('create menu(s) from a menuCreate input JSON file')
-  .action(async (file, opts, cmd) => {
+  .command('create <source> [handles]')
+  .description(
+    'create menu(s) from <source>/<handle>.json menu inputs, by comma-separated handles, or ' +
+    'every one found in <source> if omitted',
+  )
+  .requiredOption('--collection-source <dir>', 'folder containing collection-resource-ids.json')
+  .option('--dry-run', 'log what would be created without calling the API', false)
+  .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const menuInputFile = path.resolve(file);
-    const resourceIdsFile = resourceIdsFileFor(menuInputFile);
-    const result = await createMenus({ client, menuInputFile, resourceIdsFile });
+    const sourceDir = path.resolve(source);
+    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+      console.error(`Source must be an existing directory: ${sourceDir}`);
+      process.exitCode = 1;
+      return;
+    }
+    const collectionSourceDir = path.resolve(opts.collectionSource);
+    if (!fs.existsSync(collectionSourceDir) || !fs.statSync(collectionSourceDir).isDirectory()) {
+      console.error(`--collection-source must be an existing directory: ${collectionSourceDir}`);
+      process.exitCode = 1;
+      return;
+    }
+    const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
+    const result = await createMenus({
+      client,
+      sourceDir,
+      collectionSourceDir,
+      handles: handleList,
+      dryRun: opts.dryRun,
+    });
     exitOnErrors(result);
   });
 
 menu
   .command('query <source> [handles]')
   .description(
-    'fetch menu(s) by comma-separated handles, or all menus if omitted, ' +
-    'writing <source>/menus.json',
+    'fetch menu(s) by comma-separated handles, or all menus if omitted, writing <source>/<handle>.json, ' +
+    '<source>/store.json, and <source>/menu-resource-ids.json',
   )
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);

@@ -66,6 +66,10 @@ const COLLECTION_UPDATE_JOB_QUERY = `
 export function buildCollectionInput(collection, { id, updateRules }) {
   const input = { id };
 
+  // `description` is NOT in this list on purpose - it's a read-only,
+  // auto-generated field on CollectionInput. Sending it raises:
+  // "Field `description` is not defined by type `CollectionInput`". Use
+  // `descriptionHtml` instead.
   for (const field of ['title', 'handle', 'descriptionHtml', 'templateSuffix']) {
     if (collection[field] !== undefined) {
       input[field] = collection[field];
