@@ -1,5 +1,46 @@
-{
-  "bwp_fields.faq_content": {
-    "type": "multi_line_text_field"
+[
+  {
+    "id": "gid://shopify/MetafieldDefinition/135539818559",
+    "name": "Show Orderable Products Only",
+    "namespace": "custom",
+    "key": "show_orderable_products_only",
+    "description": "",
+    "ownerType": "COLLECTION",
+    "type": {
+      "name": "boolean"
+    }
+  },
+  {
+    "id": "gid://shopify/MetafieldDefinition/135539851327",
+    "name": "Protected Password",
+    "namespace": "custom",
+    "key": "protected_password",
+    "description": "",
+    "ownerType": "COLLECTION",
+    "type": {
+      "name": "single_line_text_field"
+    }
+  },
+  {
+    "id": "gid://shopify/MetafieldDefinition/208005726271",
+    "name": "SEO Contents",
+    "namespace": "bwp_fields",
+    "key": "seo_contents",
+    "description": "",
+    "ownerType": "COLLECTION",
+    "type": {
+      "name": "list.page_reference"
+    }
+  },
+  {
+    "id": "gid://shopify/MetafieldDefinition/431719383103",
+    "name": "FAQ Content",
+    "namespace": "bwp_fields",
+    "key": "faq_content",
+    "description": "",
+    "ownerType": "COLLECTION",
+    "type": {
+      "name": "multi_line_text_field"
+    }
   }
-}
+]

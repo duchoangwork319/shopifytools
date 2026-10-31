@@ -20,6 +20,7 @@ import { updateMenus } from './update-menus.mjs';
 import { createPages } from './create-pages.mjs';
 import { queryPages } from './query-pages.mjs';
 import { updatePages } from './update-pages.mjs';
+import { queryMetafieldDefinitions } from './query-metafield-def.mjs';
 
 loadEnv();
 
@@ -287,6 +288,22 @@ page
     }
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     await queryPages({ client, sourceDir, handles: handleList });
+  });
+
+// ---------------------------------------------------------------------------
+// metafield-def
+// ---------------------------------------------------------------------------
+const metafieldDef = program.command('metafield-def').description('manage metafield definitions');
+
+metafieldDef
+  .command('query <ownerType>')
+  .description(
+    'fetch every metafield definition for a MetafieldOwnerType (e.g. "collection", "product"), ' +
+    'writing config/metafields/<ownerType>.json',
+  )
+  .action(async (ownerType, opts, cmd) => {
+    const client = clientFromCommand(cmd);
+    await queryMetafieldDefinitions({ client, ownerType });
   });
 
 program.parseAsync(process.argv);

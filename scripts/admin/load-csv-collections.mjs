@@ -18,25 +18,27 @@ const METAFIELD_COLUMN_PREFIX = 'metafields.';
 const METAFIELD_COLUMN = /^metafields\.([^.]+)\.(.+)$/;
 
 // Resolves each `metafields.{namespace}.{key}` column's `namespace`/`key`/
-// `type` (from config/metafields/collection.json), keyed by column name -
-// done once per CSV, not once per row. A column whose namespace.key isn't
-// in that config is left out (and warned about) rather than silently
-// written as a plain field.
+// `type` (from config/metafields/collection.json - a bare array of
+// metafield definitions, as written by `metafield-def query`), keyed by
+// column name - done once per CSV, not once per row. A column whose
+// namespace.key isn't in that config is left out (and warned about) rather
+// than silently written as a plain field.
 function resolveMetafieldColumns(columns) {
-  const metafieldConfig = readJsonFile(METAFIELD_CONFIG_FILE, 'metafield config');
+  const metafieldDefinitions = readJsonFile(METAFIELD_CONFIG_FILE, 'metafield config');
   const defsByColumn = new Map();
 
   for (const column of columns) {
     if (!column.startsWith(METAFIELD_COLUMN_PREFIX)) continue;
 
     const [, namespace, key] = column.match(METAFIELD_COLUMN) ?? [];
-    const definition = namespace && metafieldConfig[`${namespace}.${key}`];
+    const definition = namespace
+      && metafieldDefinitions.find((def) => def.namespace === namespace && def.key === key);
     if (!definition) {
       console.warn(`No metafield config found for column "${column}" - skipping.`);
       continue;
     }
 
-    defsByColumn.set(column, { namespace, key, type: definition.type });
+    defsByColumn.set(column, { namespace, key, type: definition.type.name });
   }
 
   return defsByColumn;
