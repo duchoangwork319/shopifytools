@@ -201,11 +201,13 @@ export async function updateCollections({
 
   const entries = handles?.length ? store.filter((entry) => handles.includes(entry.handle)) : store;
   let hadErrors = false;
+  const counts = { warn: 0, success: 0, error: 0 };
 
   for (const entry of entries) {
     const id = collectionResourceIds[entry.handle];
     if (!id) {
       console.warn(`No collection resource ID found for handle "${entry.handle}" - skipping.`);
+      counts.warn += 1;
       continue;
     }
 
@@ -215,11 +217,15 @@ export async function updateCollections({
     try {
       await updateCollection(client, collection, { id, updateRules, includeMetafields, dryRun });
       console.log(`Updated: ${collection.title ?? entry.handle}`);
+      counts.success += 1;
     } catch (err) {
       hadErrors = true;
+      counts.error += 1;
       console.error(`Failed: ${entry.handle}: ${err.message}`);
     }
   }
+
+  console.log(`\nWarn: ${counts.warn}, Success: ${counts.success}, Error: ${counts.error}`);
 
   return { hadErrors };
 }

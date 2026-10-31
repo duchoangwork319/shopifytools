@@ -8,7 +8,7 @@
 import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from './lib/api-client.mjs';
-import { readJsonFileIfExists, writeJsonFile } from './lib/io.mjs';
+import { readJsonFileIfExists, saveResourceIds, writeJsonFile } from './lib/io.mjs';
 
 const MENU_ITEM_FIELDS = `
   id
@@ -119,11 +119,11 @@ export async function queryMenus({ client, sourceDir, handles }) {
   console.log(`Saved ${store.length} menu entrie(s) to ${storeFile}`);
 
   const resourceIdsFile = path.resolve(sourceDir, 'menu-resource-ids.json');
-  const resourceIds = {};
+  const newResourceIds = {};
   for (const { handle, id } of menus) {
-    resourceIds[handle] = id;
+    newResourceIds[handle] = id;
   }
-  writeJsonFile(resourceIdsFile, resourceIds);
+  const resourceIds = saveResourceIds(resourceIdsFile, newResourceIds);
   console.log(`Saved ${Object.keys(resourceIds).length} menu resource ID(s) to ${resourceIdsFile}`);
 
   return { count: menus.length };

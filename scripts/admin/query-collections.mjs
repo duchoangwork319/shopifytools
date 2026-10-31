@@ -7,7 +7,7 @@
 import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from './lib/api-client.mjs';
-import { writeJsonFile, readJsonFileIfExists } from './lib/io.mjs';
+import { writeJsonFile, readJsonFileIfExists, saveResourceIds } from './lib/io.mjs';
 
 const COLLECTION_FIELDS = `
   id
@@ -252,7 +252,12 @@ export async function queryCollections({ client, sourceDir, handles, title, incl
   const collectionFile = (handle) => path.resolve(sourceDir, `${handle}.json`);
 
   for (const collection of collections) {
-    writeJsonFile(collectionFile(collection.handle), toEntry(collection));
+    // Metafields aren't fetched yet at this point - when they're not being
+    // refreshed this run (includeMetafields: false), carry over whatever
+    // metafields this collection's file already has instead of wiping them.
+    const existing = readJsonFileIfExists(collectionFile(collection.handle), null);
+    const metafields = includeMetafields ? collection.metafields : existing?.metafields;
+    writeJsonFile(collectionFile(collection.handle), toEntry({ ...collection, metafields }));
   }
   console.log(`Saved ${collections.length} collection JSON file(s) to ${sourceDir}`);
 
@@ -275,11 +280,11 @@ export async function queryCollections({ client, sourceDir, handles, title, incl
   }
 
   const resourceIdsFile = path.resolve(sourceDir, 'collection-resource-ids.json');
-  const resourceIds = {};
+  const newResourceIds = {};
   for (const { handle, id } of collections) {
-    resourceIds[handle] = id;
+    newResourceIds[handle] = id;
   }
-  writeJsonFile(resourceIdsFile, resourceIds);
+  const resourceIds = saveResourceIds(resourceIdsFile, newResourceIds);
   console.log(`Saved ${Object.keys(resourceIds).length} collection resource ID(s) to ${resourceIdsFile}`);
 
   return { count: collections.length };
