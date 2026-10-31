@@ -237,10 +237,11 @@ menu
 menu
   .command('update <source> [handles]')
   .description(
-    'update menu(s) from <source>/menus.json (keyed by handle), by comma-separated ' +
-    'handles, or every entry if omitted',
+    'update menu(s) from <source>/store.json (the per-menu JSON files written by "menu query"), ' +
+    'by comma-separated handles, or every entry if omitted',
   )
-  .option('--dryrun', 'log what would be updated without calling the API', false)
+  .option('-t, --title <pattern>', 'match menus by title - a full title, a wildcard (*, ?), or a /regex/flags')
+  .option('--dry-run', 'log what would be updated without calling the API', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
     const sourceDir = path.resolve(source);
@@ -250,7 +251,13 @@ menu
       return;
     }
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
-    const result = await updateMenus({ client, sourceDir, handles: handleList, dryRun: opts.dryrun });
+    const result = await updateMenus({
+      client,
+      sourceDir,
+      handles: handleList,
+      title: opts.title,
+      dryRun: opts.dryRun,
+    });
     if (result.failed) process.exitCode = 1;
   });
 
