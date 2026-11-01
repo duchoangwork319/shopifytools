@@ -4,11 +4,14 @@
 // written by query-collections.mjs. If the CSV includes a `title` column,
 // the matching entry's title in `<sourceDir>/store.json` is updated too. A
 // `description` column also auto-assigns `descriptionHtml` to the same
-// value, since `descriptionHtml` - not `description` - is the field
-// update-collections.mjs actually sends to collectionUpdate. A column named
-// `metafields.{namespace}.{key}` (namespace is always `bwp_fields`) is
-// merged into the entry's `metafields` array instead - see
-// resolveMetafieldColumns / applyMetafieldColumn.
+// value wrapped in `<p class="five-lead">`, since `descriptionHtml` - not
+// `description` - is the field update-collections.mjs actually sends to
+// collectionUpdate. A column named `seo.{key}` (e.g. "seo.title",
+// "seo.description") is assigned to entry.seo[key] instead of a literal
+// "seo.key" property. A column named `metafields.{namespace}.{key}`
+// (namespace is always `bwp_fields`) is merged into the entry's
+// `metafields` array instead - see resolveMetafieldColumns /
+// applyMetafieldColumn.
 import fs from 'fs';
 import path from 'path';
 import { parseCsv, readJsonFile, readJsonFileIfExists, writeJsonFile } from './lib/io.mjs';
@@ -16,6 +19,7 @@ import { parseCsv, readJsonFile, readJsonFileIfExists, writeJsonFile } from './l
 const METAFIELD_CONFIG_FILE = path.resolve(import.meta.dirname, 'config', 'metafields', 'collection.json');
 const METAFIELD_COLUMN_PREFIX = 'metafields.';
 const METAFIELD_COLUMN = /^metafields\.([^.]+)\.(.+)$/;
+const SEO_COLUMN_PREFIX = 'seo.';
 
 // Resolves each `metafields.{namespace}.{key}` column's `namespace`/`key`/
 // `type` (from config/metafields/collection.json - a bare array of
@@ -102,9 +106,16 @@ export function loadCsvCollections({ csvFile, sourceDir }) {
         continue;
       }
 
+      if (column.startsWith(SEO_COLUMN_PREFIX)) {
+        const seoKey = column.slice(SEO_COLUMN_PREFIX.length);
+        entry.seo = entry.seo ?? {};
+        entry.seo[seoKey] = row[column];
+        continue;
+      }
+
       entry[column] = row[column];
       if (column === 'description') {
-        entry.descriptionHtml = row[column];
+        entry.descriptionHtml = `<p class="five-lead">${row[column]}</p>`;
       }
     }
 

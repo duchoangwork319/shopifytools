@@ -82,8 +82,8 @@ export async function fetchPageByHandle(client, handle) {
 
 // Fetches pages (by `handles`, or all of them if omitted/empty), writes each
 // one's body to `<sourceDir>/<handle>.html`, and writes the resulting
-// { handle, title, bodyFilePath } entries to `<sourceDir>/store.json`. The
-// store file is purely an output - its existing content, if any, is not
+// { id, handle, title, bodyFilePath } entries to `<sourceDir>/store.json`.
+// The store file is purely an output - its existing content, if any, is not
 // read.
 export async function queryPages({ client, sourceDir, handles }) {
   fs.mkdirSync(sourceDir, { recursive: true });
@@ -107,7 +107,7 @@ export async function queryPages({ client, sourceDir, handles }) {
     const bodyFilePath = path.resolve(sourceDir, `${remotePage.handle}.html`);
     fs.writeFileSync(bodyFilePath, remotePage.body || '', 'utf8');
     console.log(`Saved body for "${remotePage.handle}" to ${bodyFilePath}`);
-    return { handle: remotePage.handle, title: remotePage.title, bodyFilePath };
+    return { id: remotePage.id, handle: remotePage.handle, title: remotePage.title, bodyFilePath };
   });
 
   const storeFile = path.resolve(sourceDir, 'store.json');

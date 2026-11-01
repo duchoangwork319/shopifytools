@@ -72,7 +72,8 @@ export function buildFaqHtml(raw) {
 
   return (
     `    <section class="c5dla-seo-guide__faq" aria-labelledby="${HEADING_ID}">\n` +
-    `      <h2 id="${HEADING_ID}" class="c5dla-seo-guide__section-heading">FAQ</h2>\n` +
+    `      <p class="c5dla-seo-guide__eyebrow">FREQUENTLY ASKED QUESTIONS</p>\n` +
+    `      <h2 id="${HEADING_ID}" class="c5dla-seo-guide__section-heading">ANSWERED</h2>\n` +
     '      <div class="c5dla-seo-guide__faq-list">\n' +
     `${items}\n` +
     '      </div>\n' +
