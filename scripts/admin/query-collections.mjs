@@ -187,6 +187,14 @@ export async function fetchCollectionMetafields(client, collectionId) {
 
     const connection = json.data.collection.metafields;
     for (const edge of connection.edges) {
+      // `global.title_tag`/`global.description_tag` are Shopify's own SEO
+      // pseudo-metafields (the same values as `seo.title`/`seo.description`,
+      // already captured separately) - not real custom metafields, so they're
+      // skipped here.
+      if (edge.node.key === 'title_tag' || edge.node.key === 'description_tag') {
+        cursor = edge.cursor;
+        continue;
+      }
       // Metafields are linked to their collection via `ownerId` - carry it
       // along so update-collections.mjs can pass it straight to
       // metafieldsSet without needing the collection's id separately.
