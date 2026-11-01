@@ -2,8 +2,8 @@
 // Library: updates page(s) against the Admin GraphQL API, sourced from a
 // store.json file (the shape written by create-pages.mjs/query-pages.mjs:
 // an array of { handle, title, bodyFilePath }) in a given folder. Pages can
-// be narrowed down by an exact handle or by a title pattern (exact string,
-// glob-style wildcard, or /regex/flags).
+// be narrowed down by comma-separated handles and/or a title pattern (exact
+// string, glob-style wildcard, or /regex/flags).
 import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from './lib/api-client.mjs';
@@ -58,18 +58,21 @@ export function titleMatcher(pattern) {
   return new RegExp(`^${escaped}$`, 'i');
 }
 
-// Narrows store entries down to those matching `handle` (exact, must
-// exist) and/or `title` (exact/wildcard/regex, via titleMatcher). With
-// neither given, every entry is selected.
-export function selectEntries(store, { title, handle } = {}) {
+// Narrows store entries down to the given `handles` (every one must exist)
+// and/or `title` (exact/wildcard/regex, via titleMatcher). With neither
+// given, every entry is selected.
+export function selectEntries(store, { title, handles = [] } = {}) {
   let entries = store;
 
-  if (handle) {
-    entries = entries.filter((entry) => entry.handle === handle);
-    if (!entries.length) {
-      console.error(`Handle "${handle}" not found in store.json.`);
-      process.exit(1);
-    }
+  if (handles.length) {
+    entries = handles.map((handle) => {
+      const entry = store.find((e) => e.handle === handle);
+      if (!entry) {
+        console.error(`Handle "${handle}" not found in store.json.`);
+        process.exit(1);
+      }
+      return entry;
+    });
   }
 
   if (title) {
@@ -81,10 +84,10 @@ export function selectEntries(store, { title, handle } = {}) {
 }
 
 // Reads `<sourceDir>/store.json` (throws/exits if missing), narrows it down
-// via `title`/`handle`, and updates each matched page's title/body. Every
+// via `handles`/`title`, and updates each matched page's title/body. Every
 // selected entry's bodyFilePath must exist on disk - if a store.json record
 // points to a missing file, this exits before updating anything.
-export async function updatePages({ client, sourceDir, title, handle, dryRun = false }) {
+export async function updatePages({ client, sourceDir, handles = [], title, dryRun = false }) {
   const storeFile = path.resolve(sourceDir, 'store.json');
   if (!fs.existsSync(storeFile)) {
     console.error(`Missing store.json in ${sourceDir}. Run "page query" or "page create" first.`);
@@ -92,7 +95,7 @@ export async function updatePages({ client, sourceDir, title, handle, dryRun = f
   }
 
   const store = readJsonFile(storeFile, 'store');
-  const entries = selectEntries(store, { title, handle });
+  const entries = selectEntries(store, { title, handles });
 
   for (const entry of entries) {
     if (!fs.existsSync(entry.bodyFilePath)) {

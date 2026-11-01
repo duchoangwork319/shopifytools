@@ -20,6 +20,7 @@ import { updateMenus } from './update-menus.mjs';
 import { createPages } from './create-pages.mjs';
 import { queryPages } from './query-pages.mjs';
 import { updatePages } from './update-pages.mjs';
+import { deletePages } from './delete-pages.mjs';
 import { queryMetafieldDefinitions } from './query-metafield-def.mjs';
 
 loadEnv();
@@ -281,15 +282,14 @@ page
   });
 
 page
-  .command('update <source>')
+  .command('update <source> [handles]')
   .description(
-    'update page(s) from <source>/store.json. Narrows to one handle with -d, or to ' +
-    'titles matching a pattern with -t; updates everything in store.json if neither is given.',
+    'update page(s) from <source>/store.json by comma-separated handles, by -t/--title ' +
+    '(wildcard supported), or every entry if neither is given',
   )
   .option('-t, --title <pattern>', 'match pages by title - a full title, a wildcard (*, ?), or a /regex/flags')
-  .option('-d, --handle <handle>', 'match a page by its exact, existing handle')
   .option('--dry-run', 'log what would be updated without calling the API', false)
-  .action(async (source, opts, cmd) => {
+  .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
     const sourceDir = path.resolve(source);
     if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
@@ -297,7 +297,8 @@ page
       process.exitCode = 1;
       return;
     }
-    const result = await updatePages({ client, sourceDir, title: opts.title, handle: opts.handle, dryRun: opts.dryRun });
+    const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
+    const result = await updatePages({ client, sourceDir, handles: handleList, title: opts.title, dryRun: opts.dryRun });
     if (result.failed) process.exitCode = 1;
   });
 
@@ -317,6 +318,27 @@ page
     }
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     await queryPages({ client, sourceDir, handles: handleList });
+  });
+
+page
+  .command('delete <source> [handles]')
+  .description(
+    'delete page(s) from <source>/store.json by comma-separated handles, or every entry if ' +
+    'omitted; removes each deleted one from store.json',
+  )
+  .option('--delete-html', 'also delete each page\'s bodyFilePath from disk', false)
+  .option('--dry-run', 'log what would be deleted without calling the API', false)
+  .action(async (source, handles, opts, cmd) => {
+    const client = clientFromCommand(cmd);
+    const sourceDir = path.resolve(source);
+    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+      console.error(`Source must be an existing directory: ${sourceDir}`);
+      process.exitCode = 1;
+      return;
+    }
+    const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
+    const result = await deletePages({ client, sourceDir, handles: handleList, deleteHtml: opts.deleteHtml, dryRun: opts.dryRun });
+    if (result.failed) process.exitCode = 1;
   });
 
 // ---------------------------------------------------------------------------
