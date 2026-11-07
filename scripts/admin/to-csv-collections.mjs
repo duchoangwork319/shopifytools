@@ -1,6 +1,6 @@
 // to-csv-collections.mjs
 // Library: converts `<sourceDir>/collections.json` (the shape written by
-// query-collections.mjs: an array of { title, handle, ruleSet }) into
+// collection/query.mjs: an array of { title, handle, ruleSet }) into
 // `<sourceDir>/collections.csv`, with one column per requested prop.
 import path from 'path';
 import fs from 'fs';

@@ -1,14 +1,14 @@
-// update-pages.mjs
+// page/update.mjs
 // Library: updates page(s) against the Admin GraphQL API, sourced from a
-// store.json file (the shape written by create-pages.mjs/query-pages.mjs:
+// store.json file (the shape written by page/create.mjs / page/query.mjs:
 // an array of { handle, title, bodyFilePath }) in a given folder. Pages can
 // be narrowed down by comma-separated handles and/or a title pattern (exact
 // string, glob-style wildcard, or /regex/flags).
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from './lib/api-client.mjs';
-import { readJsonFile } from './lib/io.mjs';
-import { fetchPageByHandle } from './query-pages.mjs';
+import { graphqlRequest } from '../lib/api-client.mjs';
+import { readJsonFile } from '../lib/io.mjs';
+import { fetchPageByHandle } from './query.mjs';
 
 const UPDATE_PAGE_MUTATION = `
   mutation UpdatePageById($id: ID!, $page: PageUpdateInput!) {

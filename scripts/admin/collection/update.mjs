@@ -1,6 +1,6 @@
-// update-collections.mjs
+// collection/update.mjs
 // Library: updates collections against the Admin GraphQL API from the
-// per-collection JSON files written by query-collections.mjs
+// per-collection JSON files written by collection/query.mjs
 // (<sourceDir>/store.json + <sourceDir>/<handle>.json), resolving each
 // handle's `id` via <sourceDir>/collection-resource-ids.json. Collections
 // are updated sequentially, one at a time: a `collectionUpdate` mutation
@@ -8,10 +8,10 @@
 // collection membership asynchronously), then its metafields via
 // `metafieldsSet` (chunked 25 per request, Shopify's limit). Metafields are
 // linked to their collection via `ownerId`, which fetchCollectionMetafields
-// in query-collections.mjs stores on each metafield alongside its node data.
+// in collection/query.mjs stores on each metafield alongside its node data.
 import path from 'path';
-import { graphqlRequest } from './lib/api-client.mjs';
-import { readJsonFile, sleep } from './lib/io.mjs';
+import { graphqlRequest } from '../lib/api-client.mjs';
+import { readJsonFile, sleep } from '../lib/io.mjs';
 
 export const METAFIELDS_CHUNK_SIZE = 25;
 const JOB_POLL_INTERVAL_MS = 1000;
@@ -180,7 +180,7 @@ async function updateCollection(client, collection, { id, updateRules, includeMe
 }
 
 // Updates collections from the per-collection JSON files written by
-// query-collections.mjs: reads <sourceDir>/store.json (narrowed to
+// collection/query.mjs: reads <sourceDir>/store.json (narrowed to
 // `handles`, or every entry if omitted), resolves each handle's `id` via
 // <sourceDir>/collection-resource-ids.json, and updates its writable fields,
 // one collection at a time. Metafields are a separate request on top of the

@@ -1,14 +1,14 @@
-// delete-pages.mjs
+// page/delete.mjs
 // Library: deletes page(s) from the Admin GraphQL API, sourced from
-// <sourceDir>/store.json (the shape written by create-pages.mjs/
-// query-pages.mjs: an array of { id, handle, title, bodyFilePath }).
+// <sourceDir>/store.json (the shape written by page/create.mjs /
+// page/query.mjs: an array of { id, handle, title, bodyFilePath }).
 // Narrowed down to specific handles, or every entry if omitted. On success,
 // the matched entry is removed from store.json; with --delete-html, its
 // bodyFilePath is deleted too.
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from './lib/api-client.mjs';
-import { readJsonFile, writeJsonFile } from './lib/io.mjs';
+import { graphqlRequest } from '../lib/api-client.mjs';
+import { readJsonFile, writeJsonFile } from '../lib/io.mjs';
 
 const DELETE_PAGE_MUTATION = `
   mutation DeletePage($id: ID!) {

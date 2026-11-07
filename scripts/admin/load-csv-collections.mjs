@@ -1,11 +1,11 @@
 // load-csv-collections.mjs
 // Library: reads a CSV file (header row incl. "handle") and merges its other
 // columns into each matching `<sourceDir>/<handle>.json` collection file
-// written by query-collections.mjs. If the CSV includes a `title` column,
+// written by collection/query.mjs. If the CSV includes a `title` column,
 // the matching entry's title in `<sourceDir>/store.json` is updated too. A
 // `description` column also auto-assigns `descriptionHtml` to the same
 // value wrapped in `<p class="five-lead">`, since `descriptionHtml` - not
-// `description` - is the field update-collections.mjs actually sends to
+// `description` - is the field collection/update.mjs actually sends to
 // collectionUpdate. A column named `seo.{key}` (e.g. "seo.title",
 // "seo.description") is assigned to entry.seo[key] instead of a literal
 // "seo.key" property. A column named `metafields.{namespace}.{key}`
@@ -49,7 +49,7 @@ function resolveMetafieldColumns(columns) {
 }
 
 // Merges one metafield column's value into entry.metafields (matching the
-// shape written by query-collections.mjs / update-collections.mjs: id?,
+// shape written by collection/query.mjs / collection/update.mjs: id?,
 // namespace, key, type, value, ownerId). `ownerId` is the collection's id,
 // resolved from collection-resource-ids.json by handle - when it's missing,
 // the metafield isn't added, and a warning is logged instead.

@@ -1,4 +1,4 @@
-// create-pages.mjs
+// page/create.mjs
 // Library: creates pages against the Admin GraphQL API from an HTML file or
 // a directory of HTML files. Each file's basename becomes the page's title
 // (title-cased) and handle (slugified). A store.json file next to the
@@ -6,8 +6,8 @@
 // created pages by handle, so re-runs skip ones that already exist.
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from './lib/api-client.mjs';
-import { readJsonFileIfExists, writeJsonFile } from './lib/io.mjs';
+import { graphqlRequest } from '../lib/api-client.mjs';
+import { readJsonFileIfExists, writeJsonFile } from '../lib/io.mjs';
 
 const CREATE_PAGE_MUTATION = `
   mutation CreatePage($page: PageCreateInput!) {

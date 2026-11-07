@@ -1,14 +1,14 @@
-// update-menus.mjs
+// menu/update.mjs
 // Library: updates menu(s) against the Admin GraphQL API, sourced from the
-// per-menu JSON files written by query-menus.mjs: <sourceDir>/store.json
+// per-menu JSON files written by menu/query.mjs: <sourceDir>/store.json
 // ({ handle, title, filePath }[], narrowed to `handles` and/or a `title`
 // pattern - exact string, glob-style wildcard, or /regex/flags - or every
 // entry if neither is given) plus each entry's own <sourceDir>/<handle>.json
 // ({ handle, title, isDefault, items }). Each handle's `id` is resolved via
 // <sourceDir>/menu-resource-ids.json.
 import path from 'path';
-import { graphqlRequest } from './lib/api-client.mjs';
-import { readJsonFile } from './lib/io.mjs';
+import { graphqlRequest } from '../lib/api-client.mjs';
+import { readJsonFile } from '../lib/io.mjs';
 
 const UPDATE_MENU_MUTATION = `
   mutation UpdateMenu(

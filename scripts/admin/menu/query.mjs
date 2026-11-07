@@ -1,4 +1,4 @@
-// query-menus.mjs
+// menu/query.mjs
 // Library: queries menus from the Admin GraphQL API (all of them, paged;
 // the `menus` connection has no server-side handle/title filter) and writes
 // one JSON file per menu - `<sourceDir>/<handle>.json` - plus
@@ -7,8 +7,8 @@
 // query-collections.mjs.
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from './lib/api-client.mjs';
-import { readJsonFileIfExists, saveResourceIds, writeJsonFile } from './lib/io.mjs';
+import { graphqlRequest } from '../lib/api-client.mjs';
+import { readJsonFileIfExists, saveResourceIds, writeJsonFile } from '../lib/io.mjs';
 
 const MENU_ITEM_FIELDS = `
   id
