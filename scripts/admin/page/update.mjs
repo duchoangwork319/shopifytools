@@ -8,6 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { readJsonFile } from '../lib/io.mjs';
+import { FILE } from '../lib/constants.mjs';
 import { fetchPageByHandle } from './query.mjs';
 
 const UPDATE_PAGE_MUTATION = `
@@ -88,9 +89,9 @@ export function selectEntries(store, { title, handles = [] } = {}) {
 // selected entry's bodyFilePath must exist on disk - if a _searchable-attrs.json record
 // points to a missing file, this exits before updating anything.
 export async function updatePages({ client, sourceDir, handles = [], title, dryRun = false }) {
-  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   if (!fs.existsSync(storeFile)) {
-    console.error(`Missing _searchable-attrs.json in ${sourceDir}. Run "page query" or "page create" first.`);
+    console.error(`Missing ${FILE.SEARCHABLE_ATTRS} in ${sourceDir}. Run "page query" or "page create" first.`);
     process.exit(1);
   }
 

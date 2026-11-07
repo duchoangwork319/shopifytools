@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { writeJsonFile } from '../lib/io.mjs';
+import { FILE } from '../lib/constants.mjs';
 
 const GET_ALL_PAGES_QUERY = `
   query GetAllPages($cursor: String) {
@@ -110,7 +111,7 @@ export async function queryPages({ client, sourceDir, handles }) {
     return { id: remotePage.id, handle: remotePage.handle, title: remotePage.title, bodyFilePath };
   });
 
-  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   writeJsonFile(storeFile, entries);
 
   return { count: entries.length };

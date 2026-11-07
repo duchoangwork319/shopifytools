@@ -8,6 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { writeJsonFile, readJsonFileIfExists, saveResourceIds } from '../lib/io.mjs';
+import { FILE } from '../lib/constants.mjs';
 
 const COLLECTION_FIELDS = `
   id
@@ -269,7 +270,7 @@ export async function queryCollections({ client, sourceDir, handles, title, incl
   }
   console.log(`Saved ${collections.length} collection JSON file(s) to ${sourceDir}`);
 
-  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   const store = readJsonFileIfExists(storeFile, []);
   const existingHandles = new Set(store.map((entry) => entry.handle));
   for (const collection of collections) {
@@ -287,7 +288,7 @@ export async function queryCollections({ client, sourceDir, handles, title, incl
     }
   }
 
-  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, FILE.RESOURCE_IDS);
   const newResourceIds = {};
   for (const { handle, id } of collections) {
     newResourceIds[handle] = id;

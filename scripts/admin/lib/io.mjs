@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import Papa from 'papaparse';
+import { FILE } from './constants.mjs';
 
 export function readJsonFile(file, label) {
   if (!fs.existsSync(file)) {
@@ -29,10 +30,10 @@ export function saveResourceIds(file, newResourceIds) {
   return merged;
 }
 
-// Resolves the _resource-ids.json path that sits next to a given
+// Resolves the FILE.RESOURCE_IDS path that sits next to a given
 // collections/menu input file.
 export function resourceIdsFileFor(inputFile) {
-  return path.resolve(path.dirname(inputFile), '_resource-ids.json');
+  return path.resolve(path.dirname(inputFile), FILE.RESOURCE_IDS);
 }
 
 export function sleep(ms) {

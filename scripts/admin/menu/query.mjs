@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { readJsonFileIfExists, saveResourceIds, writeJsonFile } from '../lib/io.mjs';
+import { FILE } from '../lib/constants.mjs';
 
 const MENU_ITEM_FIELDS = `
   id
@@ -107,7 +108,7 @@ export async function queryMenus({ client, sourceDir, handles }) {
   }
   console.log(`Saved ${menus.length} menu JSON file(s) to ${sourceDir}`);
 
-  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   const store = readJsonFileIfExists(storeFile, []);
   const existingHandles = new Set(store.map((entry) => entry.handle));
   for (const menu of menus) {
@@ -118,7 +119,7 @@ export async function queryMenus({ client, sourceDir, handles }) {
   writeJsonFile(storeFile, store);
   console.log(`Saved ${store.length} menu entrie(s) to ${storeFile}`);
 
-  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, FILE.RESOURCE_IDS);
   const newResourceIds = {};
   for (const { handle, id } of menus) {
     newResourceIds[handle] = id;

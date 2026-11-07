@@ -16,9 +16,10 @@ import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { readJsonFile, readJsonFileIfExists, saveResourceIds, writeJsonFile } from '../lib/io.mjs';
+import { FILE } from '../lib/constants.mjs';
 
 // Files in a menu source directory that are never themselves a menu input.
-const RESERVED_FILES = new Set(['_searchable-attrs.json', '_resource-ids.json']);
+const RESERVED_FILES = new Set([FILE.SEARCHABLE_ATTRS, FILE.RESOURCE_IDS]);
 
 // Same shape as menu/query.mjs's MENU_ITEM_FIELDS, so the menu this mutation
 // returns can be written back to <sourceDir>/<handle>.json exactly like a
@@ -108,12 +109,12 @@ function resolveTargetHandles(sourceDir, handles) {
 // same three files menu/query.mjs maintains.
 export async function createMenus({ client, sourceDir, collectionSourceDir, handles, dryRun = false }) {
   const targetHandles = resolveTargetHandles(sourceDir, handles);
-  const collectionResourceIdsFile = path.resolve(collectionSourceDir, '_resource-ids.json');
+  const collectionResourceIdsFile = path.resolve(collectionSourceDir, FILE.RESOURCE_IDS);
   const collectionResourceIds = readJsonFileIfExists(collectionResourceIdsFile, {});
 
-  const menuResourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
+  const menuResourceIdsFile = path.resolve(sourceDir, FILE.RESOURCE_IDS);
   const menuResourceIds = readJsonFileIfExists(menuResourceIdsFile, {});
-  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   const store = readJsonFileIfExists(storeFile, []);
   const storeHandles = new Set(store.map((entry) => entry.handle));
 

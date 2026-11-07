@@ -12,6 +12,7 @@
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { readJsonFile, sleep } from '../lib/io.mjs';
+import { FILE } from '../lib/constants.mjs';
 
 export const METAFIELDS_CHUNK_SIZE = 25;
 const JOB_POLL_INTERVAL_MS = 1000;
@@ -194,9 +195,9 @@ export async function updateCollections({
   includeMetafields = false,
   dryRun = false,
 }) {
-  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   const store = readJsonFile(storeFile, 'collection store');
-  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, FILE.RESOURCE_IDS);
   const collectionResourceIds = readJsonFile(resourceIdsFile, 'collection resource ids');
 
   const entries = handles?.length ? store.filter((entry) => handles.includes(entry.handle)) : store;

@@ -9,6 +9,7 @@
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { readJsonFile } from '../lib/io.mjs';
+import { FILE } from '../lib/constants.mjs';
 
 const UPDATE_MENU_MUTATION = `
   mutation UpdateMenu(
@@ -106,11 +107,11 @@ export function selectMenus(store, { handles, title } = {}) {
 // and pushes each selected menu's title/handle/items - read from its own
 // <sourceDir>/<handle>.json - back to Shopify via menuUpdate.
 export async function updateMenus({ client, sourceDir, handles, title, dryRun = false }) {
-  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   const store = readJsonFile(storeFile, 'menu store');
   const entries = selectMenus(store, { handles, title });
 
-  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, FILE.RESOURCE_IDS);
   const menuResourceIds = readJsonFile(resourceIdsFile, 'menu resource ids');
 
   let updated = 0;

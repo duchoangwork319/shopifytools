@@ -8,6 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { readJsonFileIfExists, writeJsonFile } from '../lib/io.mjs';
+import { FILE } from '../lib/constants.mjs';
 
 const CREATE_PAGE_MUTATION = `
   mutation CreatePage($page: PageCreateInput!) {
@@ -70,7 +71,7 @@ function resolveHtmlFiles(source, isDirectory) {
 
 function storeFileFor(source, isDirectory) {
   const dir = isDirectory ? source : path.dirname(source);
-  return path.resolve(dir, '_searchable-attrs.json');
+  return path.resolve(dir, FILE.SEARCHABLE_ATTRS);
 }
 
 // Creates a page for each .html file found in `source` (a single file or a

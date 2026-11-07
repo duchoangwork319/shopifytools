@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import { createAdminApiClient, loadEnv, readAuth } from './lib/api-client.mjs';
 import { resourceIdsFileFor } from './lib/io.mjs';
+import { FOLDER } from './lib/constants.mjs';
 import { createCollections, DEFAULT_CHUNK_SIZE as CREATE_CHUNK_SIZE, DEFAULT_DELAY_MS as CREATE_DELAY_MS } from './collection/create.mjs';
 import { updateCollections } from './collection/update.mjs';
 import { queryCollections } from './collection/query.mjs';
@@ -40,6 +41,27 @@ function clientFromCommand(cmd) {
 
 function exitOnErrors({ hadErrors }) {
   if (hadErrors) process.exitCode = 1;
+}
+
+// Resolves <source> - the one main data folder shared by every business
+// object - after validating it's an existing directory. Returns null (and
+// sets process.exitCode) instead of exiting outright, so callers can
+// `return` out of their action cleanly.
+function resolveMainDir(source) {
+  const mainDir = path.resolve(source);
+  if (!fs.existsSync(mainDir) || !fs.statSync(mainDir).isDirectory()) {
+    console.error(`Source must be an existing directory: ${mainDir}`);
+    process.exitCode = 1;
+    return null;
+  }
+  return mainDir;
+}
+
+// Resolves a business object's own subfolder (e.g. FOLDER.COLLECTION) inside
+// <source>, validating <source> itself first.
+function resolveBusinessDir(source, folder) {
+  const mainDir = resolveMainDir(source);
+  return mainDir ? path.join(mainDir, folder) : null;
 }
 
 const program = new Command();
@@ -87,8 +109,8 @@ collection
 collection
   .command('update <source> [handles]')
   .description(
-    'update collections from <source>/_searchable-attrs.json (the per-collection JSON files written by ' +
-    '"collection query"), by comma-separated handles, or every entry if omitted',
+    'update collections from <source>/collection/_searchable-attrs.json (the per-collection JSON files ' +
+    'written by "collection query"), by comma-separated handles, or every entry if omitted',
   )
   .option(
     '--update-rules',
@@ -99,12 +121,8 @@ collection
   .option('--dry-run', 'log what would be updated without calling the API', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const sourceDir = resolveBusinessDir(source, FOLDER.COLLECTION);
+    if (!sourceDir) return;
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     const result = await updateCollections({
       client,
@@ -121,19 +139,15 @@ collection
   .command('query <source> [handles]')
   .description(
     'fetch collection(s) by comma-separated handles, by -t/--title search (wildcard supported), ' +
-    'or all collections if neither is given, writing <source>/collections.json and ' +
-    '<source>/_resource-ids.json',
+    'or all collections if neither is given, writing <source>/collection/<handle>.json and ' +
+    '<source>/collection/_resource-ids.json',
   )
   .option('-t, --title <pattern>', 'search collections by title (wildcard supported, e.g. "*summer*")')
   .option('--with-metafields', 'also fetch each collection\'s metafields (a separate, paged request per collection)', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const sourceDir = resolveBusinessDir(source, FOLDER.COLLECTION);
+    if (!sourceDir) return;
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     await queryCollections({
       client,
@@ -147,17 +161,13 @@ collection
 collection
   .command('to-csv <source> [props]')
   .description(
-    'convert <source>/collections.json to a CSV, with columns from the comma-separated ' +
+    'convert <source>/collection/collections.json to a CSV, with columns from the comma-separated ' +
     '[props] (e.g. "handle,title"); defaults to every key on the first collection',
   )
-  .option('-o, --output <file>', 'path to write the CSV to (default: <source>/collections.csv)')
+  .option('-o, --output <file>', 'path to write the CSV to (default: <source>/collection/collections.csv)')
   .action((source, props, opts) => {
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const sourceDir = resolveBusinessDir(source, FOLDER.COLLECTION);
+    if (!sourceDir) return;
     const propList = props ? props.split(',').map((p) => p.trim()).filter(Boolean) : [];
     collectionsToCsv({ sourceDir, props: propList, output: opts.output });
   });
@@ -165,8 +175,8 @@ collection
 collection
   .command('load-csv <csvPath> <source>')
   .description(
-    'merge a CSV file (header row incl. "handle") into each matching <source>/<handle>.json ' +
-    'collection file; also updates title in <source>/_searchable-attrs.json when the CSV has a title column',
+    'merge a CSV file (header row incl. "handle") into each matching <source>/collection/<handle>.json ' +
+    'collection file; also updates title in <source>/collection/_searchable-attrs.json when the CSV has a title column',
   )
   .action((csvPath, source) => {
     const csvFile = path.resolve(csvPath);
@@ -175,12 +185,8 @@ collection
       process.exitCode = 1;
       return;
     }
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const sourceDir = resolveBusinessDir(source, FOLDER.COLLECTION);
+    if (!sourceDir) return;
     loadCsvCollections({ csvFile, sourceDir });
   });
 
@@ -192,25 +198,17 @@ const menu = program.command('menu').description('manage navigation menus');
 menu
   .command('create <source> [handles]')
   .description(
-    'create menu(s) from <source>/<handle>.json menu inputs, by comma-separated handles, or ' +
-    'every one found in <source> if omitted',
+    'create menu(s) from <source>/menu/<handle>.json menu inputs, by comma-separated handles, or ' +
+    'every one found in <source>/menu if omitted - collection-linked items are resolved via ' +
+    '<source>/collection/_resource-ids.json',
   )
-  .requiredOption('--collection-source <dir>', 'folder containing _resource-ids.json')
   .option('--dry-run', 'log what would be created without calling the API', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
-    const collectionSourceDir = path.resolve(opts.collectionSource);
-    if (!fs.existsSync(collectionSourceDir) || !fs.statSync(collectionSourceDir).isDirectory()) {
-      console.error(`--collection-source must be an existing directory: ${collectionSourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const mainDir = resolveMainDir(source);
+    if (!mainDir) return;
+    const sourceDir = path.join(mainDir, FOLDER.MENU);
+    const collectionSourceDir = path.join(mainDir, FOLDER.COLLECTION);
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     const result = await createMenus({
       client,
@@ -225,12 +223,13 @@ menu
 menu
   .command('query <source> [handles]')
   .description(
-    'fetch menu(s) by comma-separated handles, or all menus if omitted, writing <source>/<handle>.json, ' +
-    '<source>/_searchable-attrs.json, and <source>/_resource-ids.json',
+    'fetch menu(s) by comma-separated handles, or all menus if omitted, writing <source>/menu/<handle>.json, ' +
+    '<source>/menu/_searchable-attrs.json, and <source>/menu/_resource-ids.json',
   )
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = path.resolve(source);
+    const sourceDir = resolveBusinessDir(source, FOLDER.MENU);
+    if (!sourceDir) return;
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     await queryMenus({ client, sourceDir, handles: handleList });
   });
@@ -238,19 +237,15 @@ menu
 menu
   .command('update <source> [handles]')
   .description(
-    'update menu(s) from <source>/_searchable-attrs.json (the per-menu JSON files written by "menu query"), ' +
-    'by comma-separated handles, or every entry if omitted',
+    'update menu(s) from <source>/menu/_searchable-attrs.json (the per-menu JSON files written by ' +
+    '"menu query"), by comma-separated handles, or every entry if omitted',
   )
   .option('-t, --title <pattern>', 'match menus by title - a full title, a wildcard (*, ?), or a /regex/flags')
   .option('--dry-run', 'log what would be updated without calling the API', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const sourceDir = resolveBusinessDir(source, FOLDER.MENU);
+    if (!sourceDir) return;
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     const result = await updateMenus({
       client,
@@ -270,33 +265,35 @@ const page = program.command('page').description('manage pages');
 page
   .command('create <source>')
   .description(
-    'create page(s) from an .html file, or every *.html file in a directory. ' +
-    'Skips handles already recorded in _searchable-attrs.json next to <source>.',
+    'create page(s) from every *.html file in <source>/page. ' +
+    'Skips handles already recorded in <source>/page/_searchable-attrs.json.',
   )
   .option('--dry-run', 'log what would be created without calling the API or writing _searchable-attrs.json', false)
   .action(async (source, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const resolvedSource = path.resolve(source);
-    const result = await createPages({ client, source: resolvedSource, dryRun: opts.dryRun });
+    const pagesDir = resolveBusinessDir(source, FOLDER.PAGE);
+    if (!pagesDir) return;
+    if (!fs.existsSync(pagesDir)) {
+      console.error(`No ${FOLDER.PAGE} folder found in ${path.resolve(source)}. Create ${pagesDir} and add .html files to it.`);
+      process.exitCode = 1;
+      return;
+    }
+    const result = await createPages({ client, source: pagesDir, dryRun: opts.dryRun });
     if (result.failed) process.exitCode = 1;
   });
 
 page
   .command('update <source> [handles]')
   .description(
-    'update page(s) from <source>/_searchable-attrs.json by comma-separated handles, by -t/--title ' +
+    'update page(s) from <source>/page/_searchable-attrs.json by comma-separated handles, by -t/--title ' +
     '(wildcard supported), or every entry if neither is given',
   )
   .option('-t, --title <pattern>', 'match pages by title - a full title, a wildcard (*, ?), or a /regex/flags')
   .option('--dry-run', 'log what would be updated without calling the API', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const sourceDir = resolveBusinessDir(source, FOLDER.PAGE);
+    if (!sourceDir) return;
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     const result = await updatePages({ client, sourceDir, handles: handleList, title: opts.title, dryRun: opts.dryRun });
     if (result.failed) process.exitCode = 1;
@@ -306,16 +303,12 @@ page
   .command('query <source> [handles]')
   .description(
     'fetch page(s) by comma-separated handles (or all pages if omitted), ' +
-    'writing each body to <source>/<handle>.html and the entries to <source>/_searchable-attrs.json',
+    'writing each body to <source>/page/<handle>.html and the entries to <source>/page/_searchable-attrs.json',
   )
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const sourceDir = resolveBusinessDir(source, FOLDER.PAGE);
+    if (!sourceDir) return;
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     await queryPages({ client, sourceDir, handles: handleList });
   });
@@ -323,19 +316,15 @@ page
 page
   .command('delete <source> [handles]')
   .description(
-    'delete page(s) from <source>/_searchable-attrs.json by comma-separated handles, or every entry if ' +
-    'omitted; removes each deleted one from _searchable-attrs.json',
+    'delete page(s) from <source>/page/_searchable-attrs.json by comma-separated handles, or every entry ' +
+    'if omitted; removes each deleted one from _searchable-attrs.json',
   )
   .option('--delete-html', 'also delete each page\'s bodyFilePath from disk', false)
   .option('--dry-run', 'log what would be deleted without calling the API', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const sourceDir = resolveBusinessDir(source, FOLDER.PAGE);
+    if (!sourceDir) return;
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     const result = await deletePages({ client, sourceDir, handles: handleList, deleteHtml: opts.deleteHtml, dryRun: opts.dryRun });
     if (result.failed) process.exitCode = 1;
@@ -351,16 +340,12 @@ systemMetafield
   .command('query <source> <ownerType>')
   .description(
     'fetch every metafield definition for a MetafieldOwnerType (e.g. "collection", "product"), ' +
-    'writing/updating <source>/<ownerType>.json',
+    `writing/updating <source>/${FOLDER.SYSTEM_METAFIELD}/<ownerType>.json`,
   )
   .action(async (source, ownerType, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = path.resolve(source);
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-      console.error(`Source must be an existing directory: ${sourceDir}`);
-      process.exitCode = 1;
-      return;
-    }
+    const sourceDir = resolveBusinessDir(source, FOLDER.SYSTEM_METAFIELD);
+    if (!sourceDir) return;
     await queryMetafieldDefinitions({ client, sourceDir, ownerType });
   });
 

@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { readJsonFile, writeJsonFile } from '../lib/io.mjs';
+import { FILE } from '../lib/constants.mjs';
 
 const DELETE_PAGE_MUTATION = `
   mutation DeletePage($id: ID!) {
@@ -48,9 +49,9 @@ function selectEntries(store, handles) {
 // from Shopify, removing it from _searchable-attrs.json on success. With
 // `deleteHtml`, its bodyFilePath is also deleted from disk.
 export async function deletePages({ client, sourceDir, handles = [], deleteHtml = false, dryRun = false }) {
-  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   if (!fs.existsSync(storeFile)) {
-    console.error(`Missing _searchable-attrs.json in ${sourceDir}. Run "page query" or "page create" first.`);
+    console.error(`Missing ${FILE.SEARCHABLE_ATTRS} in ${sourceDir}. Run "page query" or "page create" first.`);
     process.exit(1);
   }
 

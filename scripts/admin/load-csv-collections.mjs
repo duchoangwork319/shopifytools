@@ -15,6 +15,7 @@
 import fs from 'fs';
 import path from 'path';
 import { parseCsv, readJsonFile, readJsonFileIfExists, writeJsonFile } from './lib/io.mjs';
+import { FILE } from './lib/constants.mjs';
 
 const METAFIELD_CONFIG_FILE = path.resolve(import.meta.dirname, 'config', 'metafields', 'collection.json');
 const METAFIELD_COLUMN_PREFIX = 'metafields.';
@@ -77,9 +78,9 @@ export function loadCsvCollections({ csvFile, sourceDir }) {
   const metafieldDefsByColumn = resolveMetafieldColumns(columns);
   const updatesTitle = columns.includes('title');
 
-  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   const store = readJsonFileIfExists(storeFile, []);
-  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, FILE.RESOURCE_IDS);
   const collectionResourceIds = readJsonFileIfExists(resourceIdsFile, {});
 
   let updatedCount = 0;
