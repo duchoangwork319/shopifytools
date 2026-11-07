@@ -1,8 +1,8 @@
 // collection/update.mjs
 // Library: updates collections against the Admin GraphQL API from the
 // per-collection JSON files written by collection/query.mjs
-// (<sourceDir>/store.json + <sourceDir>/<handle>.json), resolving each
-// handle's `id` via <sourceDir>/collection-resource-ids.json. Collections
+// (<sourceDir>/_searchable-attrs.json + <sourceDir>/<handle>.json), resolving each
+// handle's `id` via <sourceDir>/_resource-ids.json. Collections
 // are updated sequentially, one at a time: a `collectionUpdate` mutation
 // first (waiting for its `job` to finish - rule changes recompute
 // collection membership asynchronously), then its metafields via
@@ -180,9 +180,9 @@ async function updateCollection(client, collection, { id, updateRules, includeMe
 }
 
 // Updates collections from the per-collection JSON files written by
-// collection/query.mjs: reads <sourceDir>/store.json (narrowed to
+// collection/query.mjs: reads <sourceDir>/_searchable-attrs.json (narrowed to
 // `handles`, or every entry if omitted), resolves each handle's `id` via
-// <sourceDir>/collection-resource-ids.json, and updates its writable fields,
+// <sourceDir>/_resource-ids.json, and updates its writable fields,
 // one collection at a time. Metafields are a separate request on top of the
 // basic fields, so they're only pushed via metafieldsSet when
 // `includeMetafields` is set.
@@ -194,9 +194,9 @@ export async function updateCollections({
   includeMetafields = false,
   dryRun = false,
 }) {
-  const storeFile = path.resolve(sourceDir, 'store.json');
+  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
   const store = readJsonFile(storeFile, 'collection store');
-  const resourceIdsFile = path.resolve(sourceDir, 'collection-resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
   const collectionResourceIds = readJsonFile(resourceIdsFile, 'collection resource ids');
 
   const entries = handles?.length ? store.filter((entry) => handles.includes(entry.handle)) : store;

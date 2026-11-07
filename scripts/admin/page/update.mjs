@@ -1,6 +1,6 @@
 // page/update.mjs
 // Library: updates page(s) against the Admin GraphQL API, sourced from a
-// store.json file (the shape written by page/create.mjs / page/query.mjs:
+// _searchable-attrs.json file (the shape written by page/create.mjs / page/query.mjs:
 // an array of { handle, title, bodyFilePath }) in a given folder. Pages can
 // be narrowed down by comma-separated handles and/or a title pattern (exact
 // string, glob-style wildcard, or /regex/flags).
@@ -68,7 +68,7 @@ export function selectEntries(store, { title, handles = [] } = {}) {
     entries = handles.map((handle) => {
       const entry = store.find((e) => e.handle === handle);
       if (!entry) {
-        console.error(`Handle "${handle}" not found in store.json.`);
+        console.error(`Handle "${handle}" not found in _searchable-attrs.json.`);
         process.exit(1);
       }
       return entry;
@@ -83,14 +83,14 @@ export function selectEntries(store, { title, handles = [] } = {}) {
   return entries;
 }
 
-// Reads `<sourceDir>/store.json` (throws/exits if missing), narrows it down
+// Reads `<sourceDir>/_searchable-attrs.json` (throws/exits if missing), narrows it down
 // via `handles`/`title`, and updates each matched page's title/body. Every
-// selected entry's bodyFilePath must exist on disk - if a store.json record
+// selected entry's bodyFilePath must exist on disk - if a _searchable-attrs.json record
 // points to a missing file, this exits before updating anything.
 export async function updatePages({ client, sourceDir, handles = [], title, dryRun = false }) {
-  const storeFile = path.resolve(sourceDir, 'store.json');
+  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
   if (!fs.existsSync(storeFile)) {
-    console.error(`Missing store.json in ${sourceDir}. Run "page query" or "page create" first.`);
+    console.error(`Missing _searchable-attrs.json in ${sourceDir}. Run "page query" or "page create" first.`);
     process.exit(1);
   }
 
@@ -99,7 +99,7 @@ export async function updatePages({ client, sourceDir, handles = [], title, dryR
 
   for (const entry of entries) {
     if (!fs.existsSync(entry.bodyFilePath)) {
-      console.error(`store.json record "${entry.handle}" points to a missing file: ${entry.bodyFilePath}`);
+      console.error(`_searchable-attrs.json record "${entry.handle}" points to a missing file: ${entry.bodyFilePath}`);
       process.exit(1);
     }
   }

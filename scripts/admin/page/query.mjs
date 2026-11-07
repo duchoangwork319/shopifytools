@@ -82,7 +82,7 @@ export async function fetchPageByHandle(client, handle) {
 
 // Fetches pages (by `handles`, or all of them if omitted/empty), writes each
 // one's body to `<sourceDir>/<handle>.html`, and writes the resulting
-// { id, handle, title, bodyFilePath } entries to `<sourceDir>/store.json`.
+// { id, handle, title, bodyFilePath } entries to `<sourceDir>/_searchable-attrs.json`.
 // The store file is purely an output - its existing content, if any, is not
 // read.
 export async function queryPages({ client, sourceDir, handles }) {
@@ -110,7 +110,7 @@ export async function queryPages({ client, sourceDir, handles }) {
     return { id: remotePage.id, handle: remotePage.handle, title: remotePage.title, bodyFilePath };
   });
 
-  const storeFile = path.resolve(sourceDir, 'store.json');
+  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
   writeJsonFile(storeFile, entries);
 
   return { count: entries.length };

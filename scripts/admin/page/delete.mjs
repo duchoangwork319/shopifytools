@@ -1,9 +1,9 @@
 // page/delete.mjs
 // Library: deletes page(s) from the Admin GraphQL API, sourced from
-// <sourceDir>/store.json (the shape written by page/create.mjs /
+// <sourceDir>/_searchable-attrs.json (the shape written by page/create.mjs /
 // page/query.mjs: an array of { id, handle, title, bodyFilePath }).
 // Narrowed down to specific handles, or every entry if omitted. On success,
-// the matched entry is removed from store.json; with --delete-html, its
+// the matched entry is removed from _searchable-attrs.json; with --delete-html, its
 // bodyFilePath is deleted too.
 import fs from 'fs';
 import path from 'path';
@@ -34,7 +34,7 @@ function selectEntries(store, handles) {
   const entries = handles.map((handle) => {
     const entry = store.find((e) => e.handle === handle);
     if (!entry) {
-      console.error(`Handle "${handle}" not found in store.json.`);
+      console.error(`Handle "${handle}" not found in _searchable-attrs.json.`);
       process.exit(1);
     }
     return entry;
@@ -43,14 +43,14 @@ function selectEntries(store, handles) {
   return entries;
 }
 
-// Reads `<sourceDir>/store.json` (throws/exits if missing), narrows it down
+// Reads `<sourceDir>/_searchable-attrs.json` (throws/exits if missing), narrows it down
 // to `handles` (or every entry if omitted), and deletes each matched page
-// from Shopify, removing it from store.json on success. With
+// from Shopify, removing it from _searchable-attrs.json on success. With
 // `deleteHtml`, its bodyFilePath is also deleted from disk.
 export async function deletePages({ client, sourceDir, handles = [], deleteHtml = false, dryRun = false }) {
-  const storeFile = path.resolve(sourceDir, 'store.json');
+  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
   if (!fs.existsSync(storeFile)) {
-    console.error(`Missing store.json in ${sourceDir}. Run "page query" or "page create" first.`);
+    console.error(`Missing _searchable-attrs.json in ${sourceDir}. Run "page query" or "page create" first.`);
     process.exit(1);
   }
 
@@ -62,7 +62,7 @@ export async function deletePages({ client, sourceDir, handles = [], deleteHtml 
 
   for (const entry of entries) {
     if (!entry.id) {
-      console.error(`store.json record "${entry.handle}" has no id - run "page query" to refresh it.`);
+      console.error(`_searchable-attrs.json record "${entry.handle}" has no id - run "page query" to refresh it.`);
       failed += 1;
       continue;
     }

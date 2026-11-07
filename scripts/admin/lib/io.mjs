@@ -29,10 +29,10 @@ export function saveResourceIds(file, newResourceIds) {
   return merged;
 }
 
-// Resolves the collection-resource-ids.json path that sits next to a given
+// Resolves the _resource-ids.json path that sits next to a given
 // collections/menu input file.
 export function resourceIdsFileFor(inputFile) {
-  return path.resolve(path.dirname(inputFile), 'collection-resource-ids.json');
+  return path.resolve(path.dirname(inputFile), '_resource-ids.json');
 }
 
 export function sleep(ms) {

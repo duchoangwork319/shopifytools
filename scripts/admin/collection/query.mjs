@@ -225,9 +225,9 @@ function toEntry({ title, handle, description, descriptionHtml, templateSuffix, 
 // Fetches collections (by `handles`, by `title` search, or all of them if
 // neither is given) and writes one JSON file per collection -
 // `<sourceDir>/<handle>.json` ({ title, handle, description, descriptionHtml,
-// templateSuffix, seo, ruleSet, metafields }) - plus `<sourceDir>/store.json`
+// templateSuffix, seo, ruleSet, metafields }) - plus `<sourceDir>/_searchable-attrs.json`
 // ({ handle, title, filePath }[], appended to, never truncated) and
-// `<sourceDir>/collection-resource-ids.json` ({ handle: id }).
+// `<sourceDir>/_resource-ids.json` ({ handle: id }).
 //
 // Metafields are a separate, per-collection paged request on top of the
 // basic fields, so they're only fetched when `includeMetafields` is set -
@@ -269,7 +269,7 @@ export async function queryCollections({ client, sourceDir, handles, title, incl
   }
   console.log(`Saved ${collections.length} collection JSON file(s) to ${sourceDir}`);
 
-  const storeFile = path.resolve(sourceDir, 'store.json');
+  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
   const store = readJsonFileIfExists(storeFile, []);
   const existingHandles = new Set(store.map((entry) => entry.handle));
   for (const collection of collections) {
@@ -287,7 +287,7 @@ export async function queryCollections({ client, sourceDir, handles, title, incl
     }
   }
 
-  const resourceIdsFile = path.resolve(sourceDir, 'collection-resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
   const newResourceIds = {};
   for (const { handle, id } of collections) {
     newResourceIds[handle] = id;

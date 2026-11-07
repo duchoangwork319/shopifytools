@@ -2,8 +2,8 @@
 // Library: queries menus from the Admin GraphQL API (all of them, paged;
 // the `menus` connection has no server-side handle/title filter) and writes
 // one JSON file per menu - `<sourceDir>/<handle>.json` - plus
-// `<sourceDir>/store.json` ({ handle, title, filePath }[], appended to) and
-// `<sourceDir>/menu-resource-ids.json` ({ handle: id }), mirroring
+// `<sourceDir>/_searchable-attrs.json` ({ handle, title, filePath }[], appended to) and
+// `<sourceDir>/_resource-ids.json` ({ handle: id }), mirroring
 // query-collections.mjs.
 import fs from 'fs';
 import path from 'path';
@@ -76,9 +76,9 @@ function toEntry({ handle, title, isDefault, items }) {
 
 // Fetches menus (by `handles`, or all of them if omitted/empty) and writes
 // one JSON file per menu - `<sourceDir>/<handle>.json` ({ handle, title,
-// isDefault, items }) - plus `<sourceDir>/store.json` ({ handle, title,
+// isDefault, items }) - plus `<sourceDir>/_searchable-attrs.json` ({ handle, title,
 // filePath }[], appended to, never truncated) and
-// `<sourceDir>/menu-resource-ids.json` ({ handle: id }).
+// `<sourceDir>/_resource-ids.json` ({ handle: id }).
 export async function queryMenus({ client, sourceDir, handles }) {
   fs.mkdirSync(sourceDir, { recursive: true });
 
@@ -107,7 +107,7 @@ export async function queryMenus({ client, sourceDir, handles }) {
   }
   console.log(`Saved ${menus.length} menu JSON file(s) to ${sourceDir}`);
 
-  const storeFile = path.resolve(sourceDir, 'store.json');
+  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
   const store = readJsonFileIfExists(storeFile, []);
   const existingHandles = new Set(store.map((entry) => entry.handle));
   for (const menu of menus) {
@@ -118,7 +118,7 @@ export async function queryMenus({ client, sourceDir, handles }) {
   writeJsonFile(storeFile, store);
   console.log(`Saved ${store.length} menu entrie(s) to ${storeFile}`);
 
-  const resourceIdsFile = path.resolve(sourceDir, 'menu-resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
   const newResourceIds = {};
   for (const { handle, id } of menus) {
     newResourceIds[handle] = id;

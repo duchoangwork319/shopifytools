@@ -1,7 +1,7 @@
 // page/create.mjs
 // Library: creates pages against the Admin GraphQL API from an HTML file or
 // a directory of HTML files. Each file's basename becomes the page's title
-// (title-cased) and handle (slugified). A store.json file next to the
+// (title-cased) and handle (slugified). A _searchable-attrs.json file next to the
 // source (see ignore/storedata/all/all.json for the shape) tracks already
 // created pages by handle, so re-runs skip ones that already exist.
 import fs from 'fs';
@@ -70,12 +70,12 @@ function resolveHtmlFiles(source, isDirectory) {
 
 function storeFileFor(source, isDirectory) {
   const dir = isDirectory ? source : path.dirname(source);
-  return path.resolve(dir, 'store.json');
+  return path.resolve(dir, '_searchable-attrs.json');
 }
 
 // Creates a page for each .html file found in `source` (a single file or a
-// directory), skipping any handle already recorded in store.json. Each
-// successfully created page is appended to store.json as
+// directory), skipping any handle already recorded in _searchable-attrs.json. Each
+// successfully created page is appended to _searchable-attrs.json as
 // { handle, title, bodyFilePath } right away, so a re-run only creates the
 // remaining ones.
 export async function createPages({ client, source, dryRun = false }) {

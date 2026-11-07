@@ -2,7 +2,7 @@
 // Library: reads a CSV file (header row incl. "handle") and merges its other
 // columns into each matching `<sourceDir>/<handle>.json` collection file
 // written by collection/query.mjs. If the CSV includes a `title` column,
-// the matching entry's title in `<sourceDir>/store.json` is updated too. A
+// the matching entry's title in `<sourceDir>/_searchable-attrs.json` is updated too. A
 // `description` column also auto-assigns `descriptionHtml` to the same
 // value wrapped in `<p class="five-lead">`, since `descriptionHtml` - not
 // `description` - is the field collection/update.mjs actually sends to
@@ -51,7 +51,7 @@ function resolveMetafieldColumns(columns) {
 // Merges one metafield column's value into entry.metafields (matching the
 // shape written by collection/query.mjs / collection/update.mjs: id?,
 // namespace, key, type, value, ownerId). `ownerId` is the collection's id,
-// resolved from collection-resource-ids.json by handle - when it's missing,
+// resolved from _resource-ids.json by handle - when it's missing,
 // the metafield isn't added, and a warning is logged instead.
 function applyMetafieldColumn(entry, value, handle, { namespace, key, type }, collectionResourceIds) {
   const ownerId = collectionResourceIds[handle];
@@ -77,9 +77,9 @@ export function loadCsvCollections({ csvFile, sourceDir }) {
   const metafieldDefsByColumn = resolveMetafieldColumns(columns);
   const updatesTitle = columns.includes('title');
 
-  const storeFile = path.resolve(sourceDir, 'store.json');
+  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
   const store = readJsonFileIfExists(storeFile, []);
-  const resourceIdsFile = path.resolve(sourceDir, 'collection-resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
   const collectionResourceIds = readJsonFileIfExists(resourceIdsFile, {});
 
   let updatedCount = 0;

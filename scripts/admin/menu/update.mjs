@@ -1,11 +1,11 @@
 // menu/update.mjs
 // Library: updates menu(s) against the Admin GraphQL API, sourced from the
-// per-menu JSON files written by menu/query.mjs: <sourceDir>/store.json
+// per-menu JSON files written by menu/query.mjs: <sourceDir>/_searchable-attrs.json
 // ({ handle, title, filePath }[], narrowed to `handles` and/or a `title`
 // pattern - exact string, glob-style wildcard, or /regex/flags - or every
 // entry if neither is given) plus each entry's own <sourceDir>/<handle>.json
 // ({ handle, title, isDefault, items }). Each handle's `id` is resolved via
-// <sourceDir>/menu-resource-ids.json.
+// <sourceDir>/_resource-ids.json.
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
 import { readJsonFile } from '../lib/io.mjs';
@@ -74,7 +74,7 @@ export function titleMatcher(pattern) {
   return new RegExp(`^${escaped}$`, 'i');
 }
 
-// Narrows store.json entries down to `handles` (every one must exist)
+// Narrows _searchable-attrs.json entries down to `handles` (every one must exist)
 // and/or `title` (exact/wildcard/regex, via titleMatcher). With neither
 // given, every entry is selected.
 export function selectMenus(store, { handles, title } = {}) {
@@ -86,7 +86,7 @@ export function selectMenus(store, { handles, title } = {}) {
     for (const handle of handles) {
       const entry = byHandle.get(handle);
       if (!entry) {
-        console.error(`Handle "${handle}" not found in store.json.`);
+        console.error(`Handle "${handle}" not found in _searchable-attrs.json.`);
         process.exit(1);
       }
       entries.push(entry);
@@ -101,16 +101,16 @@ export function selectMenus(store, { handles, title } = {}) {
   return entries;
 }
 
-// Reads <sourceDir>/store.json (exits if missing), narrows it down via
-// `handles`, resolves each handle's id via <sourceDir>/menu-resource-ids.json,
+// Reads <sourceDir>/_searchable-attrs.json (exits if missing), narrows it down via
+// `handles`, resolves each handle's id via <sourceDir>/_resource-ids.json,
 // and pushes each selected menu's title/handle/items - read from its own
 // <sourceDir>/<handle>.json - back to Shopify via menuUpdate.
 export async function updateMenus({ client, sourceDir, handles, title, dryRun = false }) {
-  const storeFile = path.resolve(sourceDir, 'store.json');
+  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
   const store = readJsonFile(storeFile, 'menu store');
   const entries = selectMenus(store, { handles, title });
 
-  const resourceIdsFile = path.resolve(sourceDir, 'menu-resource-ids.json');
+  const resourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
   const menuResourceIds = readJsonFile(resourceIdsFile, 'menu resource ids');
 
   let updated = 0;

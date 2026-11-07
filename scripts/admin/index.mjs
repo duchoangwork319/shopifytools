@@ -87,7 +87,7 @@ collection
 collection
   .command('update <source> [handles]')
   .description(
-    'update collections from <source>/store.json (the per-collection JSON files written by ' +
+    'update collections from <source>/_searchable-attrs.json (the per-collection JSON files written by ' +
     '"collection query"), by comma-separated handles, or every entry if omitted',
   )
   .option(
@@ -122,7 +122,7 @@ collection
   .description(
     'fetch collection(s) by comma-separated handles, by -t/--title search (wildcard supported), ' +
     'or all collections if neither is given, writing <source>/collections.json and ' +
-    '<source>/collection-resource-ids.json',
+    '<source>/_resource-ids.json',
   )
   .option('-t, --title <pattern>', 'search collections by title (wildcard supported, e.g. "*summer*")')
   .option('--with-metafields', 'also fetch each collection\'s metafields (a separate, paged request per collection)', false)
@@ -166,7 +166,7 @@ collection
   .command('load-csv <csvPath> <source>')
   .description(
     'merge a CSV file (header row incl. "handle") into each matching <source>/<handle>.json ' +
-    'collection file; also updates title in <source>/store.json when the CSV has a title column',
+    'collection file; also updates title in <source>/_searchable-attrs.json when the CSV has a title column',
   )
   .action((csvPath, source) => {
     const csvFile = path.resolve(csvPath);
@@ -195,7 +195,7 @@ menu
     'create menu(s) from <source>/<handle>.json menu inputs, by comma-separated handles, or ' +
     'every one found in <source> if omitted',
   )
-  .requiredOption('--collection-source <dir>', 'folder containing collection-resource-ids.json')
+  .requiredOption('--collection-source <dir>', 'folder containing _resource-ids.json')
   .option('--dry-run', 'log what would be created without calling the API', false)
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
@@ -226,7 +226,7 @@ menu
   .command('query <source> [handles]')
   .description(
     'fetch menu(s) by comma-separated handles, or all menus if omitted, writing <source>/<handle>.json, ' +
-    '<source>/store.json, and <source>/menu-resource-ids.json',
+    '<source>/_searchable-attrs.json, and <source>/_resource-ids.json',
   )
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
@@ -238,7 +238,7 @@ menu
 menu
   .command('update <source> [handles]')
   .description(
-    'update menu(s) from <source>/store.json (the per-menu JSON files written by "menu query"), ' +
+    'update menu(s) from <source>/_searchable-attrs.json (the per-menu JSON files written by "menu query"), ' +
     'by comma-separated handles, or every entry if omitted',
   )
   .option('-t, --title <pattern>', 'match menus by title - a full title, a wildcard (*, ?), or a /regex/flags')
@@ -271,9 +271,9 @@ page
   .command('create <source>')
   .description(
     'create page(s) from an .html file, or every *.html file in a directory. ' +
-    'Skips handles already recorded in store.json next to <source>.',
+    'Skips handles already recorded in _searchable-attrs.json next to <source>.',
   )
-  .option('--dry-run', 'log what would be created without calling the API or writing store.json', false)
+  .option('--dry-run', 'log what would be created without calling the API or writing _searchable-attrs.json', false)
   .action(async (source, opts, cmd) => {
     const client = clientFromCommand(cmd);
     const resolvedSource = path.resolve(source);
@@ -284,7 +284,7 @@ page
 page
   .command('update <source> [handles]')
   .description(
-    'update page(s) from <source>/store.json by comma-separated handles, by -t/--title ' +
+    'update page(s) from <source>/_searchable-attrs.json by comma-separated handles, by -t/--title ' +
     '(wildcard supported), or every entry if neither is given',
   )
   .option('-t, --title <pattern>', 'match pages by title - a full title, a wildcard (*, ?), or a /regex/flags')
@@ -306,7 +306,7 @@ page
   .command('query <source> [handles]')
   .description(
     'fetch page(s) by comma-separated handles (or all pages if omitted), ' +
-    'writing each body to <source>/<handle>.html and the entries to <source>/store.json',
+    'writing each body to <source>/<handle>.html and the entries to <source>/_searchable-attrs.json',
   )
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
@@ -323,8 +323,8 @@ page
 page
   .command('delete <source> [handles]')
   .description(
-    'delete page(s) from <source>/store.json by comma-separated handles, or every entry if ' +
-    'omitted; removes each deleted one from store.json',
+    'delete page(s) from <source>/_searchable-attrs.json by comma-separated handles, or every entry if ' +
+    'omitted; removes each deleted one from _searchable-attrs.json',
   )
   .option('--delete-html', 'also delete each page\'s bodyFilePath from disk', false)
   .option('--dry-run', 'log what would be deleted without calling the API', false)

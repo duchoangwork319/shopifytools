@@ -10,7 +10,7 @@
 // rather than a hardcoded `resourceId`, since the real resourceId only
 // exists once the collection has been created. Before sending each menu,
 // `/collections/<handle>` urls are resolved to `resourceId` via
-// <collectionSourceDir>/collection-resource-ids.json (written by
+// <collectionSourceDir>/_resource-ids.json (written by
 // collection/create.mjs / collection/query.mjs), if it exists.
 import fs from 'fs';
 import path from 'path';
@@ -18,7 +18,7 @@ import { graphqlRequest } from '../lib/api-client.mjs';
 import { readJsonFile, readJsonFileIfExists, saveResourceIds, writeJsonFile } from '../lib/io.mjs';
 
 // Files in a menu source directory that are never themselves a menu input.
-const RESERVED_FILES = new Set(['store.json', 'menu-resource-ids.json']);
+const RESERVED_FILES = new Set(['_searchable-attrs.json', '_resource-ids.json']);
 
 // Same shape as menu/query.mjs's MENU_ITEM_FIELDS, so the menu this mutation
 // returns can be written back to <sourceDir>/<handle>.json exactly like a
@@ -101,19 +101,19 @@ function resolveTargetHandles(sourceDir, handles) {
 
 // Reads each <sourceDir>/<handle>.json menu input (narrowed to `handles`, or
 // every one found in sourceDir if omitted) and creates it, resolving
-// collection-linked items via <collectionSourceDir>/collection-resource-ids.json
+// collection-linked items via <collectionSourceDir>/_resource-ids.json
 // if it exists. On success, the created menu is written back to
 // <sourceDir>/<handle>.json (now with real item ids/resourceIds), and added
-// to <sourceDir>/menu-resource-ids.json and <sourceDir>/store.json - the
+// to <sourceDir>/_resource-ids.json and <sourceDir>/_searchable-attrs.json - the
 // same three files menu/query.mjs maintains.
 export async function createMenus({ client, sourceDir, collectionSourceDir, handles, dryRun = false }) {
   const targetHandles = resolveTargetHandles(sourceDir, handles);
-  const collectionResourceIdsFile = path.resolve(collectionSourceDir, 'collection-resource-ids.json');
+  const collectionResourceIdsFile = path.resolve(collectionSourceDir, '_resource-ids.json');
   const collectionResourceIds = readJsonFileIfExists(collectionResourceIdsFile, {});
 
-  const menuResourceIdsFile = path.resolve(sourceDir, 'menu-resource-ids.json');
+  const menuResourceIdsFile = path.resolve(sourceDir, '_resource-ids.json');
   const menuResourceIds = readJsonFileIfExists(menuResourceIdsFile, {});
-  const storeFile = path.resolve(sourceDir, 'store.json');
+  const storeFile = path.resolve(sourceDir, '_searchable-attrs.json');
   const store = readJsonFileIfExists(storeFile, []);
   const storeHandles = new Set(store.map((entry) => entry.handle));
 

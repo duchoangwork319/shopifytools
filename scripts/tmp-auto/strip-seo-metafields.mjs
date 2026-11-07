@@ -15,7 +15,7 @@ const STRIPPED_KEYS = new Set(['title_tag', 'description_tag']);
 function stripSeoMetafields(sourceDir) {
   const files = fs
     .readdirSync(sourceDir, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith('.json') && entry.name !== 'store.json' && !entry.name.endsWith('-resource-ids.json'));
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.json') && entry.name !== '_searchable-attrs.json' && !entry.name.endsWith('-resource-ids.json'));
 
   let scanned = 0;
   let updated = 0;
