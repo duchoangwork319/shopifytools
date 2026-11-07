@@ -340,11 +340,11 @@ systemMetafield
   .command('query <source> <ownerType>')
   .description(
     'fetch every metafield definition for a MetafieldOwnerType (e.g. "collection", "product"), ' +
-    `writing/updating <source>/${FOLDER.SYSTEM_METAFIELD}/<ownerType>.json`,
+    `writing/updating <source>/${FOLDER.SYSTEM.METAFIELD}/<ownerType>.json`,
   )
   .action(async (source, ownerType, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    const sourceDir = resolveBusinessDir(source, FOLDER.SYSTEM_METAFIELD);
+    const sourceDir = resolveBusinessDir(source, FOLDER.SYSTEM.METAFIELD);
     if (!sourceDir) return;
     await queryMetafieldDefinitions({ client, sourceDir, ownerType });
   });

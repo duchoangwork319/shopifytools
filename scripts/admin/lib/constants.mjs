@@ -9,7 +9,9 @@ export const FOLDER = {
   COLLECTION: 'collection',
   MENU: 'menu',
   PAGE: 'page',
-  SYSTEM_METAFIELD: 'system/metafields',
+  SYSTEM: {
+    METAFIELD: 'system/metafields',
+  },
 };
 
 export const FILE = {
