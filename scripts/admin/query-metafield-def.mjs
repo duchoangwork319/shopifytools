@@ -1,14 +1,11 @@
 // query-metafield-def.mjs
 // Library: queries every metafield definition for a given ownerType (e.g.
 // "collection", "product") from the Admin GraphQL API, paged, and writes
-// them as a bare array to config/metafields/<ownerType>.json (lowercased),
-// next to this script.
+// them as a bare array to <sourceDir>/<ownerType>.json (lowercased).
 import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from './lib/api-client.mjs';
 import { writeJsonFile } from './lib/io.mjs';
-
-const CONFIG_DIR = path.resolve(import.meta.dirname, 'config', 'metafields');
 
 const GET_METAFIELD_DEFINITIONS_QUERY = `
   query GetMetafieldDefinitions($ownerType: MetafieldOwnerType!, $cursor: String) {
@@ -63,12 +60,12 @@ export async function fetchMetafieldDefinitions(client, ownerType) {
 
 // Fetches every metafield definition for `ownerType` (case-insensitive,
 // e.g. "collection") and writes them as a bare array to
-// config/metafields/<ownerType>.json (lowercased).
-export async function queryMetafieldDefinitions({ client, ownerType }) {
+// <sourceDir>/<ownerType>.json (lowercased).
+export async function queryMetafieldDefinitions({ client, sourceDir, ownerType }) {
   const definitions = await fetchMetafieldDefinitions(client, ownerType.toUpperCase());
 
-  fs.mkdirSync(CONFIG_DIR, { recursive: true });
-  const outputFile = path.resolve(CONFIG_DIR, `${ownerType.toLowerCase()}.json`);
+  fs.mkdirSync(sourceDir, { recursive: true });
+  const outputFile = path.resolve(sourceDir, `${ownerType.toLowerCase()}.json`);
   writeJsonFile(outputFile, definitions);
   console.log(`Saved ${definitions.length} metafield definition(s) to ${outputFile}`);
 

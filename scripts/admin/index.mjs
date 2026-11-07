@@ -342,19 +342,26 @@ page
   });
 
 // ---------------------------------------------------------------------------
-// metafield-def
+// system
 // ---------------------------------------------------------------------------
-const metafieldDef = program.command('metafield-def').description('manage metafield definitions');
+const system = program.command('system').description('manage shared config (metafield definitions, etc.)');
+const systemMetafield = system.command('metafield').description('manage metafield definitions');
 
-metafieldDef
-  .command('query <ownerType>')
+systemMetafield
+  .command('query <source> <ownerType>')
   .description(
     'fetch every metafield definition for a MetafieldOwnerType (e.g. "collection", "product"), ' +
-    'writing config/metafields/<ownerType>.json',
+    'writing/updating <source>/<ownerType>.json',
   )
-  .action(async (ownerType, opts, cmd) => {
+  .action(async (source, ownerType, opts, cmd) => {
     const client = clientFromCommand(cmd);
-    await queryMetafieldDefinitions({ client, ownerType });
+    const sourceDir = path.resolve(source);
+    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+      console.error(`Source must be an existing directory: ${sourceDir}`);
+      process.exitCode = 1;
+      return;
+    }
+    await queryMetafieldDefinitions({ client, sourceDir, ownerType });
   });
 
 program.parseAsync(process.argv);
