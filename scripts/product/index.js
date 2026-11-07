@@ -23,6 +23,7 @@ program
   .option("-m, --mode <mode>", "Output format: json or html", "json")
   .requiredOption("-r, --rate-limit <number>", "Number of concurrent requests", "5")
   .requiredOption("-b, --rate-breaker <number>", "Number of concurrent requests", "500")
+  .option("-O, --overwrite", "Overwrite files that already exist in the output folder, instead of skipping them", false)
   .action((sitemapUrl, options) => {
     sitemap.doAction(sitemapUrl, options);
   });

@@ -59,7 +59,7 @@ const processSitemap = async (sitemapUrl, options) => {
     const productSitemap = await fetchXMLContent(productSitemapUrl);
 
     // Process each product URL
-    const productUrls = extractProductUrls(productSitemap)
+    let productUrls = extractProductUrls(productSitemap)
       .map(url => ({
         apiUrl: options.mode === "html" ? url : `${url}.js`,
         filename: url.split("/").pop()
@@ -67,6 +67,17 @@ const processSitemap = async (sitemapUrl, options) => {
       .filter(obj => obj.filename !== "");
 
     console.log(`Found ${productUrls.length} product URL(s).`);
+
+    // Unless --overwrite is set, skip products whose output file already
+    // exists, instead of re-fetching and overwriting it.
+    if (!options.overwrite) {
+      const remaining = productUrls.filter(obj => !existsSync(makeFilePath(obj.filename, options)));
+      const skippedCount = productUrls.length - remaining.length;
+      if (skippedCount) {
+        console.log(`Skipping ${skippedCount} product(s) with existing output file(s).`);
+      }
+      productUrls = remaining;
+    }
 
     // Process products in parallel with concurrency limit
     for (let i = 0; i < productUrls.length; i += options.rateLimit) {
@@ -94,6 +105,7 @@ export function doAction(sitemapUrl, options) {
     mode: options.mode,
     rateLimit: parseInt(options.rateLimit, 10),
     rateBreaker: parseInt(options.rateBreaker, 10),
+    overwrite: options.overwrite,
   };
 
   if (!["json", "html"].includes(resolvedOptions.mode)) {

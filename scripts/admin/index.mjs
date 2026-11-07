@@ -23,6 +23,7 @@ import { queryPages } from './page/query.mjs';
 import { updatePages } from './page/update.mjs';
 import { deletePages } from './page/delete.mjs';
 import { queryMetafieldDefinitions } from './system/metafield/query.mjs';
+import { createMetafieldDefinitions } from './system/metafield/create.mjs';
 
 loadEnv();
 
@@ -347,6 +348,21 @@ systemMetafield
     const sourceDir = resolveBusinessDir(source, FOLDER.SYSTEM.METAFIELD);
     if (!sourceDir) return;
     await queryMetafieldDefinitions({ client, sourceDir, ownerType });
+  });
+
+systemMetafield
+  .command('create <source> <ownerType>')
+  .description(
+    `create every metafield definition with no "id" in <source>/${FOLDER.SYSTEM.METAFIELD}/<ownerType>.json ` +
+    '(the file written by "system metafield query"), writing each created id back into it',
+  )
+  .option('--dry-run', 'log what would be created without calling the API', false)
+  .action(async (source, ownerType, opts, cmd) => {
+    const client = clientFromCommand(cmd);
+    const sourceDir = resolveBusinessDir(source, FOLDER.SYSTEM.METAFIELD);
+    if (!sourceDir) return;
+    const result = await createMetafieldDefinitions({ client, sourceDir, ownerType, dryRun: opts.dryRun });
+    exitOnErrors(result);
   });
 
 program.parseAsync(process.argv);
