@@ -25,10 +25,10 @@ Fetch options include publishing fetched products, choosing whether inventory ca
 
 ### Product data CLI
 
-The CLI in `scripts/cli` fetches product data from Shopify sitemaps or storefronts and transforms Shopify product data and CSV files. Run it from the project root:
+The CLI in `scripts/product` fetches product data from Shopify sitemaps or storefronts and transforms Shopify product data and CSV files. Run it from the project root:
 
 ```sh
-node scripts/cli/cli.js --help
+node scripts/product/index.js --help
 ```
 
 Available commands:
@@ -46,19 +46,19 @@ Examples:
 
 ```sh
 # Download product JSON files from a Shopify sitemap
-node scripts/cli/cli.js sitemap https://store.example.com/sitemap.xml --output ./data/products
+node scripts/product/index.js sitemap https://store.example.com/sitemap.xml --output ./data/products
 
 # Convert downloaded JSON files to CSV
-node scripts/cli/cli.js tocsv ./data/products --output ./data/products.csv
+node scripts/product/index.js tocsv ./data/products --output ./data/products.csv
 
 # Refresh a CSV from the storefront
-node scripts/cli/cli.js fetch ./data/products.csv --store-origin https://store.example.com --output ./data/refreshed.csv
+node scripts/product/index.js fetch ./data/products.csv --store-origin https://store.example.com --output ./data/refreshed.csv
 
 # Or refresh from previously downloaded JSON and HTML files (one pair per handle)
-node scripts/cli/cli.js fetch ./data/products.csv --local-source ./data/products --output ./data/refreshed.csv
+node scripts/product/index.js fetch ./data/products.csv --local-source ./data/products --output ./data/refreshed.csv
 
 # Keep handles matching a wildcard pattern
-node scripts/cli/cli.js filter ./data/products.csv --pattern "*-preorder" --output ./data/preorders.csv
+node scripts/product/index.js filter ./data/products.csv --pattern "*-preorder" --output ./data/preorders.csv
 ```
 
 Common options (`-o, --output` is required by every command except `filter`, which defaults to `<source>_filtered.csv`):
@@ -70,7 +70,7 @@ Common options (`-o, --output` is required by every command except `filter`, whi
 | `filter` | `-d, --handle <handles>`, `-p, --pattern <pattern>`, `-r, --regex <pattern>`, `--not-match` (inverts `--regex`); at least one of handle, pattern, or regex is required, and a row is kept if it matches any of them. |
 | `tocsv`, `map-tag-gender`, `group-to-one-json` | Only `-o, --output`. |
 
-Use `sitemap --mode html` to download HTML pages. To use the local-source `fetch` command, the source directory must contain both `<handle>.json` and `<handle>.html` for each product. `fetch --only` accepts a comma-separated list of columns; protected and required columns are included automatically. See each command's help for all options, for example `node scripts/cli/cli.js fetch --help`.
+Use `sitemap --mode html` to download HTML pages. To use the local-source `fetch` command, the source directory must contain both `<handle>.json` and `<handle>.html` for each product. `fetch --only` accepts a comma-separated list of columns; protected and required columns are included automatically. See each command's help for all options, for example `node scripts/product/index.js fetch --help`.
 
 ### Shopify Admin CLI
 
@@ -146,7 +146,7 @@ The GitHub Pages workflow deploys the contents of `web/` on pushes to `master` o
 
 ```text
 src/                  React app, UI components, Shopify fetching and CSV mapping
-scripts/cli/          Product sitemap, CSV, and JSON command-line tools
+scripts/product/      Product sitemap, CSV, and JSON command-line tools
 scripts/admin/        Shopify Admin GraphQL commands and OAuth flow
 src/shared/json/      Shared CSV column and tag-mapping configuration
 public/               Static logos and icons
