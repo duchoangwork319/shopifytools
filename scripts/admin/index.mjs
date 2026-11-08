@@ -24,6 +24,7 @@ import { updatePages } from './page/update.mjs';
 import { deletePages } from './page/delete.mjs';
 import { queryMetafieldDefinitions } from './system/metafield/query.mjs';
 import { createMetafieldDefinitions } from './system/metafield/create.mjs';
+import { queryProducts } from './product/query.mjs';
 
 loadEnv();
 
@@ -329,6 +330,24 @@ page
     const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
     const result = await deletePages({ client, sourceDir, handles: handleList, deleteHtml: opts.deleteHtml, dryRun: opts.dryRun });
     if (result.failed) process.exitCode = 1;
+  });
+
+// ---------------------------------------------------------------------------
+// product
+// ---------------------------------------------------------------------------
+const product = program.command('product').description('manage products');
+
+product
+  .command('query <source>')
+  .description(
+    'fetch every product (via a bulk operation) with its variants + metafields, writing ' +
+    `<source>/${FOLDER.PRODUCT}/<handle>.json and <source>/${FOLDER.PRODUCT}/_resource-ids.json`,
+  )
+  .action(async (source, opts, cmd) => {
+    const client = clientFromCommand(cmd);
+    const sourceDir = resolveBusinessDir(source, FOLDER.PRODUCT);
+    if (!sourceDir) return;
+    await queryProducts({ client, sourceDir });
   });
 
 // ---------------------------------------------------------------------------

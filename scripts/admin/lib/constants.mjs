@@ -9,6 +9,7 @@ export const FOLDER = {
   COLLECTION: 'collection',
   MENU: 'menu',
   PAGE: 'page',
+  PRODUCT: 'product',
   SYSTEM: {
     METAFIELD: 'system/metafields',
   },
