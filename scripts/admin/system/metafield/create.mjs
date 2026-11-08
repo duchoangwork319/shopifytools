@@ -4,9 +4,13 @@
 // <sourceDir>/<ownerType>.json ({ id?, name, namespace, key, description,
 // ownerType, type: { name } }[]). Only entries with no `id` are created -
 // an entry that already has one is assumed to already exist on Shopify and
-// is skipped. On success, the created definition's `id` (and name/namespace/
-// key, in case Shopify normalized them) is written back into that same
-// entry, and the whole array is saved back to <sourceDir>/<ownerType>.json.
+// is skipped. An entry missing `name`, `namespace`, `key`, or `type.name` is
+// logged as an error and skipped, rather than sent with an invalid/missing
+// field. `description` is only included in the request when the entry has
+// one. On success, the
+// created definition's `id` (and name/namespace/key, in case Shopify
+// normalized them) is written back into that same entry, and the whole
+// array is saved back to <sourceDir>/<ownerType>.json.
 import path from 'path';
 import { graphqlRequest } from '../../lib/api-client.mjs';
 import { readJsonFile, writeJsonFile } from '../../lib/io.mjs';
@@ -32,13 +36,15 @@ const CREATE_METAFIELD_DEFINITION_MUTATION = `
 // Builds the MetafieldDefinitionInput from a saved definition entry.
 // `ownerType` is the command's own ownerType argument (uppercased) - used as
 // a fallback only, since each entry already carries its own `ownerType`.
+// `description` is omitted entirely (rather than sent as undefined) when the
+// entry doesn't have one.
 export function buildDefinitionInput(entry, ownerType) {
   return {
     name: entry.name,
     namespace: entry.namespace,
     key: entry.key,
     type: entry.type?.name,
-    description: entry.description,
+    ...(entry.description ? { description: entry.description } : {}),
     ownerType: entry.ownerType ?? ownerType,
   };
 }
@@ -60,6 +66,21 @@ export async function createMetafieldDefinitions({ client, sourceDir, ownerType,
   for (const entry of definitions) {
     if (entry.id) {
       counts.skipped += 1;
+      continue;
+    }
+
+    const missingFields = ['name', 'namespace', 'key'].filter((field) => !entry[field]);
+    if (missingFields.length) {
+      console.error(`Entry "${entry.namespace ?? '?'}.${entry.key ?? '?'}" is missing ${missingFields.join(', ')} - skipping.`);
+      hadErrors = true;
+      counts.errors += 1;
+      continue;
+    }
+
+    if (!entry.type?.name) {
+      console.error(`Entry "${entry.namespace}.${entry.key}" has no type.name - skipping.`);
+      hadErrors = true;
+      counts.errors += 1;
       continue;
     }
 
