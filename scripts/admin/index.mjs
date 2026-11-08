@@ -25,6 +25,7 @@ import { deletePages } from './page/delete.mjs';
 import { queryMetafieldDefinitions } from './system/metafield/query.mjs';
 import { createMetafieldDefinitions } from './system/metafield/create.mjs';
 import { queryProducts } from './product/query.mjs';
+import { updateProducts } from './product/update.mjs';
 
 loadEnv();
 
@@ -348,6 +349,36 @@ product
     const sourceDir = resolveBusinessDir(source, FOLDER.PRODUCT);
     if (!sourceDir) return;
     await queryProducts({ client, sourceDir });
+  });
+
+product
+  .command('update <source> [handles]')
+  .description(
+    `update product(s) from <source>/${FOLDER.PRODUCT}/<handle>.json (the files written by "product query"), ` +
+    'by comma-separated handles, by -t/--title (wildcard supported), or every entry if neither is given',
+  )
+  .option('-t, --title <pattern>', 'match products by title - a full title, a wildcard (*, ?), or a /regex/flags')
+  .option(
+    '--update-metafields',
+    'push each variant\'s metafields via metafieldsSet - currently the only data this command can update; ' +
+    'without this flag nothing is updated (use the CSV-based "product import" for product data itself)',
+    false,
+  )
+  .option('--dry-run', 'log what would be updated without calling the API', false)
+  .action(async (source, handles, opts, cmd) => {
+    const client = clientFromCommand(cmd);
+    const sourceDir = resolveBusinessDir(source, FOLDER.PRODUCT);
+    if (!sourceDir) return;
+    const handleList = handles ? handles.split(',').map((h) => h.trim()).filter(Boolean) : [];
+    const result = await updateProducts({
+      client,
+      sourceDir,
+      handles: handleList,
+      title: opts.title,
+      includeMetafields: opts.updateMetafields,
+      dryRun: opts.dryRun,
+    });
+    exitOnErrors(result);
   });
 
 // ---------------------------------------------------------------------------

@@ -8,6 +8,7 @@ import * as filter from "./filter.js";
 import * as mapToJSON from "./mapToJSON.js";
 import * as fetchCmd from "./fetch.js";
 import * as mapTagGender from "./mapTagGender.js";
+import * as importCmd from "./import.js";
 
 const program = new Command();
 
@@ -73,6 +74,15 @@ program
   .option("--not-match", "Keep handles that do NOT match --regex, instead of ones that do", false)
   .action((source, options) => {
     filter.doAction(source, options);
+  });
+
+program
+  .command("import <originCsv> <incomingCsv>")
+  .description("Merge or update an origin Shopify product CSV with data from an incoming CSV, matched by Handle")
+  .option("-m, --mode <mode>", "Import mode: MERGE (create the product if missing, then UPDATE) or UPDATE (only modify existing products)", "UPDATE")
+  .option("-o, --output <path>", "Output path for the result CSV file, for example: ./output/imported.csv")
+  .action((originCsv, incomingCsv, options) => {
+    importCmd.doAction(originCsv, incomingCsv, options);
   });
 
 program.parse();
