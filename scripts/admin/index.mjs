@@ -7,6 +7,7 @@
 import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
+import { performance } from 'node:perf_hooks';
 import { createAdminApiClient, loadEnv, readAuth } from './lib/api-client.mjs';
 import { resourceIdsFileFor } from './lib/io.mjs';
 import { FOLDER } from './lib/constants.mjs';
@@ -46,6 +47,13 @@ function exitOnErrors({ hadErrors }) {
   if (hadErrors) process.exitCode = 1;
 }
 
+// Renders a millisecond duration as "<minutes>m <seconds>s", e.g. "2m 7.483s".
+function formatDuration(ms) {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = (ms % 60000) / 1000;
+  return `${minutes}m ${seconds.toFixed(3)}s`;
+}
+
 // Resolves <source> - the one main data folder shared by every business
 // object - after validating it's an existing directory. Returns null (and
 // sets process.exitCode) instead of exiting outright, so callers can
@@ -83,7 +91,18 @@ program
     'afterAll',
     '\nGlobal Options:\n' +
     `  -a, --auth <file>  path to access-token.json (default: "${DEFAULT_AUTH_FILE}")`,
-  );
+  )
+  // Times every command's action() callback with the Performance API -
+  // preAction stamps the start time onto the action command itself (so
+  // nested/concurrent invocations can't clobber each other's start time),
+  // postAction reads it back and logs the elapsed time.
+  .hook('preAction', (thisCommand, actionCommand) => {
+    actionCommand.__startTime = performance.now();
+  })
+  .hook('postAction', (thisCommand, actionCommand) => {
+    const elapsedMs = performance.now() - actionCommand.__startTime;
+    console.log(`\nExecution time: ${formatDuration(elapsedMs)}`);
+  });
 
 // ---------------------------------------------------------------------------
 // collection
@@ -365,6 +384,7 @@ product
     false,
   )
   .option('--dry-run', 'log what would be updated without calling the API', false)
+  .option('--sleep <ms>', 'milliseconds to pause after each product, to stay under the API rate limit', '0')
   .action(async (source, handles, opts, cmd) => {
     const client = clientFromCommand(cmd);
     const sourceDir = resolveBusinessDir(source, FOLDER.PRODUCT);
@@ -377,6 +397,7 @@ product
       title: opts.title,
       includeMetafields: opts.updateMetafields,
       dryRun: opts.dryRun,
+      sleepMs: Number(opts.sleep),
     });
     exitOnErrors(result);
   });

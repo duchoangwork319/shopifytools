@@ -15,7 +15,7 @@
 import fs from 'fs';
 import path from 'path';
 import { graphqlRequest } from '../lib/api-client.mjs';
-import { readJsonFile } from '../lib/io.mjs';
+import { readJsonFile, sleep } from '../lib/io.mjs';
 import { FILE } from '../lib/constants.mjs';
 
 export const METAFIELDS_CHUNK_SIZE = 25;
@@ -136,8 +136,10 @@ async function setVariantMetafields(client, metafieldsInput) {
 // `includeMetafields` must be set, or this logs a warning and returns
 // without updating anything - there's currently nothing else for this
 // command to update (product data itself should go through `product
-// import`, a CSV-based command, instead).
-export async function updateProducts({ client, sourceDir, handles = [], title, includeMetafields = false, dryRun = false }) {
+// import`, a CSV-based command, instead). `sleepMs`, when set, pauses for
+// that many milliseconds after each product is processed (success, error,
+// skip, or dry run alike) - useful to stay under the API's rate limit.
+export async function updateProducts({ client, sourceDir, handles = [], title, includeMetafields = false, dryRun = false, sleepMs = 0 }) {
   if (!includeMetafields) {
     console.warn(
       'Nothing to update: this command only supports updating Product Variant Metafields (pass --update-metafields). ' +
@@ -160,18 +162,21 @@ export async function updateProducts({ client, sourceDir, handles = [], title, i
       hadErrors = true;
       counts.error += 1;
       console.error(`Failed: ${product.handle}: ${err.message}`);
+      if (sleepMs) await sleep(sleepMs);
       continue;
     }
 
     if (!metafieldsInput.length) {
       console.warn(`No variant metafields to update for "${product.handle}" - skipping.`);
       counts.warn += 1;
+      if (sleepMs) await sleep(sleepMs);
       continue;
     }
 
     if (dryRun) {
       console.log(`[dry run] Would set ${metafieldsInput.length} variant metafield(s) for "${product.handle}".`);
       counts.success += 1;
+      if (sleepMs) await sleep(sleepMs);
       continue;
     }
 
@@ -184,6 +189,8 @@ export async function updateProducts({ client, sourceDir, handles = [], title, i
       counts.error += 1;
       console.error(`Failed: ${product.handle}: ${err.message}`);
     }
+
+    if (sleepMs) await sleep(sleepMs);
   }
 
   console.log(`\nWarn: ${counts.warn}, Success: ${counts.success}, Error: ${counts.error}`);
