@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// index.mjs
+// index.js
 // CLI entry point wiring the admin library scripts (create/update/query
 // collections, create menus) into a single `commander`-based tool with
 // `collection`, `menu`, and `page` sub-commands, each nesting `create`,
@@ -8,26 +8,26 @@ import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
 import { performance } from 'node:perf_hooks';
-import { createAdminApiClient, loadEnv, readAuth } from './lib/api-client.mjs';
-import { resourceIdsFileFor } from './lib/io.mjs';
-import { FOLDER } from './lib/constants.mjs';
-import { createCollections, DEFAULT_CHUNK_SIZE as CREATE_CHUNK_SIZE, DEFAULT_DELAY_MS as CREATE_DELAY_MS } from './collection/create.mjs';
-import { updateCollections } from './collection/update.mjs';
-import { queryCollections } from './collection/query.mjs';
-import { collectionsToCsv } from './to-csv-collections.mjs';
-import { loadCsvCollections } from './load-csv-collections.mjs';
-import { createMenus } from './menu/create.mjs';
-import { queryMenus } from './menu/query.mjs';
-import { updateMenus } from './menu/update.mjs';
-import { createPages } from './page/create.mjs';
-import { queryPages } from './page/query.mjs';
-import { updatePages } from './page/update.mjs';
-import { deletePages } from './page/delete.mjs';
-import { queryMetafieldDefinitions } from './system/metafield/query.mjs';
-import { createMetafieldDefinitions } from './system/metafield/create.mjs';
-import { deleteMetafieldDefinitions } from './system/metafield/delete.mjs';
-import { queryProducts } from './product/query.mjs';
-import { updateProducts } from './product/update.mjs';
+import { createAdminApiClient, loadEnv, readAuth } from './lib/api-client.js';
+import { resourceIdsFileFor } from './lib/io.js';
+import { FOLDER } from './lib/constants.js';
+import { createCollections, DEFAULT_CHUNK_SIZE as CREATE_CHUNK_SIZE, DEFAULT_DELAY_MS as CREATE_DELAY_MS } from './collection/create.js';
+import { updateCollections } from './collection/update.js';
+import { queryCollections } from './collection/query.js';
+import { collectionsToCsv } from './to-csv-collections.js';
+import { loadCsvCollections } from './load-csv-collections.js';
+import { createMenus } from './menu/create.js';
+import { queryMenus } from './menu/query.js';
+import { updateMenus } from './menu/update.js';
+import { createPages } from './page/create.js';
+import { queryPages } from './page/query.js';
+import { updatePages } from './page/update.js';
+import { deletePages } from './page/delete.js';
+import { queryMetafieldDefinitions } from './system/metafield/query.js';
+import { createMetafieldDefinitions } from './system/metafield/create.js';
+import { deleteMetafieldDefinitions } from './system/metafield/delete.js';
+import { queryProducts } from './product/query.js';
+import { updateProducts } from './product/update.js';
 
 loadEnv();
 

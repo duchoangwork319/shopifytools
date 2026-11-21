@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// strip-seo-metafields.mjs
+// strip-seo-metafields.js
 // One-off cleanup (not part of the admin CLI architecture): scans every
 // `<source>/<handle>.json` collection file (the shape written by
-// query-collections.mjs) and removes any `title_tag`/`description_tag`
+// query-collections.js) and removes any `title_tag`/`description_tag`
 // entries from its `metafields` array - Shopify's own SEO pseudo-metafields
 // (the same values as `seo.title`/`seo.description`), which query-collections
 // no longer saves going forward, but older collection files may still have.

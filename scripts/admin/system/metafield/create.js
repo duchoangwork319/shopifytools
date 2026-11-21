@@ -1,6 +1,6 @@
-// system/metafield/create.mjs
+// system/metafield/create.js
 // Library: creates metafield definitions against the Admin GraphQL API from
-// the bare array written/updated by system/metafield/query.mjs at
+// the bare array written/updated by system/metafield/query.js at
 // <sourceDir>/<ownerType>.json ({ id?, name, namespace, key, description,
 // ownerType, type: { name } }[]). Only entries with no `id` are created -
 // an entry that already has one is assumed to already exist on Shopify and
@@ -12,8 +12,8 @@
 // normalized them) is written back into that same entry, and the whole
 // array is saved back to <sourceDir>/<ownerType>.json.
 import path from 'path';
-import { graphqlRequest } from '../../lib/api-client.mjs';
-import { readJsonFile, writeJsonFile } from '../../lib/io.mjs';
+import { graphqlRequest } from '../../lib/api-client.js';
+import { readJsonFile, writeJsonFile } from '../../lib/io.js';
 
 const CREATE_METAFIELD_DEFINITION_MUTATION = `
   mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {

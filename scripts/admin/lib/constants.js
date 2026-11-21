@@ -1,4 +1,4 @@
-// lib/constants.mjs
+// lib/constants.js
 // Shared <source> layout for the admin CLI: every command's <source>
 // argument is the one main data folder, holding one subfolder per business
 // object (FOLDER.*) - e.g. <source>/collection, <source>/menu - matching the

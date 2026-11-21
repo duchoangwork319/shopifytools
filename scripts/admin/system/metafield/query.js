@@ -1,11 +1,11 @@
-// system/metafield/query.mjs
+// system/metafield/query.js
 // Library: queries every metafield definition for a given ownerType (e.g.
 // "collection", "product") from the Admin GraphQL API, paged, and writes
 // them as a bare array to <sourceDir>/<ownerType>.json (lowercased).
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from '../../lib/api-client.mjs';
-import { writeJsonFile } from '../../lib/io.mjs';
+import { graphqlRequest } from '../../lib/api-client.js';
+import { writeJsonFile } from '../../lib/io.js';
 
 const GET_METAFIELD_DEFINITIONS_QUERY = `
   query GetMetafieldDefinitions($ownerType: MetafieldOwnerType!, $cursor: String) {

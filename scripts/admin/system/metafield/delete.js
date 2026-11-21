@@ -1,4 +1,4 @@
-// system/metafield/delete.mjs
+// system/metafield/delete.js
 // Library: deletes metafield definitions - by comma-separated key(s), for a
 // given ownerType - from the Admin GraphQL API (metafieldDefinitionDelete,
 // which also deletes every metafield value already set from that
@@ -12,9 +12,9 @@
 // called - only the local files are cleaned up.
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from '../../lib/api-client.mjs';
-import { readJsonFile, writeJsonFile } from '../../lib/io.mjs';
-import { FOLDER } from '../../lib/constants.mjs';
+import { graphqlRequest } from '../../lib/api-client.js';
+import { readJsonFile, writeJsonFile } from '../../lib/io.js';
+import { FOLDER } from '../../lib/constants.js';
 
 const DELETE_METAFIELD_DEFINITION_MUTATION = `
   mutation DeleteMetafieldDefinition($id: ID!, $deleteAllAssociatedMetafields: Boolean!) {

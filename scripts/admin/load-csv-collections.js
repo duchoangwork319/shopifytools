@@ -1,11 +1,11 @@
-// load-csv-collections.mjs
+// load-csv-collections.js
 // Library: reads a CSV file (header row incl. "handle") and merges its other
 // columns into each matching `<sourceDir>/<handle>.json` collection file
-// written by collection/query.mjs. If the CSV includes a `title` column,
+// written by collection/query.js. If the CSV includes a `title` column,
 // the matching entry's title in `<sourceDir>/_searchable-attrs.json` is updated too. A
 // `description` column also auto-assigns `descriptionHtml` to the same
 // value wrapped in `<p class="five-lead">`, since `descriptionHtml` - not
-// `description` - is the field collection/update.mjs actually sends to
+// `description` - is the field collection/update.js actually sends to
 // collectionUpdate. A column named `seo.{key}` (e.g. "seo.title",
 // "seo.description") is assigned to entry.seo[key] instead of a literal
 // "seo.key" property. A column named `metafields.{namespace}.{key}`
@@ -16,8 +16,8 @@
 // `system metafield query`/`create`), not a hardcoded path.
 import fs from 'fs';
 import path from 'path';
-import { parseCsv, readJsonFile, readJsonFileIfExists, writeJsonFile } from './lib/io.mjs';
-import { FILE, FOLDER } from './lib/constants.mjs';
+import { parseCsv, readJsonFile, readJsonFileIfExists, writeJsonFile } from './lib/io.js';
+import { FILE, FOLDER } from './lib/constants.js';
 
 const METAFIELD_COLUMN_PREFIX = 'metafields.';
 const METAFIELD_COLUMN = /^metafields\.([^.]+)\.(.+)$/;
@@ -51,7 +51,7 @@ function resolveMetafieldColumns(columns, metafieldConfigFile) {
 }
 
 // Merges one metafield column's value into entry.metafields (matching the
-// shape written by collection/query.mjs / collection/update.mjs: id?,
+// shape written by collection/query.js / collection/update.js: id?,
 // namespace, key, type, value, ownerId). `ownerId` is the collection's id,
 // resolved from _resource-ids.json by handle - when it's missing,
 // the metafield isn't added, and a warning is logged instead.

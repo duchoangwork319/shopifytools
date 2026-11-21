@@ -1,9 +1,9 @@
-// lib/io.mjs
+// lib/io.js
 // Small shared filesystem helpers used by the admin library scripts.
 import fs from 'fs';
 import path from 'path';
 import Papa from 'papaparse';
-import { FILE } from './constants.mjs';
+import { FILE } from './constants.js';
 
 export function readJsonFile(file, label) {
   if (!fs.existsSync(file)) {

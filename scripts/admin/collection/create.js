@@ -1,4 +1,4 @@
-// collection/create.mjs
+// collection/create.js
 // Library: creates collections against the Admin GraphQL API from a JSON
 // input (a bare array of CollectionCreateInput objects (title/handle/
 // sources/etc. - see
@@ -13,8 +13,8 @@
 // handle -> id (gid://shopify/Collection/...) is merged into
 // resourceIdsFile - see data/create-collection-response.json for the
 // response shape this is read from.
-import { graphqlRequest } from '../lib/api-client.mjs';
-import { chunk, readJsonFile, saveResourceIds, sleep } from '../lib/io.mjs';
+import { graphqlRequest } from '../lib/api-client.js';
+import { chunk, readJsonFile, saveResourceIds, sleep } from '../lib/io.js';
 
 export const DEFAULT_CHUNK_SIZE = 10;
 export const DEFAULT_DELAY_MS = 500;

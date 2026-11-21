@@ -1,27 +1,27 @@
-// menu/create.mjs
+// menu/create.js
 // Library: creates menu(s) against the Admin GraphQL API from the
 // per-handle JSON input files in a source directory - <sourceDir>/
 // <handle>.json ({ title, handle, items }), the same per-menu file shape
-// menu/query.mjs writes. Each menu runs through the CreateCollectionMenu
+// menu/query.js writes. Each menu runs through the CreateCollectionMenu
 // mutation against the Admin GraphQL API.
 //
-// This runs after collection/create.mjs. Collection-linked items are
+// This runs after collection/create.js. Collection-linked items are
 // authored with a `url` (e.g. "/collections/womens-featured-shop-all-women")
 // rather than a hardcoded `resourceId`, since the real resourceId only
 // exists once the collection has been created. Before sending each menu,
 // `/collections/<handle>` urls are resolved to `resourceId` via
 // <collectionSourceDir>/_resource-ids.json (written by
-// collection/create.mjs / collection/query.mjs), if it exists.
+// collection/create.js / collection/query.js), if it exists.
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from '../lib/api-client.mjs';
-import { readJsonFile, readJsonFileIfExists, saveResourceIds, writeJsonFile } from '../lib/io.mjs';
-import { FILE } from '../lib/constants.mjs';
+import { graphqlRequest } from '../lib/api-client.js';
+import { readJsonFile, readJsonFileIfExists, saveResourceIds, writeJsonFile } from '../lib/io.js';
+import { FILE } from '../lib/constants.js';
 
 // Files in a menu source directory that are never themselves a menu input.
 const RESERVED_FILES = new Set([FILE.SEARCHABLE_ATTRS, FILE.RESOURCE_IDS]);
 
-// Same shape as menu/query.mjs's MENU_ITEM_FIELDS, so the menu this mutation
+// Same shape as menu/query.js's MENU_ITEM_FIELDS, so the menu this mutation
 // returns can be written back to <sourceDir>/<handle>.json exactly like a
 // freshly-queried one.
 const MENU_ITEM_FIELDS = `
@@ -106,7 +106,7 @@ function resolveTargetHandles(sourceDir, handles) {
 // if it exists. On success, the created menu is written back to
 // <sourceDir>/<handle>.json (now with real item ids/resourceIds), and added
 // to <sourceDir>/_resource-ids.json and <sourceDir>/_searchable-attrs.json - the
-// same three files menu/query.mjs maintains.
+// same three files menu/query.js maintains.
 export async function createMenus({ client, sourceDir, collectionSourceDir, handles, dryRun = false }) {
   const targetHandles = resolveTargetHandles(sourceDir, handles);
   const collectionResourceIdsFile = path.resolve(collectionSourceDir, FILE.RESOURCE_IDS);

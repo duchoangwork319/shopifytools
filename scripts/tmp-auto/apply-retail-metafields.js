@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// apply-retail-metafields.mjs
+// apply-retail-metafields.js
 // Temporary automation script (not part of the admin CLI architecture):
 // merges each product's retail feed data (keyed by variant SKU) into that
 // product's `variants[i].metafields`, under the `five_dla` namespace - local

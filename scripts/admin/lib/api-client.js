@@ -1,4 +1,4 @@
-// lib/api-client.mjs
+// lib/api-client.js
 // Shared axios client for the Shopify Admin GraphQL API. Request/response
 // interceptors inject the access token and shared headers, and normalize
 // HTTP failures into a single Error shape, so callers just call
@@ -14,12 +14,12 @@ export function loadEnv(cwd = process.cwd()) {
 
 export function readAuth(authFile) {
   if (!fs.existsSync(authFile)) {
-    console.error(`Missing access token file: ${authFile}. Run auth.mjs first.`);
+    console.error(`Missing access token file: ${authFile}. Run auth.js first.`);
     process.exit(1);
   }
   const { shop, access_token: accessToken } = JSON.parse(fs.readFileSync(authFile, 'utf8'));
   if (!shop || !accessToken) {
-    console.error(`${authFile} is missing "shop" or "access_token". Run auth.mjs first.`);
+    console.error(`${authFile} is missing "shop" or "access_token". Run auth.js first.`);
     process.exit(1);
   }
   return { shop, accessToken };

@@ -1,4 +1,4 @@
-// product/update.mjs
+// product/update.js
 // Library: updates product variant metafields against the Admin GraphQL API,
 // sourced from the per-product JSON files written by `product query`
 // (<sourceDir>/<handle>.json, each already carrying its own handle/title/
@@ -14,9 +14,9 @@
 // must opt in with `includeMetafields`; otherwise nothing is updated.
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from '../lib/api-client.mjs';
-import { readJsonFile, sleep } from '../lib/io.mjs';
-import { FILE } from '../lib/constants.mjs';
+import { graphqlRequest } from '../lib/api-client.js';
+import { readJsonFile, sleep } from '../lib/io.js';
+import { FILE } from '../lib/constants.js';
 
 export const METAFIELDS_CHUNK_SIZE = 25;
 

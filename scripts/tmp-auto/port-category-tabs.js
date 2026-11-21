@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// port-category-tabs.mjs
+// port-category-tabs.js
 // One-off data migration (not part of the admin CLI architecture): ports
 // the "tab_*" menu-handle groupings from
 // ignore/menus_5DLA_Collections_FAQ_Reviewed.xlsx - handle_category-tabs.json
 // into theme-azeno-v1/templates/collection.c5dla.basic.json's
 // sections.subcollections.blocks, as one `activity_links` block per group.
-// Unlike port-related-links.mjs (which added to banner.blocks alongside an
+// Unlike port-related-links.js (which added to banner.blocks alongside an
 // existing starting block), this REPLACES subcollections.blocks and
 // subcollections.block_order entirely - every existing activity_links block
 // is discarded. The template file is JSON5-ish (a /* ... */ header comment

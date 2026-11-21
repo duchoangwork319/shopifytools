@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// built-menu.mjs
+// built-menu.js
 // Temporary automation script (not part of the admin CLI architecture):
 // reads the "related links" column of a CSV (handle, group of title/URL
 // pairs) and builds one menuCreate-input-shaped JSON file per unique set of

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// port-related-links.mjs
+// port-related-links.js
 // One-off data migration (not part of the admin CLI architecture): ports
 // the "related_*" menu-handle groupings from
 // ignore/menus_5DLA_Collections_FAQ_Reviewed.xlsx - handle_related-links.json

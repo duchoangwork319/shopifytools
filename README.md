@@ -83,29 +83,29 @@ Before running Admin API commands:
 3. Run the OAuth flow to install the app and save its access token:
 
    ```sh
-   node scripts/admin/auth.mjs
+   node scripts/admin/auth.js
    ```
 
    The token is written to `scripts/admin/data/access-token.json`, which is ignored by Git.
 4. Inspect command options:
 
    ```sh
-   node scripts/admin/index.mjs --help
-   node scripts/admin/index.mjs collection --help
-   node scripts/admin/index.mjs page --help
+   node scripts/admin/index.js --help
+   node scripts/admin/index.js collection --help
+   node scripts/admin/index.js page --help
    ```
 
 Examples:
 
 ```sh
 # Query collections into an existing directory
-node scripts/admin/index.mjs collection query ./data/collections
+node scripts/admin/index.js collection query ./data/collections
 
 # Query selected pages into an existing directory
-node scripts/admin/index.mjs page query ./data/pages about-us,contact
+node scripts/admin/index.js page query ./data/pages about-us,contact
 
 # Preview page creation from an HTML file without making an API mutation
-node scripts/admin/index.mjs page create ./data/pages/about-us.html --dry-run
+node scripts/admin/index.js page create ./data/pages/about-us.html --dry-run
 ```
 
 | Command | Purpose and options |

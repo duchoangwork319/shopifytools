@@ -1,11 +1,11 @@
-// page/query.mjs
+// page/query.js
 // Library: queries pages from the Admin GraphQL API, either all of them
 // (paged) or a single one by handle.
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from '../lib/api-client.mjs';
-import { writeJsonFile } from '../lib/io.mjs';
-import { FILE } from '../lib/constants.mjs';
+import { graphqlRequest } from '../lib/api-client.js';
+import { writeJsonFile } from '../lib/io.js';
+import { FILE } from '../lib/constants.js';
 
 const GET_ALL_PAGES_QUERY = `
   query GetAllPages($cursor: String) {

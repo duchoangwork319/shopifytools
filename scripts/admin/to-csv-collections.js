@@ -1,10 +1,10 @@
-// to-csv-collections.mjs
+// to-csv-collections.js
 // Library: converts `<sourceDir>/collections.json` (the shape written by
-// collection/query.mjs: an array of { title, handle, ruleSet }) into
+// collection/query.js: an array of { title, handle, ruleSet }) into
 // `<sourceDir>/collections.csv`, with one column per requested prop.
 import path from 'path';
 import fs from 'fs';
-import { readJsonFile, toCsv } from './lib/io.mjs';
+import { readJsonFile, toCsv } from './lib/io.js';
 
 // Reads collections.json from sourceDir and writes a CSV - `output` if
 // given, otherwise collections.csv next to it - with columns from `props`

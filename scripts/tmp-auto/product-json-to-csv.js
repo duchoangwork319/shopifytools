@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// product-json-to-csv.mjs
+// product-json-to-csv.js
 // Temporary automation script (not part of the admin CLI architecture):
 // converts a JSON file of API-fetched products - { products: [...] } (see
 // 5dla-data/products/full-product-sample.json for the shape) into a CSV.

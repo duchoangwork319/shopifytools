@@ -1,4 +1,4 @@
-// product/query.mjs
+// product/query.js
 // Library: queries every product via a bulk operation (the Admin API has no
 // cursor-paginated way to fetch every product with its variants and
 // metafields in one pass, so a bulk query is used instead, same as Shopify's
@@ -10,9 +10,9 @@ import fs from 'fs';
 import path from 'path';
 import { Readable } from 'stream';
 import { createInterface } from 'readline';
-import { graphqlRequest } from '../lib/api-client.mjs';
-import { writeJsonFile, saveResourceIds, sleep } from '../lib/io.mjs';
-import { FILE } from '../lib/constants.mjs';
+import { graphqlRequest } from '../lib/api-client.js';
+import { writeJsonFile, saveResourceIds, sleep } from '../lib/io.js';
+import { FILE } from '../lib/constants.js';
 
 const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour

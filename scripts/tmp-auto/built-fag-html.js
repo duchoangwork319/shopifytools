@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// built-fag-html.mjs
+// built-fag-html.js
 // Temporary automation script (not part of the admin CLI architecture):
 // converts the raw FAQ text in the 2nd column of a CSV (handle, raw FAQ
 // text) into the same FAQ HTML structure used by the `.c5dla-seo-guide__faq`

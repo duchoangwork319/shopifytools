@@ -1,4 +1,4 @@
-// collection/query.mjs
+// collection/query.js
 // Library: queries collections from the Admin GraphQL API - all of them
 // (paged), by exact handle(s), or by a title search (wildcard supported,
 // e.g. "*summer*"). Each collection is written to its own
@@ -6,9 +6,9 @@
 // property fetched (paged) per collection.
 import fs from 'fs';
 import path from 'path';
-import { graphqlRequest } from '../lib/api-client.mjs';
-import { writeJsonFile, readJsonFileIfExists, saveResourceIds } from '../lib/io.mjs';
-import { FILE } from '../lib/constants.mjs';
+import { graphqlRequest } from '../lib/api-client.js';
+import { writeJsonFile, readJsonFileIfExists, saveResourceIds } from '../lib/io.js';
+import { FILE } from '../lib/constants.js';
 
 const COLLECTION_FIELDS = `
   id
@@ -197,7 +197,7 @@ export async function fetchCollectionMetafields(client, collectionId) {
         continue;
       }
       // Metafields are linked to their collection via `ownerId` - carry it
-      // along so collection/update.mjs can pass it straight to
+      // along so collection/update.js can pass it straight to
       // metafieldsSet without needing the collection's id separately.
       metafields.push({ ...edge.node, ownerId: collectionId });
       cursor = edge.cursor;

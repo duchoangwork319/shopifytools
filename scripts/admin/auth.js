@@ -1,4 +1,4 @@
-// auth.mjs
+// auth.js
 // Runs a local OAuth flow against the Shopify Admin API: opens the browser to
 // `/admin/oauth/authorize`, and on `/auth/callback` exchanges the code for an
 // access token, saves it to disk, then shuts itself down.
