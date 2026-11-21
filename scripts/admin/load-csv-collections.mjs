@@ -11,25 +11,26 @@
 // "seo.key" property. A column named `metafields.{namespace}.{key}`
 // (namespace is always `bwp_fields`) is merged into the entry's
 // `metafields` array instead - see resolveMetafieldColumns /
-// applyMetafieldColumn.
+// applyMetafieldColumn. Metafield definitions are read from
+// <mainDir>/<FOLDER.SYSTEM.METAFIELD>/collection.json (the file written by
+// `system metafield query`/`create`), not a hardcoded path.
 import fs from 'fs';
 import path from 'path';
 import { parseCsv, readJsonFile, readJsonFileIfExists, writeJsonFile } from './lib/io.mjs';
-import { FILE } from './lib/constants.mjs';
+import { FILE, FOLDER } from './lib/constants.mjs';
 
-const METAFIELD_CONFIG_FILE = path.resolve(import.meta.dirname, 'config', 'metafields', 'collection.json');
 const METAFIELD_COLUMN_PREFIX = 'metafields.';
 const METAFIELD_COLUMN = /^metafields\.([^.]+)\.(.+)$/;
 const SEO_COLUMN_PREFIX = 'seo.';
 
 // Resolves each `metafields.{namespace}.{key}` column's `namespace`/`key`/
-// `type` (from config/metafields/collection.json - a bare array of
-// metafield definitions, as written by `metafield-def query`), keyed by
-// column name - done once per CSV, not once per row. A column whose
-// namespace.key isn't in that config is left out (and warned about) rather
-// than silently written as a plain field.
-function resolveMetafieldColumns(columns) {
-  const metafieldDefinitions = readJsonFile(METAFIELD_CONFIG_FILE, 'metafield config');
+// `type` (from <mainDir>/<FOLDER.SYSTEM.METAFIELD>/collection.json - a bare
+// array of metafield definitions, as written by `system metafield
+// query`/`create`), keyed by column name - done once per CSV, not once per
+// row. A column whose namespace.key isn't in that config is left out (and
+// warned about) rather than silently written as a plain field.
+function resolveMetafieldColumns(columns, metafieldConfigFile) {
+  const metafieldDefinitions = readJsonFile(metafieldConfigFile, 'metafield config');
   const defsByColumn = new Map();
 
   for (const column of columns) {
@@ -72,10 +73,12 @@ function applyMetafieldColumn(entry, value, handle, { namespace, key, type }, co
   }
 }
 
-export function loadCsvCollections({ csvFile, sourceDir }) {
+export function loadCsvCollections({ csvFile, sourceDir, mainDir }) {
+  const metafieldConfigFile = path.join(mainDir, FOLDER.SYSTEM.METAFIELD, 'collection.json');
+
   const rows = parseCsv(fs.readFileSync(csvFile, 'utf8'));
   const columns = rows.length ? Object.keys(rows[0]).filter((key) => key !== 'handle') : [];
-  const metafieldDefsByColumn = resolveMetafieldColumns(columns);
+  const metafieldDefsByColumn = resolveMetafieldColumns(columns, metafieldConfigFile);
   const updatesTitle = columns.includes('title');
 
   const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);

@@ -25,6 +25,7 @@ import { updatePages } from './page/update.mjs';
 import { deletePages } from './page/delete.mjs';
 import { queryMetafieldDefinitions } from './system/metafield/query.mjs';
 import { createMetafieldDefinitions } from './system/metafield/create.mjs';
+import { deleteMetafieldDefinitions } from './system/metafield/delete.mjs';
 import { queryProducts } from './product/query.mjs';
 import { updateProducts } from './product/update.mjs';
 
@@ -195,21 +196,22 @@ collection
   });
 
 collection
-  .command('load-csv <csvPath> <source>')
+  .command('load-csv <source> <csvPath>')
   .description(
     'merge a CSV file (header row incl. "handle") into each matching <source>/collection/<handle>.json ' +
     'collection file; also updates title in <source>/collection/_searchable-attrs.json when the CSV has a title column',
   )
-  .action((csvPath, source) => {
+  .action((source, csvPath) => {
     const csvFile = path.resolve(csvPath);
     if (!fs.existsSync(csvFile) || !fs.statSync(csvFile).isFile()) {
       console.error(`CSV path must be an existing file: ${csvFile}`);
       process.exitCode = 1;
       return;
     }
-    const sourceDir = resolveBusinessDir(source, FOLDER.COLLECTION);
-    if (!sourceDir) return;
-    loadCsvCollections({ csvFile, sourceDir });
+    const mainDir = resolveMainDir(source);
+    if (!mainDir) return;
+    const sourceDir = path.join(mainDir, FOLDER.COLLECTION);
+    loadCsvCollections({ csvFile, sourceDir, mainDir });
   });
 
 // ---------------------------------------------------------------------------
@@ -433,6 +435,41 @@ systemMetafield
     const sourceDir = resolveBusinessDir(source, FOLDER.SYSTEM.METAFIELD);
     if (!sourceDir) return;
     const result = await createMetafieldDefinitions({ client, sourceDir, ownerType, dryRun: opts.dryRun });
+    exitOnErrors(result);
+  });
+
+systemMetafield
+  .command('delete <source> <ownerType> <fields>')
+  .description(
+    'delete metafield definition(s) by comma-separated key(s), for a MetafieldOwnerType (e.g. "collection", ' +
+    `"product", "productvariant"), from <source>/${FOLDER.SYSTEM.METAFIELD}/<ownerType>.json, also removing ` +
+    'the matching entries from every affected per-object JSON file ("product" and "productvariant" share the ' +
+    'same files)',
+  )
+  .option(
+    '--local',
+    'only remove locally (the definitions file + per-object JSON files) - skip the GraphQL API entirely',
+    false,
+  )
+  .action(async (source, ownerType, fields, opts, cmd) => {
+    const mainDir = resolveMainDir(source);
+    if (!mainDir) return;
+    const sourceDir = path.join(mainDir, FOLDER.SYSTEM.METAFIELD);
+    const fieldList = fields.split(',').map((f) => f.trim()).filter(Boolean);
+    if (!fieldList.length) {
+      console.error('<fields> must be one or more comma-separated metafield keys.');
+      process.exitCode = 1;
+      return;
+    }
+    const client = opts.local ? null : clientFromCommand(cmd);
+    const result = await deleteMetafieldDefinitions({
+      client,
+      sourceDir,
+      mainDir,
+      ownerType,
+      fields: fieldList,
+      local: opts.local,
+    });
     exitOnErrors(result);
   });
 
