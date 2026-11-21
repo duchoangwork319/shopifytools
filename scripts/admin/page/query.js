@@ -3,8 +3,9 @@
 // (paged) or a single one by handle.
 import fs from 'fs';
 import path from 'path';
+import { createHash } from 'crypto';
 import { graphqlRequest } from '../lib/api-client.js';
-import { writeJsonFile } from '../lib/io.js';
+import { readJsonFileIfExists, writeJsonFile } from '../lib/io.js';
 import { FILE } from '../lib/constants.js';
 
 const GET_ALL_PAGES_QUERY = `
@@ -69,6 +70,10 @@ export async function fetchAllPages(client) {
   return allPages;
 }
 
+function sha256(content) {
+  return createHash('sha256').update(content).digest('hex');
+}
+
 // Fetches a single page by its handle, or null if none matches.
 export async function fetchPageByHandle(client, handle) {
   const json = await graphqlRequest(client, GET_PAGE_BY_HANDLE_QUERY, { query: `handle:'${handle}'` });
@@ -104,15 +109,41 @@ export async function queryPages({ client, sourceDir, handles }) {
     remotePages = await fetchAllPages(client);
   }
 
+  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
+  const previousEntries = readJsonFileIfExists(storeFile, []);
+  const previousHandles = new Set(previousEntries.map((entry) => entry.handle));
+
+  let newCount = 0;
+  let updatedCount = 0;
+  let unchangedCount = 0;
+
   const entries = remotePages.map((remotePage) => {
     const bodyFilePath = path.resolve(sourceDir, `${remotePage.handle}.html`);
-    fs.writeFileSync(bodyFilePath, remotePage.body || '', 'utf8');
-    console.log(`Saved body for "${remotePage.handle}" to ${bodyFilePath}`);
+    const newBody = remotePage.body || '';
+    const isNew = !previousHandles.has(remotePage.handle);
+
+    const existingBody = !isNew && fs.existsSync(bodyFilePath) ? fs.readFileSync(bodyFilePath, 'utf8') : null;
+    const changed = isNew || existingBody === null || sha256(existingBody) !== sha256(newBody);
+
+    if (changed) {
+      fs.writeFileSync(bodyFilePath, newBody, 'utf8');
+      console.log(`Saved body for "${remotePage.handle}" to ${bodyFilePath}`);
+    }
+
+    if (isNew) {
+      newCount += 1;
+    } else if (changed) {
+      updatedCount += 1;
+    } else {
+      unchangedCount += 1;
+    }
+
     return { id: remotePage.id, handle: remotePage.handle, title: remotePage.title, bodyFilePath };
   });
 
-  const storeFile = path.resolve(sourceDir, FILE.SEARCHABLE_ATTRS);
   writeJsonFile(storeFile, entries);
 
-  return { count: entries.length };
+  console.log(`\nNew: ${newCount}, Updated: ${updatedCount}, Unchanged: ${unchangedCount}`);
+
+  return { count: entries.length, newCount, updatedCount, unchangedCount };
 }
