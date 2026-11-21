@@ -1,13 +1,13 @@
 // system/metafield/delete.js
-// Library: deletes metafield definitions - by comma-separated key(s), for a
-// given ownerType - from the Admin GraphQL API (metafieldDefinitionDelete,
-// which also deletes every metafield value already set from that
-// definition), then removes the matching entries from
-// <sourceDir>/<ownerType>.json (the file written by "system metafield
-// query"/"create") and from every per-object JSON file in that ownerType's
-// own business folder. `product` and `productvariant` share the same
-// <mainDir>/product/<handle>.json files - a "product" field lives on the
-// product's own `metafields`, a "productvariant" field lives on each
+// Library: deletes metafield definitions - by comma-separated key(s), or by
+// every definition under a given `namespace` - for a given ownerType, from
+// the Admin GraphQL API (metafieldDefinitionDelete, which also deletes every
+// metafield value already set from that definition), then removes the
+// matching entries from <sourceDir>/<ownerType>.json (the file written by
+// "system metafield query"/"create") and from every per-object JSON file in
+// that ownerType's own business folder. `product` and `productvariant` share
+// the same <mainDir>/product/<handle>.json files - a "product" field lives
+// on the product's own `metafields`, a "productvariant" field lives on each
 // `variants[i].metafields`. With `local: true`, the GraphQL API is never
 // called - only the local files are cleaned up.
 import fs from 'fs';
@@ -97,18 +97,19 @@ function removeMetafieldsFromDataFiles(dataDir, ownerType, keys) {
   return updatedFiles;
 }
 
-// Deletes metafield definitions matching `fields` (keys) for `ownerType`,
-// from <sourceDir>/<ownerType>.json. With `local: true`, skips the GraphQL
-// API entirely and only removes the matching entries locally - from the
-// definitions file and from every per-object JSON file that could carry one
-// of those fields' metafields (<mainDir>/<ownerType's business folder>).
-// Otherwise, each definition is deleted via metafieldDefinitionDelete first
-// (which also deletes every metafield value already set from it on
-// Shopify) - only successfully deleted ones are then removed locally.
-export async function deleteMetafieldDefinitions({ client, sourceDir, mainDir, ownerType, fields, local = false }) {
-  const normalizedOwnerType = ownerType.toUpperCase();
-  const definitionsFile = path.resolve(sourceDir, `${ownerType.toLowerCase()}.json`);
-  const definitions = readJsonFile(definitionsFile, `${ownerType} metafield definitions`);
+// Resolves which definitions a delete call targets: either the given `fields`
+// (keys, every one must match a saved definition - unmatched ones are warned
+// about), or, when `fields` is empty, every definition under `namespace`
+// (warned about if none match). Exactly one of the two is expected to be
+// set by the caller.
+function resolveMatchedDefinitions(definitions, definitionsFile, { fields, namespace }) {
+  if (namespace) {
+    const matched = definitions.filter((entry) => entry.namespace === namespace);
+    if (!matched.length) {
+      console.warn(`No metafield definitions found under namespace "${namespace}" in ${definitionsFile}.`);
+    }
+    return { matched, hadErrors: false };
+  }
 
   const requestedKeys = new Set(fields);
   const matched = definitions.filter((entry) => requestedKeys.has(entry.key));
@@ -117,10 +118,39 @@ export async function deleteMetafieldDefinitions({ client, sourceDir, mainDir, o
     console.warn(`No metafield definition found for key "${key}" in ${definitionsFile} - skipping.`);
   }
 
-  let hadErrors = notFoundKeys.length > 0;
+  return { matched, hadErrors: notFoundKeys.length > 0 };
+}
+
+// Deletes metafield definitions matching `fields` (keys), or every
+// definition under `namespace` when `fields` is empty, for `ownerType`, from
+// <sourceDir>/<ownerType>.json. With `local: true`, skips the GraphQL API
+// entirely and only removes the matching entries locally - from the
+// definitions file and from every per-object JSON file that could carry one
+// of those fields' metafields (<mainDir>/<ownerType's business folder>).
+// Otherwise, each definition is deleted via metafieldDefinitionDelete first
+// (which also deletes every metafield value already set from it on
+// Shopify) - only successfully deleted ones are then removed locally. With
+// `dryRun: true`, nothing is actually deleted or written - the API is never
+// called and no file (neither the definitions file nor any per-object JSON
+// file) is modified; only what would happen is logged.
+export async function deleteMetafieldDefinitions({ client, sourceDir, mainDir, ownerType, fields = [], namespace, local = false, dryRun = false }) {
+  const normalizedOwnerType = ownerType.toUpperCase();
+  const definitionsFile = path.resolve(sourceDir, `${ownerType.toLowerCase()}.json`);
+  const definitions = readJsonFile(definitionsFile, `${ownerType} metafield definitions`);
+
+  const { matched, hadErrors: matchErrors } = resolveMatchedDefinitions(definitions, definitionsFile, { fields, namespace });
+
+  let hadErrors = matchErrors;
   const deletedKeys = [];
 
   for (const definition of matched) {
+    if (dryRun) {
+      const scope = local ? 'locally only' : 'on Shopify (including every associated metafield value) and locally';
+      console.log(`[dry run] Would delete metafield definition "${definition.namespace}.${definition.key}" ${scope}.`);
+      deletedKeys.push(definition.key);
+      continue;
+    }
+
     if (local) {
       console.log(`[local] Removing "${definition.namespace}.${definition.key}" from local data only.`);
       deletedKeys.push(definition.key);
@@ -153,12 +183,21 @@ export async function deleteMetafieldDefinitions({ client, sourceDir, mainDir, o
     return { hadErrors, deletedKeys };
   }
 
+  const dataFolder = OWNER_TYPE_DATA_FOLDER[normalizedOwnerType];
+
+  if (dryRun) {
+    console.log(`\n[dry run] Would remove ${deletedKeys.length} definition(s) from ${definitionsFile}.`);
+    if (dataFolder) {
+      console.log(`[dry run] Would remove matching metafield(s) from per-object JSON files in ${path.join(mainDir, dataFolder)}.`);
+    }
+    return { hadErrors, deletedKeys };
+  }
+
   const deletedKeySet = new Set(deletedKeys);
   const remainingDefinitions = definitions.filter((entry) => !deletedKeySet.has(entry.key));
   writeJsonFile(definitionsFile, remainingDefinitions);
   console.log(`Removed ${deletedKeys.length} definition(s) from ${definitionsFile}.`);
 
-  const dataFolder = OWNER_TYPE_DATA_FOLDER[normalizedOwnerType];
   if (dataFolder) {
     const dataDir = path.join(mainDir, dataFolder);
     const updatedFiles = removeMetafieldsFromDataFiles(dataDir, normalizedOwnerType, deletedKeySet);

@@ -8,6 +8,7 @@ import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
 import { performance } from 'node:perf_hooks';
+import { createInterface } from 'node:readline/promises';
 import { createAdminApiClient, loadEnv, readAuth } from './lib/api-client.js';
 import { resourceIdsFileFor } from './lib/io.js';
 import { FOLDER } from './lib/constants.js';
@@ -59,6 +60,18 @@ function formatDuration(ms) {
 // object - after validating it's an existing directory. Returns null (and
 // sets process.exitCode) instead of exiting outright, so callers can
 // `return` out of their action cleanly.
+// Prompts the user on the terminal with `message` + " (y/N): " and resolves
+// to whether they confirmed (only "y"/"yes", case-insensitive, counts).
+async function confirmAction(message) {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const answer = await rl.question(`${message} (y/N): `);
+    return /^y(es)?$/i.test(answer.trim());
+  } finally {
+    rl.close();
+  }
+}
+
 function resolveMainDir(source) {
   const mainDir = path.resolve(source);
   if (!fs.existsSync(mainDir) || !fs.statSync(mainDir).isDirectory()) {
@@ -439,36 +452,66 @@ systemMetafield
   });
 
 systemMetafield
-  .command('delete <source> <ownerType> <fields>')
+  .command('delete <source> <ownerType> [fields]')
   .description(
-    'delete metafield definition(s) by comma-separated key(s), for a MetafieldOwnerType (e.g. "collection", ' +
-    `"product", "productvariant"), from <source>/${FOLDER.SYSTEM.METAFIELD}/<ownerType>.json, also removing ` +
-    'the matching entries from every affected per-object JSON file ("product" and "productvariant" share the ' +
-    'same files)',
+    'delete metafield definition(s) by comma-separated key(s) (or every definition under --namespace), for a ' +
+    'MetafieldOwnerType (e.g. "collection", "product", "productvariant"), from ' +
+    `<source>/${FOLDER.SYSTEM.METAFIELD}/<ownerType>.json, also removing the matching entries from every ` +
+    'affected per-object JSON file ("product" and "productvariant" share the same files)',
   )
+  .option('--namespace <namespace>', 'delete every metafield definition under this namespace, instead of [fields]')
   .option(
     '--local',
     'only remove locally (the definitions file + per-object JSON files) - skip the GraphQL API entirely',
     false,
   )
+  .option('--dry-run', 'log what would be deleted without calling the API or changing any file', false)
   .action(async (source, ownerType, fields, opts, cmd) => {
-    const mainDir = resolveMainDir(source);
-    if (!mainDir) return;
-    const sourceDir = path.join(mainDir, FOLDER.SYSTEM.METAFIELD);
-    const fieldList = fields.split(',').map((f) => f.trim()).filter(Boolean);
-    if (!fieldList.length) {
-      console.error('<fields> must be one or more comma-separated metafield keys.');
+    if (!fields && !opts.namespace) {
+      console.error('Provide [fields] (comma-separated metafield keys) or --namespace <namespace>.');
       process.exitCode = 1;
       return;
     }
-    const client = opts.local ? null : clientFromCommand(cmd);
+    if (fields && opts.namespace) {
+      console.error('Provide either [fields] or --namespace, not both.');
+      process.exitCode = 1;
+      return;
+    }
+
+    const fieldList = fields ? fields.split(',').map((f) => f.trim()).filter(Boolean) : [];
+    if (fields && !fieldList.length) {
+      console.error('[fields] must be one or more comma-separated metafield keys.');
+      process.exitCode = 1;
+      return;
+    }
+
+    const mainDir = resolveMainDir(source);
+    if (!mainDir) return;
+    const sourceDir = path.join(mainDir, FOLDER.SYSTEM.METAFIELD);
+
+    if (opts.namespace && !opts.dryRun) {
+      const scope = opts.local
+        ? 'locally (the definitions file + per-object JSON files) only'
+        : 'on Shopify (including every associated metafield value) and locally';
+      const confirmed = await confirmAction(
+        `Warning: this will delete EVERY "${ownerType}" metafield definition under namespace "${opts.namespace}" ${scope}. Continue?`,
+      );
+      if (!confirmed) {
+        console.log('Aborted - no changes made.');
+        return;
+      }
+    }
+
+    const client = opts.local || opts.dryRun ? null : clientFromCommand(cmd);
     const result = await deleteMetafieldDefinitions({
       client,
       sourceDir,
       mainDir,
       ownerType,
       fields: fieldList,
+      namespace: opts.namespace,
       local: opts.local,
+      dryRun: opts.dryRun,
     });
     exitOnErrors(result);
   });
