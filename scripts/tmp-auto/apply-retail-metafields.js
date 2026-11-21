@@ -2,7 +2,7 @@
 // apply-retail-metafields.js
 // Temporary automation script (not part of the admin CLI architecture):
 // merges each product's retail feed data (keyed by variant SKU) into that
-// product's `variants[i].metafields`, under the `five_dla` namespace - local
+// product's `variants[i].metafields`, under the given `<namespace>` - local
 // file-only, no Shopify API calls. Each retail field's metafield `type` is
 // looked up from the sibling `system/metafields/productvariant.json` (the
 // file written by `system metafield query`/`create`), so the written shape
@@ -14,8 +14,6 @@ import fs from 'fs';
 import path from 'path';
 import { Command } from 'commander';
 
-const NAMESPACE = 'five_dla';
-
 function readJson(file) {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
@@ -24,15 +22,15 @@ function writeJson(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
-// Builds a Map<key, metafieldTypeName> from the `five_dla` entries of
+// Builds a Map<key, metafieldTypeName> from `namespace`'s entries of
 // <source>/../system/metafields/productvariant.json (a sibling business
 // folder of <source>, same layout as every other admin CLI business object).
-function loadFieldTypes(sourceDir) {
+function loadFieldTypes(sourceDir, namespace) {
   const definitionsFile = path.resolve(sourceDir, '..', 'system', 'metafields', 'productvariant.json');
   const definitions = readJson(definitionsFile);
   const types = new Map();
   for (const definition of definitions) {
-    if (definition.namespace !== NAMESPACE) continue;
+    if (definition.namespace !== namespace) continue;
     types.set(definition.key, definition.type?.name);
   }
   return types;
@@ -61,8 +59,8 @@ function serializeValue(value, typeName) {
 }
 
 // Builds the { key, type, value } fields to apply to a variant from its
-// retail data, skipping keys with no known metafield type (not a
-// `five_dla` field) or with no meaningful value.
+// retail data, skipping keys with no known metafield type (not a field of
+// the given namespace) or with no meaningful value.
 function buildRetailFields(retailData, fieldTypes) {
   const fields = [];
   for (const [key, value] of Object.entries(retailData)) {
@@ -76,14 +74,14 @@ function buildRetailFields(retailData, fieldTypes) {
 // Merges `fields` into `metafields` in place: an entry matching
 // namespace+key is updated (its `id` is preserved); otherwise a new entry
 // is appended without an `id`.
-function mergeMetafields(metafields, fields) {
+function mergeMetafields(metafields, fields, namespace) {
   for (const field of fields) {
-    const existing = metafields.find((metafield) => metafield.namespace === NAMESPACE && metafield.key === field.key);
+    const existing = metafields.find((metafield) => metafield.namespace === namespace && metafield.key === field.key);
     if (existing) {
       existing.type = field.type;
       existing.value = field.value;
     } else {
-      metafields.push({ namespace: NAMESPACE, key: field.key, type: field.type, value: field.value });
+      metafields.push({ namespace, key: field.key, type: field.type, value: field.value });
     }
   }
 }
@@ -94,8 +92,8 @@ function listProductFiles(sourceDir) {
     .map((entry) => path.join(sourceDir, entry.name));
 }
 
-function processProducts(sourceDir, retailJsonFile) {
-  const fieldTypes = loadFieldTypes(sourceDir);
+function processProducts(sourceDir, retailJsonFile, namespace) {
+  const fieldTypes = loadFieldTypes(sourceDir, namespace);
   const retailBySku = loadRetailBySku(retailJsonFile);
   const productFiles = listProductFiles(sourceDir);
 
@@ -117,7 +115,7 @@ function processProducts(sourceDir, retailJsonFile) {
       }
 
       variant.metafields = variant.metafields || [];
-      mergeMetafields(variant.metafields, fields);
+      mergeMetafields(variant.metafields, fields, namespace);
       updatedVariants += 1;
       changed = true;
     }
@@ -137,10 +135,11 @@ function processProducts(sourceDir, retailJsonFile) {
 const program = new Command();
 program
   .name('apply-retail-metafields')
-  .description("Merge retail feed data (keyed by variant SKU) into each product's variants[i].metafields under the five_dla namespace")
+  .description("Merge retail feed data (keyed by variant SKU) into each product's variants[i].metafields under <namespace>")
   .argument('<source>', 'product business folder path, e.g. D:/working/shopify/repo/5dla-data/product')
   .argument('<retailJson>', 'retail JSON data file path (the { products: [{ sku, retail_productfeed }] } file)')
-  .action((source, retailJson) => {
+  .argument('<namespace>', 'metafield namespace to read field types from and write fields under, e.g. five_dla')
+  .action((source, retailJson, namespace) => {
     const sourceDir = path.resolve(source);
     const retailJsonFile = path.resolve(retailJson);
 
@@ -153,7 +152,7 @@ program
       process.exit(1);
     }
 
-    processProducts(sourceDir, retailJsonFile);
+    processProducts(sourceDir, retailJsonFile, namespace);
   });
 
 program.parse();

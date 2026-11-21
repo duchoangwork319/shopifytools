@@ -456,16 +456,19 @@ systemMetafield
   .description(
     'delete metafield definition(s) by comma-separated key(s) (or every definition under --namespace), for a ' +
     'MetafieldOwnerType (e.g. "collection", "product", "productvariant"), from ' +
-    `<source>/${FOLDER.SYSTEM.METAFIELD}/<ownerType>.json, also removing the matching entries from every ` +
-    'affected per-object JSON file ("product" and "productvariant" share the same files)',
+    `<source>/${FOLDER.SYSTEM.METAFIELD}/<ownerType>.json, also removing the matching metafield value(s) from ` +
+    'every affected per-object JSON file ("product" and "productvariant" share the same files). By default, ' +
+    'the matched entries are kept in <ownerType>.json with just their "id" cleared (so you can edit ' +
+    'namespace/key/type and re-run "system metafield create"); pass --rm-defs to remove the entries entirely instead.',
   )
   .option('--namespace <namespace>', 'delete every metafield definition under this namespace, instead of [fields]')
   .option(
     '--local',
-    'only remove locally (the definitions file + per-object JSON files) - skip the GraphQL API entirely',
+    'only update locally (the definitions file + per-object JSON files) - skip the GraphQL API entirely',
     false,
   )
   .option('--dry-run', 'log what would be deleted without calling the API or changing any file', false)
+  .option('--rm-defs', 'remove the matched entries from <ownerType>.json entirely, instead of only clearing their "id"', false)
   .action(async (source, ownerType, fields, opts, cmd) => {
     if (!fields && !opts.namespace) {
       console.error('Provide [fields] (comma-separated metafield keys) or --namespace <namespace>.');
@@ -512,6 +515,7 @@ systemMetafield
       namespace: opts.namespace,
       local: opts.local,
       dryRun: opts.dryRun,
+      rmDefs: opts.rmDefs,
     });
     exitOnErrors(result);
   });
